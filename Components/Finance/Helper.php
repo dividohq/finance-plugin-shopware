@@ -325,8 +325,8 @@ class Helper
     }
 
     public function getEnvironment($environment){
-        if(isset(Divido\MerchantSDK\Environment::$$environment)){
-            $environment == Divido\MerchantSDK\Environment::$$environment;
+        if(isset(\Divido\MerchantSDK\Environment::$$environment)){
+            $environment == \Divido\MerchantSDK\Environment::$$environment;
         }else return false;
     }
 

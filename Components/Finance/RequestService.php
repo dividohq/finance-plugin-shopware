@@ -92,28 +92,31 @@ class RequestService
     public static function makeRequest(\FinancePlugin\Models\Request $request)
     {
         $apiKey = Helper::getApiKey();
-        $sdk = new Client(
-            $apiKey,
-            Helper::GetEnvironment($apiKey)
-        );
+        $nvironment = Helper::GetEnvironment($apiKey);
+        if($environment){
+            $sdk = new Client(
+                $apiKey,
+                $environment
+            );
 
-        $application = (new Application())
-            ->withCountryId($request->getCountryId())
-            ->withCurrencyId($request->getCurrencyId())
-            ->withLanguageId($request->getLanguageId())
-            ->withFinancePlanId($request->getFinancePlanId())
-            ->withApplicants($request->getApplicants())
-            ->withOrderItems($request->getOrderItems())
-            //->withDepositPercentage($request->getDepositPercentage())
-            ->withDepositAmount($request->getDepositAmount())
-            ->withFinalisationRequired($request->getFinalisationRequired())
-            ->withMerchantReference($request->getMerchantReference())
-            ->withUrls($request->getUrls());
+            $application = (new Application())
+                ->withCountryId($request->getCountryId())
+                ->withCurrencyId($request->getCurrencyId())
+                ->withLanguageId($request->getLanguageId())
+                ->withFinancePlanId($request->getFinancePlanId())
+                ->withApplicants($request->getApplicants())
+                ->withOrderItems($request->getOrderItems())
+                //->withDepositPercentage($request->getDepositPercentage())
+                ->withDepositAmount($request->getDepositAmount())
+                ->withFinalisationRequired($request->getFinalisationRequired())
+                ->withMerchantReference($request->getMerchantReference())
+                ->withUrls($request->getUrls());
 
-        $response = $sdk->applications()->createApplication($application);
+            $response = $sdk->applications()->createApplication($application);
 
-        $applicationResponseBody = $response->getBody()->getContents();
-        
-        return json_decode($applicationResponseBody);
+            $applicationResponseBody = $response->getBody()->getContents();
+            
+            return json_decode($applicationResponseBody);
+        }else return false;
     }
 }
