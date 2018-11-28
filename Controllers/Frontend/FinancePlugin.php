@@ -1,4 +1,9 @@
 <?php
+/**
+ * File for FinancePlugin class
+ * 
+ * PHP version 7.1
+ */
 
 use FinancePlugin\Components\Finance\PaymentService;
 use FinancePlugin\Components\Finance\RequestService;
@@ -8,18 +13,17 @@ use FinancePlugin\Models\Request;
 use Shopware\Components\CSRFWhitelistAware;
 
 require_once __DIR__ . '../../../vendor/autoload.php';
-//Include Divido PHP SDK
 
 /**
- * Payment Service - Webhook Response
- *
- * PHP version 7.1
- *
- * @category  CategoryName
- * @package   FinancePlugin
- * @since     File available since Release 1.0.0
+ * Controller class which handles the payment flow
+ * 
+ * @category CategoryName
+ * @package  FinancePlugin
+ * @since    File available since Release 1.0.0
  */
-class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware //
+class Shopware_Controllers_Frontend_FinancePlugin 
+    extends Shopware_Controllers_Frontend_Payment 
+    implements CSRFWhitelistAware
 {
     const
         PLUGIN_VERSION = "0.0.0.1",
@@ -44,6 +48,8 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
      /**
       * Order History Mesaages
       *
+      * @category CategoryName
+      *
       * @var array
       */
     public $historyMessages = array(
@@ -51,11 +57,13 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
         self::STATUS_ACTION_LENDER => 'Lender notified',
         self::STATUS_CANCELED      => 'Application canceled',
         self::STATUS_COMPLETED     => 'Application completed',
-        self::STATUS_DEFERRED      => 'Application deferred by Underwriter, waiting for new status',
+        self::STATUS_DEFERRED      => 'Application deferred by Underwriter,
+         waiting for new status',
         self::STATUS_DECLINED      => 'Applicaiton declined by Underwriter',
         self::STATUS_DEPOSIT_PAID  => 'Deposit paid by customer',
         self::STATUS_FULFILLED     => 'Credit request fulfilled',
-        self::STATUS_REFERRED      => 'Credit request referred by Underwriter, waiting for new status',
+        self::STATUS_REFERRED      => 'Credit request referred by Underwriter,
+         waiting for new status',
         self::STATUS_SIGNED        => 'Customer have signed all contracts',
         self::STATUS_READY         => 'Order ready to Ship',
 
@@ -126,8 +134,14 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
         
         $basket = $this->getBasket();
         $amount = $this->getAmount();
-        $deposit_percentage = filter_var($_POST['divido_deposit'], FILTER_SANITIZE_NUMBER_INT); //TODO: Ubrand: Can't Change
-        $planId = filter_var($_POST['divido_plan'], FILTER_SANITIZE_EMAIL); //TODO: Ubrand: Can't Change
+        $deposit_percentage = filter_var(
+            $_POST['divido_deposit'], //TODO: Ubrand: Can't Change
+            FILTER_SANITIZE_NUMBER_INT
+        );
+        $planId = filter_var(
+            $_POST['divido_plan'], //TODO: Ubrand: Can't Change
+            FILTER_SANITIZE_EMAIL
+        );
         
 
         $deposit = (empty($deposit_percentage))
@@ -164,8 +178,19 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
             'amount' => $amount
         ];
         
-        $response_url = $router->assemble(['action' => 'webhook', 'forceSecure' => true]);
-        $redirect_url = $router->assemble(['action' => 'return', 'forceSecure' => true]);
+        $response_url = $router->assemble(
+            [
+            'action' => 'webhook', 
+            'forceSecure' => true
+            ]
+        );
+        $redirect_url = $router->assemble(
+            [
+            'action' => 'return', 
+            'forceSecure' => true
+            ]
+        );
+        $redirect_url .= "?sid={$sessionId}&token={$token}";
 
         $request = new Request();
         $request->setFinancePlanId($planId);
@@ -177,21 +202,25 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
         $request->setOrderItems(RequestService::setOrderItemsFromBasket($basket));
         $request->setDepositAmount($deposit*100);
         $request->setDepositPercentage($deposit_percentage/100);
-        $request->setUrls([
-            'merchant_redirect_url' => $redirect_url ."?sid={$sessionId}&token={$token}",
+        $request->setUrls(
+            [
+            'merchant_redirect_url' => $redirect_url,
             'merchant_checkout_url' => $checkout_url,
             'merchant_response_url' => $response_url
-        ]);
+            ]
+        );
         $response = RequestService::makeRequest($request);
 
         // Create session if request is okay and forward to the payment platform
-        if (isset($response->error)){
+        if (isset($response->error)) {
+            $property = $response->context->property;
+            $more = $response->context->more;
             Helper::debug(
-                $response->message."(".$response->context->property.": ".$response->context->more.")",
+                $response->message."(".$property.": ".$more.")",
                 'error'
             );
             $this->forward('cancel');
-        }else{
+        } else {
             $payload = $response->data;
 
             $session->setTransactionID($payload->id);
@@ -249,7 +278,10 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
         $this->View()->assign('suffix', '');
         $this->View()->assign('displayForm', $displayFinance);
         $this->View()->assign('displayWarning', $displayWarning);
-        $this->View()->assign('basket_plans', implode(",", Helper::getBasketPlans($products)));
+        $this->View()->assign(
+            'basket_plans', 
+            implode(",", Helper::getBasketPlans($products))
+        );
     }
 
     /**
@@ -269,38 +301,54 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
     {
         $paymentService = $this->container->get('finance_plugin.payment_service');
         $orderService = $this->container->get('finance_plugin.order_service');
-        
-        /** @var FinancePlugin\Components\Finance\PaymentResponse $response */
+
+        /**
+         * A simple response object
+         * 
+         * @var FinancePlugin\Components\Finance\PaymentResponse $response  
+         */
         $response = $paymentService->createPaymentResponse($this->Request());
 
-        if(isset($response->sessionId) && isset($response->token)){
-            $sessionId = filter_var($response->sessionId,FILTER_SANITIZE_NUMBER_INT);
+        if (isset($response->sessionId) && isset($response->token)) {
+            $sessionId = filter_var(
+                $response->sessionId, 
+                FILTER_SANITIZE_NUMBER_INT
+            );
             $connection = $this->container->get('dbal_connection');
             $session = new \FinancePlugin\Models\Session;
             
-            if($session->retrieveFromDb($sessionId, $connection)){
+            if ($session->retrieveFromDb($sessionId, $connection)) {
                 $data = $session->getData();
                 
-                $customer_number = $data['sUserData']['additional']['user']['customernumber'];
+                $customer_number 
+                    = $data['sUserData']['additional']['user']['customernumber'];
                 $amount = $data['sBasket']['sAmount'];
                 /*
                 /   If response token matches the information in the session 
                 /   $service = /Components/Finance/PaymentService.php 
                 */
-                if ($paymentService->isValidToken($amount, $customer_number, $response->token)) {
+                if ($paymentService->isValidToken(
+                    $amount, 
+                    $customer_number, 
+                    $response->token
+                )
+                ) {
                     // If we haven't already generated the order already:
-                    if(is_null($session->getOrderNumber())){
+                    if (is_null($session->getOrderNumber())) {
                         $device = $this->Request()->getDeviceType();
                         $order = $session->createOrder($device);
 
                         $orderNumber = $orderService->saveOrder($order);
-                        if($orderNumber){
+                        if ($orderNumber) {
                             $orderID = $orderService->getId(
                                 $session->getTransactionID(),
                                 $session->getKey(),
                                 $connection
                             );
-                            $order->setPaymentStatus($orderID, self::PAYMENTSTATUSPAID);
+                            $order->setPaymentStatus(
+                                $orderID, 
+                                self::PAYMENTSTATUSPAID
+                            );
                             
                             $data['ordernumber'] = $orderNumber;
                             $data['cleared'] = self::PAYMENTSTATUSPAID;
@@ -324,30 +372,36 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
                             $session->setOrderNumber($orderNumber);
                             $session->update($connection);
 
-                            /*
-                            /   Close the open session, in case we create an order with the same
-                            /   session ID as the order we're currently closing
-                            */
                             session_write_close();
-                        }else{
+                        } else {
                             $this->View()->assign('error', 'Could not create order');
-                            $this->View()->assign('template', 'frontend/finance_plugin/error.tpl');
+                            $this->View()->assign(
+                                'template', 
+                                'frontend/finance_plugin/error.tpl'
+                            );
                             return;
                         }
-                    }else{
+                    } else {
                         $data['ordernumber'] = $session->getOrderNumber();
                     }
 
                     /*
-                    /   Assign the relevant stored session information to the appropriate Smarty variables
+                    /   Assign the relevant stored session information 
+                    /   to the appropriate Smarty variables
                     */
                     $this->sendDataToSmarty($data);
-                    $this->View()->assign('template', 'frontend/finance_plugin/success.tpl');
-                }else{
+                    $this->View()->assign(
+                        'template', 
+                        'frontend/finance_plugin/success.tpl'
+                    );
+                } else {
                     $this->View()->assign('error', 'Invalid token.');
-                    $this->View()->assign('template', 'frontend/finance_plugin/error.tpl');
+                    $this->View()->assign(
+                        'template',
+                        'frontend/finance_plugin/error.tpl'
+                    );
                 }
-            }else{
+            } else {
                 $this->View()->assign('template', 'frontend/finance_plugin/404.tpl');
             }
         }
@@ -366,7 +420,8 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
     /**
      * Call back
      *
-     * A listener that can receive calls from the platform to update an order in shopware
+     * A listener that can receive calls from 
+     * the platform to update an order in shopware
      * In the shopware documentation this webhook=notify
      *
      * @return void
@@ -397,75 +452,75 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
         $message ='';
 
         switch ($response->status) {
-            case self::STATUS_PROPOSAL:
-                Helper::debug('Webhook: Proposal', 'info');
-                $message ='Proposal Hook Success';
-                $session_status = self::PAYMENTSTATUSOPEN;
-                break;
+        case self::STATUS_PROPOSAL:
+            Helper::debug('Webhook: Proposal', 'info');
+            $message ='Proposal Hook Success';
+            $session_status = self::PAYMENTSTATUSOPEN;
+            break;
 
-            case self::STATUS_ACCEPTED:
-                Helper::debug('Webhook: Accepted', 'info');
-                $message ='Accepted Hook Success';
-                $session_status = self::PAYMENTSTATUSOPEN;
-                break;
+        case self::STATUS_ACCEPTED:
+            Helper::debug('Webhook: Accepted', 'info');
+            $message ='Accepted Hook Success';
+            $session_status = self::PAYMENTSTATUSOPEN;
+            break;
 
-            case self::STATUS_SIGNED:
-                Helper::debug('Webhook: Signed', 'info');
-                $message ='Signed Hook Success';
-                $session_status = self::PAYMENTSTATUSPAID;
-                break;
+        case self::STATUS_SIGNED:
+            Helper::debug('Webhook: Signed', 'info');
+            $message ='Signed Hook Success';
+            $session_status = self::PAYMENTSTATUSPAID;
+            break;
 
-            case self::STATUS_DECLINED:
-                Helper::debug('Webhook: Declined', 'info');
-                $message ='Declined Hook Success';
-                $order_status = self::PAYMENTREVIEWNEEDED;
-                $session_status = self::PAYMENTREVIEWNEEDED;
-                break;
+        case self::STATUS_DECLINED:
+            Helper::debug('Webhook: Declined', 'info');
+            $message ='Declined Hook Success';
+            $order_status = self::PAYMENTREVIEWNEEDED;
+            $session_status = self::PAYMENTREVIEWNEEDED;
+            break;
 
-            case self::STATUS_CANCELED:
-                Helper::debug('Webhook: Canceled', 'info');
-                $message ='Canceled Hook Success';
-                $order_status = self::PAYMENTCANCELLED;
-                $session_status = self::PAYMENTCANCELLED;
-                break;
+        case self::STATUS_CANCELED:
+            Helper::debug('Webhook: Canceled', 'info');
+            $message ='Canceled Hook Success';
+            $order_status = self::PAYMENTCANCELLED;
+            $session_status = self::PAYMENTCANCELLED;
+            break;
 
-            case self::STATUS_DEPOSIT_PAID:
-                Helper::debug('Webhook: Deposit Paid', 'info');
-                $message ='Deposit Paid Hook Success';
-                $session_status = self::PAYMENTSTATUSOPEN;
-                break;
+        case self::STATUS_DEPOSIT_PAID:
+            Helper::debug('Webhook: Deposit Paid', 'info');
+            $message ='Deposit Paid Hook Success';
+            $session_status = self::PAYMENTSTATUSOPEN;
+            break;
 
-            case self::STATUS_ACTION_LENDER:
-                Helper::debug('Webhook: Deposit Paid', 'info');
-                break;
+        case self::STATUS_ACTION_LENDER:
+            Helper::debug('Webhook: Deposit Paid', 'info');
+            break;
             
-            case self::STATUS_COMPLETED:
-                $message ='Completed';
-                Helper::debug('Webhook: Completed', 'info');
-                break;
+        case self::STATUS_COMPLETED:
+            $message ='Completed';
+            Helper::debug('Webhook: Completed', 'info');
+            break;
 
-            case self::STATUS_DEFERRED:
-                $message ='Deferred Success';
-                Helper::debug('Webhook: STATUS_DEFERRED', 'info');
-                break;
+        case self::STATUS_DEFERRED:
+            $message ='Deferred Success';
+            Helper::debug('Webhook: STATUS_DEFERRED', 'info');
+            break;
 
-            case self::STATUS_FULFILLED:
-                $message ='STATUS_FULFILLED Success';
-                Helper::debug('Webhook: STATUS_FULFILLED', 'info');
-                break;
+        case self::STATUS_FULFILLED:
+            $message ='STATUS_FULFILLED Success';
+            Helper::debug('Webhook: STATUS_FULFILLED', 'info');
+            break;
 
-            case self::STATUS_REFERRED:
-                $message ='Order Referred Success';
-                Helper::debug('Webhook: Referred', 'info');
-                break;
+        case self::STATUS_REFERRED:
+            $message ='Order Referred Success';
+            Helper::debug('Webhook: Referred', 'info');
+            break;
 
-            default:
-                $message ='Empty Hook';
-                Helper::debug('Webhook: Empty webook', 'warning');
-                break;
+        default:
+            $message ='Empty Hook';
+            Helper::debug('Webhook: Empty webook', 'warning');
+            break;
         }
 
-        if(isset($order_status)){
+        if (isset($order_status)) {
             $this->savePaymentStatus(
                 $transactionID,
                 $paymentUniqueID,
@@ -473,7 +528,7 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
             );
         }
         
-        if(isset($session_status)){
+        if (isset($session_status)) {
             $connection = $this->container->get('dbal_connection');
             $session = new \FinancePlugin\Models\Session;
             $update = [
@@ -495,18 +550,20 @@ class Shopware_Controllers_Frontend_FinancePlugin extends Shopware_Controllers_F
      * Take order information as received from s_finance_sessions table
      * and assign the data to the relevant Smarty variables
      * 
-     * @param array $order The session information stored in `s_finance_sessions` table `data` column
+     * @param array $order The session information stored in 
+     *                     `s_finance_sessions` table `data` column
      * 
      * @return void
      */
-    protected function sendDataToSmarty($order){
-        foreach($order as $key=>$value){
-            $this->View()->assign($key,$value);
+    protected function sendDataToSmarty($order)
+    {
+        foreach ($order as $key=>$value) {
+            $this->View()->assign($key, $value);
         }
         $addresses['billing'] = $order['sUserData']['billingaddress'];
         $addresses['shipping'] = $order['sUserData']['shippingaddress'];
-        $addresses['equal'] = 
-            ($order['sUserData']['billingaddress'] == $order['sUserData']['shippingaddress']);
+        $addresses['equal']
+            = ($addresses['billing'] == $addresses['shipping']);
         $this->View()->assign('sAddresses', $addresses);
         $this->View()->assign('sOrderNumber', $order['ordernumber']);
         $this->View()->assign('sShippingcosts', $order['sBasket']['sShippingcosts']);

@@ -97,12 +97,12 @@ class Session extends ModelEntity
         'sDispatch'
     );
 
-    private const session_table = 's_sessions';
+    const session_table = 's_sessions';
 
     /**
      * Compression method for session data. Currently either SERIAL or JSON
      */
-    private const compression_method = 'SERIAL';
+    const compression_method = 'SERIAL';
 
     /**
      * @return int

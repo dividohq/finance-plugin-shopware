@@ -3,13 +3,16 @@
  * Payment Service - Webhook Response
  *
  * PHP version 5.5
- *
- * @category  CategoryName
- * @package   FinancePlugin
- * @since     File available since Release 1.0.0
  */
 namespace FinancePlugin\Components\Finance;
 
+/**
+ * Webhook Response class
+ * 
+ * @category CategoryName
+ * @package  FinancePlugin
+ * @since    File available since Release 1.0.0
+ */
 class WebhookResponse
 {
     /**

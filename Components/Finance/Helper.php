@@ -1,7 +1,17 @@
 <?php
+/**
+ * File containing Helper class
+ * 
+ * PHP version 7.1
+ */
 
 namespace FinancePlugin\Components\Finance;
 
+use Divido\MerchantSDK\Environment;
+
+/**
+ * Helper class for the plugin's more general functions
+ */
 class Helper
 {
     /**
@@ -34,21 +44,21 @@ class Helper
     public static function log($msg, $type)
     {
         switch ($type) {
-            case 'warning':
-                Shopware()->PluginLogger()->warning("Warning: ". $msg);
-                break;
+        case 'warning':
+            Shopware()->PluginLogger()->warning("Warning: ". $msg);
+            break;
             
-            case 'info':
-                Shopware()->PluginLogger()->info("Info: " . $msg);
-                break;
+        case 'info':
+            Shopware()->PluginLogger()->info("Info: " . $msg);
+            break;
 
-            case 'error':
-                Shopware()->PluginLogger()->error("Error: " . $msg);
-                break;
+        case 'error':
+            Shopware()->PluginLogger()->error("Error: " . $msg);
+            break;
             
-            default:
-                Shopware()->PluginLogger()->info("Default info: " . $msg);
-                break;
+        default:
+            Shopware()->PluginLogger()->info("Default info: " . $msg);
+            break;
         }
         return;
     }
@@ -64,14 +74,16 @@ class Helper
         $config = Shopware()
             ->Container()
             ->get('shopware.plugin.cached_config_reader')
-            ->getByPluginName('LendingPlatform');
+            ->getByPluginName('FinancePlugin');
 
         return $config;
     }
 
     /**
      * Helper to grab the conf by key
-     *
+     * 
+     * @param string $key API key
+     * 
      * @return string
      */
     public static function getConfByKey($key)
@@ -88,7 +100,7 @@ class Helper
     public static function getApiKey()
     {
         $config = self::getConfig();
-        return $config['Api Key'];
+        return $config['API Key'];
     }
 
     /**
@@ -151,7 +163,7 @@ class Helper
      *
      * @return array
      */
-    private function formatShopwareAddress($shopwareAddressArray)
+    private function _formatShopwareAddress($shopwareAddressArray)
     {
         self::debug('Add array:'.serialize($shopwareAddressArray), 'info');
 
@@ -192,7 +204,8 @@ class Helper
             $productsArray[$i]['price']    = $product['price'];
             if ($product['modus'] == '0') {
                 $productsArray[$i]['plans']
-                = $product['additional_details']['attributes']['core']->get('finance_plans');
+                    = $product['additional_details']['attributes']['core']
+                    ->get('finance_plans');
             }
             $i++;
         }
@@ -213,27 +226,36 @@ class Helper
      */
     public function getDepositAmount($total, $deposit)
     {
-        if(empty($deposit)) return 0;
+        if (empty($deposit)) return 0;
         
         $depositPercentage = $deposit / 100;
         return round($depositPercentage * $total, 2);
     }
 
-    public function getBasketPlans($products){
+    /**
+     * Loop through all basket products for specific
+     * finance plan instructions
+     *
+     * @param array $products array of products
+     * 
+     * @return array
+     */
+    public function getBasketPlans($products)
+    {
         $basket_plans = [];
-        foreach($products as $product){
-            if(isset($product['plans'])){
-                $product_plans = explode("|",$product['plans']);
-                if(empty($basket_plans)){
-                    foreach($product_plans as $plan){
-                        if(!empty($plan)) $basket_plans[] = $plan;
+        foreach ($products as $product) {
+            if (isset($product['plans'])) {
+                $product_plans = explode("|", $product['plans']);
+                if (empty($basket_plans)) {
+                    foreach ($product_plans as $plan) {
+                        if (!empty($plan))
+                            $basket_plans[] = $plan;
                     }
-                }else{
-                    if(!empty($product_plans)){
-                        foreach($basket_plans as $k=>$listed){
-                            if(!in_array($listed,$product_plans)){
+                } else {
+                    if (!empty($product_plans)) {
+                        foreach ($basket_plans as $k=>$listed) {
+                            if (!in_array($listed, $product_plans))
                                 unset($basket_plans[$k]);
-                            }
                         }
                     }
                 }
@@ -242,8 +264,10 @@ class Helper
         return $basket_plans;
     }
 
-        /**
+    /**
      * Create customer details for credit request
+     * 
+     * @param array $user Shopware user array
      *
      * @return Array
      */
@@ -254,8 +278,8 @@ class Helper
         $billing = $user['billingaddress'];
         $shipping = $user['shippingaddress'];
 
-        $billingAddress = self::formatShopwareAddress($billing);
-        $shippingAddress = self::formatShopwareAddress($shipping);
+        $billingAddress = self::_formatShopwareAddress($billing);
+        $shippingAddress = self::_formatShopwareAddress($shipping);
         $country = $user['additional']['country']['countryiso'];
 
         $customerArray = array();
@@ -288,46 +312,75 @@ class Helper
         return $signature;
     }
 
-    public function hmacSign(){
+    /**
+     * Validate hmac signature
+     *
+     * @return boolean
+     */
+    public function hmacSign()
+    {
         //Not working
         if (isset($_SERVER['HTTP_RAW_POST_DATA']) 
-            && $_SERVER['HTTP_RAW_POST_DATA']) {
-            self::debug('Raw Data :','info');
+            && $_SERVER['HTTP_RAW_POST_DATA']
+        ) {
+            self::debug('Raw Data :', 'info');
 
             $data = file_get_contents($_SERVER['HTTP_RAW_POST_DATA']);
         } else {
-            self::debug('PHP input:','info');
+            self::debug('PHP input:', 'info');
             $data = file_get_contents('php://input');
         }
 
-        self::debug('Shared Secret:'.$this->getSharedSecret(),'info');
+        self::debug('Shared Secret:'.$this->getSharedSecret(), 'info');
 
         $sharedSecret = self::getSharedSecret();
-        if(!empty($sharedSecret))
-        {
+        if (!empty($sharedSecret)) {
             $callback_sign = $_SERVER['HTTP_X_DIVIDO_HMAC_SHA256']; /* TODO: Can this change?  */
 
-            self::debug('Callback Sign: '.$callback_sign , 'info');
+            self::debug('Callback Sign: '.$callback_sign, 'info');
             print_r($callback_sign);
-            self::debug('Callback DATA: '.$data,'info');
+            self::debug('Callback DATA: '.$data, 'info');
             print_r($data);
 
             $sign = self::createSignature($data, $sharedSecret);
 
-            self::debug('Created Signature: '.$sign,'info');
+            self::debug('Created Signature: '.$sign, 'info');
 
-            if ( $callback_sign !== $sign ) {
-                self::debug('Hash error','error');
+            if ($callback_sign !== $sign ) {
+                self::debug('Hash error', 'error');
                 return false;
             }
         }
         return true;
     }
 
-    public function getEnvironment($environment){
-        if(isset(\Divido\MerchantSDK\Environment::$$environment)){
-            $environment == \Divido\MerchantSDK\Environment::$$environment;
-        }else return false;
+    /**
+     * Checks the SDK's Environment class for the given environment type
+     *
+     * @param string $environment environment string usually taken from API Key
+     * 
+     * @return void
+     */
+    public function getEnvironment($apiKey=false)
+    {
+        if (!$apiKey) {
+           $apiKey = Helper::getApiKey();
+        }
+        
+        if (empty($apiKey)) {
+            self::debug('Empty API key', 'error');
+            return false;
+        } else {
+            list($environment, $key) = explode("_",$apiKey);
+            $environment = strtoupper($environment);
+            if (!is_null(constant("\Divido\MerchantSDK\Environment::$environment"))) {
+                $environment = constant("\Divido\MerchantSDK\Environment::$environment");
+                return $environment;
+            } else {
+                self::debug('Environment does not exist in the SDK', 'error');   
+                return false;
+            }
+        }
     }
 
 }

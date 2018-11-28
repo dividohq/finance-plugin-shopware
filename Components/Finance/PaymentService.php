@@ -1,32 +1,48 @@
 <?php
 /**
- * Payment Service
+ * File for Payment Service
  *
  * PHP version 5.5
- *
- * @category  CategoryName
- * @package   FinancePlugin
- * @since     File available since Release 1.0.0
  */
+
 namespace FinancePlugin\Components\Finance;
 
+/**
+ * Payment Service class
+ *
+ * @category CategoryName
+ * @package  FinancePlugin
+ * @since    File available since Release 1.0.0
+ */
 class PaymentService
 {
 
     /**
-     * Token Checker
+     * Token validation check
      *
-     * @param PaymentResponse $response Payment response object
-     * @param string          $token    passed token
-     *
-     * @return bool
+     * @param integer $amount      The returned cart total
+     * @param string  $customer_id The received unique customer id
+     * @param string  $token       The received token
+     * 
+     * @return boolean
      */
     public function isValidToken($amount, $customer_id, $token)
     {
-        return password_verify($this->createTokenContent($amount,$customer_id), $token);
+        return password_verify(
+            $this->_createTokenContent($amount, $customer_id), $token
+        );
     }
 
-    private function createTokenContent($amount,$customerId){
+    /**
+     * Generate a token from amount and customer id
+     *
+     * @param integer $amount     The cart total amount
+     * @param string  $customerId Unique customer ID
+     * 
+     * @return string
+     */
+    private function _createTokenContent($amount,$customerId)
+    {
         return implode('|', [$amount, $customerId]);
     }
 
@@ -40,13 +56,15 @@ class PaymentService
      */
     public function createPaymentToken($amount, $customerId)
     {
-        return password_hash($this->createTokenContent($amount,$customerId), PASSWORD_DEFAULT);
+        return password_hash(
+            $this->_createTokenContent($amount, $customerId), PASSWORD_DEFAULT
+        );
     }
 
     /**
      * Webhook Helper
      *
-     * @param \Enlight_Controller_Request_Request $request
+     * @param \Enlight_Controller_Request_Request $request Data received
      *
      * @return WebhookResponse
      */
@@ -72,12 +90,15 @@ class PaymentService
     }
 
     /**
-     * @param $request \Enlight_Controller_Request_Request
+     * Create a response fom the received request
+     * 
+     * @param \Enlight_Controller_Request_Request $request Data received
+     * 
      * @return PaymentResponse
      */
     public function createPaymentResponse(
         \Enlight_Controller_Request_Request $request
-    ){
+    ) {
         $response = new PaymentResponse();
         $response->sessionId = $request->getParam('sid', null);
         $response->status = $request->getParam('status', null);

@@ -1,4 +1,9 @@
 <?php
+/**
+ * File for RequestService class
+ * 
+ * PHP version 7.1
+ */
 
 namespace FinancePlugin\Components\Finance;
 
@@ -6,9 +11,23 @@ use Divido\MerchantSDK\Client;
 use Divido\MerchantSDK\Environment;
 use Divido\MerchantSDK\Models\Application;
 
+/**
+ * Helper service class to make application requests
+ * 
+ * @category CategoryName
+ * @package  FinancePlugin
+ * @since    File available since Release 1.0.0
+ */
 class RequestService
 {
 
+    /**
+     * Use the shopware $user array to create an applicant
+     *
+     * @param array $user The shopware user array
+     * 
+     * @return array
+     */
     public static function setApplicantsFromUser(array $user):array
     {
         Helper::debug('setting request applicant');
@@ -41,19 +60,13 @@ class RequestService
         return [$return];
     }
 
-    public static function setBillingAddressFromUser(array $user) : array
-    {
-        Helper::debug('setting request billing address');
-
-        $billing = $user['billingaddress'];
-        $return = array(
-            
-        );
-        Helper::debug('Billing address:' . serialize($return), 'info');
-
-        return [$return];
-    }
-
+    /**
+     * Search through basket for all products
+     *
+     * @param array $basket Array of products
+     * 
+     * @return array
+     */
     public static function setOrderItemsFromBasket(array $basket)
     {
         $productsArray = array();
@@ -63,9 +76,9 @@ class RequestService
                 'quantity' => intval($product['quantity']),
                 'price' => $product['price']*100,
             ];
-            if ($product['modus'] == '0') {
-                $row['plans'] = 
-                    $product['additional_details']['attributes']['core']
+            if ('0' == $product['modus']) {
+                $row['plans']
+                    = $product['additional_details']['attributes']['core']
                         ->get('finance_plans');
             }
             $productsArray[] = $row;
@@ -74,6 +87,11 @@ class RequestService
         return $productsArray;
     }
 
+    /**
+     * Retrieve the shop language based on locale
+     *
+     * @return string
+     */
     public static function getLanguageId()
     {
         $container = Shopware()->Container();
@@ -89,11 +107,19 @@ class RequestService
         return $languageId;
     }
 
+    /**
+     * Make a request via the SDK by packaging our Request model
+     *
+     * @param \FinancePlugin\Models\Request $request Request Model
+     * 
+     * @return void
+     */
     public static function makeRequest(\FinancePlugin\Models\Request $request)
     {
         $apiKey = Helper::getApiKey();
-        $nvironment = Helper::GetEnvironment($apiKey);
-        if($environment){
+        $environment = Helper::GetEnvironment($apiKey);
+        
+        if ($environment) {
             $sdk = new Client(
                 $apiKey,
                 $environment
@@ -117,6 +143,6 @@ class RequestService
             $applicationResponseBody = $response->getBody()->getContents();
             
             return json_decode($applicationResponseBody);
-        }else return false;
+        } else return false;
     }
 }

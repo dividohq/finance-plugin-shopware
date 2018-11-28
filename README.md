@@ -12,7 +12,7 @@ Login to your shopware backend, and open the plugin manager.
 4. You should now see Finance Plugin in the Uninstalled plugin list
 5. Click the green install plugin button
 6. Hit install
-7. Enter your configuration details - you api key will be provided by your Client Success manager.
+7. Enter your configuration details
 8. Click Save
 9. Click Activate
 10. Click Configuration > Payment Methods
@@ -23,7 +23,7 @@ Login to your shopware backend, and open the plugin manager.
 
 ## Custom Finance Calculator
 
-Version 0.3.0.0 brings about new added flexibility to incorporate Divido widgets into your custom pages. By following the instructions below you can generate one of two types of finance calculator, which will update automatically based on the figure entered into a text box.
+You also have the ability to incorporate Divido widgets into your custom pages. By following the instructions below you can generate one of two types of finance calculator, which will update automatically based on the figure entered into a text box.
 
 1. Enter the Backend of your online shop
 2. Go to the "Shop pages" subsection of the "Content" section
@@ -36,5 +36,5 @@ Version 0.3.0.0 brings about new added flexibility to incorporate Divido widgets
 9. The block payment calculator widget will generate directly below the input box
 10. If you have chosen the popup option (as outlined in point 6), a small area of text will be generated underneath the input box which can be clicked on to obtain the full list of payment options available to the customer
 
-Please be aware that may experience technical issues if you try to create more than one finance calculator on a page.
+Please be aware that you may experience technical issues if you try to create more than one finance calculator on a page.
 

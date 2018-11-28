@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * File for main Finance Plugin
+ *
+ * PHP version 5.5
+ **/
 namespace FinancePlugin;
 
 use Doctrine\ORM\Tools\SchemaTool;
@@ -13,11 +19,9 @@ use FinancePlugin\Components\Finance\PlansService;
 /**
  * Finance Plugin
  *
- * PHP version 5.5
- *
- * @category  Payment_Gateway
- * @package   FinancePlugin
- * @since     File available since Release 1.0.0
+ * @category Payment_Gateway
+ * @package  FinancePlugin
+ * @since    File available since Release 1.0.0
  */
 class FinancePlugin extends Plugin
 {
@@ -73,7 +77,10 @@ class FinancePlugin extends Plugin
         $em = $this->container->get('models');
         $schemaTool = new SchemaTool($em);
         $schemaTool->updateSchema(
-            [ $em->getClassMetadata(\FinancePlugin\Models\Plan::class), $em->getClassMetadata(\FinancePlugin\Models\Session::class) ],
+            [ 
+                $em->getClassMetadata(\FinancePlugin\Models\Plan::class), 
+                $em->getClassMetadata(\FinancePlugin\Models\Session::class) 
+            ],
             true
         );
 
@@ -96,7 +103,7 @@ class FinancePlugin extends Plugin
     /**
      * Uninstall context
      *
-     * @param UninstallContext $context
+     * @param UninstallContext $context The Uninstall context
      *
      * @return void
      */
@@ -106,7 +113,7 @@ class FinancePlugin extends Plugin
         $service->delete('s_order_attributes', 'finance_id');
         $service->delete('s_order_attributes', 'deposit_value');
         $service->delete('s_articles_attributes', 'finance_plans');
-        $this->setActiveFlag($context->getPlugin()->getPayments(), false);
+        $this->_setActiveFlag($context->getPlugin()->getPayments(), false);
     }
 
     /**
@@ -118,7 +125,7 @@ class FinancePlugin extends Plugin
      */
     public function deactivate(DeactivateContext $context)
     {
-        $this->setActiveFlag($context->getPlugin()->getPayments(), false);
+        $this->_setActiveFlag($context->getPlugin()->getPayments(), false);
     }
 
     /**
@@ -130,18 +137,18 @@ class FinancePlugin extends Plugin
      */
     public function activate(ActivateContext $context)
     {
-        $this->setActiveFlag($context->getPlugin()->getPayments(), true);
+        $this->_setActiveFlag($context->getPlugin()->getPayments(), true);
     }
 
     /**
      * Set Active
      *
-     * @param Payment[] $payments activate in payments
-     * @param bool      $active
+     * @param Payment[] $payments Activate in payments
+     * @param bool      $active   Active/Inactive
      *
      * @return void
      */
-    private function setActiveFlag($payments, $active)
+    private function _setActiveFlag($payments, $active)
     {
         $em = $this->container->get('models');
 
