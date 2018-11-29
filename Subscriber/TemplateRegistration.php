@@ -126,7 +126,11 @@ class TemplateRegistration implements SubscriberInterface
                     $view->assign('prefix', $prefix);
 
                     $plan_ids = explode("|", $product['finance_plans']);
-                    if (empty($plan_ids) || '' == $plan_ids[0]) {
+                    foreach ($plans_ids as $key=>$id) {
+                        if('' == $id) unset($plans_ids[$key]);
+                    }
+
+                    if (empty($plans_ids)) {
                         $plans = PlansService::getStoredPlans();
                         if (empty($plans)) {
                             $sdkResponse = PlansService::getPlansFromSDK($config['API Key']);
@@ -140,7 +144,7 @@ class TemplateRegistration implements SubscriberInterface
                         foreach ($plans as $plan) $plans_ids[] = $plan->getId();
                     } else $show_widget = true;
 
-                    $view->assign('plans', implode(",", $plans_ids));
+                    $view->assign('plans', implode(",", $plan_ids));
                 }
             }
             $view->assign('show_widget', $show_widget);

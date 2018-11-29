@@ -83,15 +83,16 @@ class PlansService
             $plans = $sdk->getAllPlans($requestOptions);
 
             $plans = $plans->getResources();
+            $planObjArray = [];
             foreach ($plans as $plan) {
                 $planObj = new Plan;
                 $planObj->setId($plan->id);
                 $planObj->setName($plan->description);
                 $planObj->setDescription($plan->description);
-                $return[] = $planObj;
+                $planObjArray[] = $planObj;
             }
             
-            $response = new PlansResponse($return);
+            $response = new PlansResponse($planObjArray);
             return $response;
         }catch(MerchantApiBadResponseException $e){
             $errorMessage = SDKErrorHandler::getMessage($e);
@@ -136,7 +137,9 @@ class PlansService
      */
     public static function clearPlans()
     {
+        // TODO: This needs to run only if the API Key changes
         if (Shopware()->Db()->query("TRUNCATE TABLE `s_plans`")) {
+            Shopware()->Db()->query("UPDATE `s_articles_attributes` SET `finance_plans` = NULL");
             return true;
         } else return false;
     }
