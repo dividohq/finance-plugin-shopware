@@ -90,11 +90,12 @@ class PlansService
                 $planObj->setDescription($plan->description);
                 $return[] = $planObj;
             }
+            
             $response = new PlansResponse($return);
             return $response;
         }catch(MerchantApiBadResponseException $e){
             $errorMessage = SDKErrorHandler::getMessage($e);
-            $response = new PlansResponse([], true, $errorMessage);
+            $response = new PlansResponse([], true, $e->getCode(), $errorMessage);
             return $response;
         }
     }
@@ -118,7 +119,7 @@ class PlansService
             $values[] = $plan->getUpdatedOn();
         }
         if (isset($inserts)) {
-            $this->clearPlans();
+            self::clearPlans();
             $sql = 'INSERT INTO `s_plans` 
                         (`id`, `name`, `description`, `updated_on`) 
                     VALUES

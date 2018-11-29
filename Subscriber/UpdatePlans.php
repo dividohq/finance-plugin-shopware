@@ -10,6 +10,7 @@ namespace FinancePlugin\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use FinancePlugin\Models\Plan;
 use FinancePlugin\Components\Finance\PlansService;
+use FinancePlugin\Components\Finance\Helper;
 
 /**
  * Backend listener which updates plans when the merchant heads
@@ -56,16 +57,26 @@ class UpdatePlans implements SubscriberInterface
      */
     public function onArticlePostDispatch(\Enlight_Event_EventArgs $args)
     {
-        /** 
-         * @var \Shopware_Controllers_Backend_Article $controller
-         **/
         $controller = $args->getSubject();
 
-        $view = $controller->View();
         $request = $controller->Request();
         
         if ($request->getActionName() == 'index') {
-            $this->_setPlans();
+            $apiKey = Helper::getApiKey();
+            $view = $controller->View();
+
+            if (!empty($apiKey)) {
+                $plans = PlansService::getStoredPlans();
+                if (empty($plans)) {
+                    $this->_refreshPlans($apiKey, $view);
+                }
+            } else {
+                $view->assign(
+                    ['success' => false, 
+                    'message' => 'API key not entered. You will not be 
+                    able to use this plugin as a payment method']
+                );
+            }
         }
     }
 
@@ -78,35 +89,47 @@ class UpdatePlans implements SubscriberInterface
      */
     public function onConfigPostDispatch(\Enlight_Event_EventArgs $args)
     {
-        /** 
-         * @var \Shopware_Controllers_Backend_Config $controller
-         **/
         $controller = $args->getSubject();
 
         $request = $controller->Request();
 
         if ($request->getActionName() == 'saveForm') {
             PlansService::clearPlans();
+            $apiKey = Helper::getApiKey();
+            $this->_refreshPlans($apiKey, $controller->View());
         }
     }
 
     /**
-     * Use the PlansService class to update plans
-     * if we have an API key
+     * Function for common process of looking up plans from the SDK
+     * and validating the API Key
      *
+     * @param string $apiKey The API Key in the config
+     * @param View $view Smarty view
+     * 
      * @return void
      */
-    private function _setPlans()
+    private function _refreshPlans($apiKey, $view)
     {
-        $config = Shopware()
-            ->Container()
-            ->get('shopware.plugin.cached_config_reader')
-            ->getByPluginName('FinancePlugin');
-        if (!empty($config["Api Key"])) {
-            // $plans = PlansService::updatePlans();
-            // TODO: Rewrite UpdatePlans
+        $sdkResponse = PlansService::getPlansFromSDK($apiKey);
+        
+        if ($sdkResponse->error === false) {
+            $plans = $sdkResponse->plans;
+            if (empty($plans)) {
+                $view->assign(
+                    ['success' => false,
+                    "message" => "There are no finance plans associated 
+                    to this API Key. This plugin will not be able to 
+                    process payments until this is rectified"]
+                );
+            } else {
+                PlansService::storePlans($plans);
+            }
+        } else {
+            $view->assign(
+                ['success' => false,
+                'message' => 'Nope'.$sdkResponse->errorMessage]
+            );
         }
     }
-
-
 }

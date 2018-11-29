@@ -126,11 +126,11 @@ class TemplateRegistration implements SubscriberInterface
                     $view->assign('prefix', $prefix);
 
                     $plan_ids = explode("|", $product['finance_plans']);
-                    if (empty($plan_ids) || $plan_ids[0] == '') {
+                    if (empty($plan_ids) || '' == $plan_ids[0]) {
                         $plans = PlansService::getStoredPlans();
                         if (empty($plans)) {
                             $sdkResponse = PlansService::getPlansFromSDK($config['API Key']);
-                            if ($sdkResponse->error === false) {
+                            if (false === $sdkResponse->error) {
                                 $plans = $sdkResponse->plans;
                                 PlansService::storePlans($plans);
                                 $show_widget = true;
