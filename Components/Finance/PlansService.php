@@ -102,6 +102,64 @@ class PlansService
     }
 
     /**
+     * Loop through all basket products for specific
+     * finance plan instructions
+     * Check if the plans currently exist on the Merchant portal
+     * Use all live plans if no individual plans set
+     * 
+     * @param array $products Helper function array of products
+     * 
+     * @return array
+     */
+    public function getBasketPlans($products)
+    {
+        $apiKey = Helper::getApiKey();
+        if (empty($apiKey)) {
+            return [];
+        }
+
+        $plans_response = self::getPlansFromSDK($apiKey);
+        $current_plans = [];
+        if (true === $plans_response->error) {
+            return [];
+        }else{
+            foreach ($plans_response->plans as $plan) {
+                $current_plans[] = $plan->getId();
+            }
+        }
+
+        $basket_plans = [];
+        $individual_plans = false;
+        foreach ($products as $product) {
+            if (isset($product['plans'])) {
+                $individual_plans = true;
+                $product_plans = explode("|", $product['plans']);
+                if (empty($basket_plans)) {
+                    foreach ($product_plans as $plan) {
+                        if (!empty($plan) && in_array($plan, $current_plans))
+                            $basket_plans[] = $plan;
+                    }
+                } else {
+                    if (!empty($product_plans)) {
+                        foreach ($basket_plans as $k => $listed) {
+                            if (!in_array($listed, $product_plans))
+                                unset($basket_plans[$k]);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (true == $individual_plans) {
+            return $basket_plans;
+        } else {
+            return $current_plans;
+        }
+
+        
+    }
+
+    /**
      * Store array of plans in the s_plans table
      *
      * @param array $plans The plans to store

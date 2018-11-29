@@ -233,38 +233,6 @@ class Helper
     }
 
     /**
-     * Loop through all basket products for specific
-     * finance plan instructions
-     *
-     * @param array $products array of products
-     * 
-     * @return array
-     */
-    public function getBasketPlans($products)
-    {
-        $basket_plans = [];
-        foreach ($products as $product) {
-            if (isset($product['plans'])) {
-                $product_plans = explode("|", $product['plans']);
-                if (empty($basket_plans)) {
-                    foreach ($product_plans as $plan) {
-                        if (!empty($plan))
-                            $basket_plans[] = $plan;
-                    }
-                } else {
-                    if (!empty($product_plans)) {
-                        foreach ($basket_plans as $k=>$listed) {
-                            if (!in_array($listed, $product_plans))
-                                unset($basket_plans[$k]);
-                        }
-                    }
-                }
-            }
-        }
-        return $basket_plans;
-    }
-
-    /**
      * Create customer details for credit request
      * 
      * @param array $user Shopware user array

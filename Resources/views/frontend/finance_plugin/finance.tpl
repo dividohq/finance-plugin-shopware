@@ -30,15 +30,16 @@
         </button>
       </form>
       {/if}
-      <br />
       {if $displayWarning}
-      <ul>
+      <h3>Sorry.</h3>
+      <ul style='margin-left: 20px'>
         {foreach item=warning from=$displayWarning}
-        <li>{$warning}</li>
+        <li style='list-style:none'>{$warning}</li>
         {/foreach}
       </ul>
       {/if}
-      <br>
+      <br />
+      <br />
       <a class="btn"
           href="{url controller=checkout action=cart}"
           title="{s namespace="frontend/checkout/cart" name="CartTitle"}change cart{/s}">

@@ -5,14 +5,15 @@
  * PHP version 7.1
  */
 
+require_once __DIR__ . '../../../vendor/autoload.php';
+
 use FinancePlugin\Components\Finance\PaymentService;
 use FinancePlugin\Components\Finance\RequestService;
+use FinancePlugin\Components\Finance\PlansService;
 use FinancePlugin\Components\Finance\OrderService;
 use FinancePlugin\Components\Finance\Helper;
 use FinancePlugin\Models\Request;
 use Shopware\Components\CSRFWhitelistAware;
-
-require_once __DIR__ . '../../../vendor/autoload.php';
 
 /**
  * Controller class which handles the payment flow
@@ -42,7 +43,11 @@ class Shopware_Controllers_Frontend_FinancePlugin
         STATUS_FULFILLED     = 'FULFILLED',
         STATUS_REFERRED      = 'REFERRED',
         STATUS_SIGNED        = 'SIGNED',
-        STATUS_READY         = 'READY';
+        STATUS_READY         = 'READY',
+
+        API_ERROR            = 'We are unable to process this order 
+        with the chosen payment method. Please choose another via the
+        <i>Change payment method</i> button.';
 
 
      /**
@@ -239,6 +244,9 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function financeAction()
     {
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+
         Helper::debug('Finance view', 'info');
         header('Access-Control-Allow-Origin: *');
         
@@ -266,22 +274,29 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $apiKey = Helper::getApiKey();
         if (empty($apiKey)) {
             $displayFinance = false;
-            $displayWarning[] =  "No Api Key Detected. Please contact the merchant.";
-        }
+            $displayWarning[] =  self::API_ERROR;
+        } else {
         
-        list($key,$stuff) = preg_split("/\./", $apiKey);
-        $this->View()->assign('apiKey', $key);
-        $this->View()->assign('title', Helper::getTitle());
-        $this->View()->assign('description', Helper::getDescription());
-        $this->View()->assign('amount', $amount);
-        $this->View()->assign('prefix', '');
-        $this->View()->assign('suffix', '');
-        $this->View()->assign('displayForm', $displayFinance);
-        $this->View()->assign('displayWarning', $displayWarning);
-        $this->View()->assign(
-            'basket_plans', 
-            implode(",", Helper::getBasketPlans($products))
-        );
+            $basket_plans = PlansService::getBasketPlans($apiKey, $products);
+            if (empty($basket_plans)) {
+                $displayFinance = false;
+                $displayWarning[] = self::API_ERROR;
+            }
+
+            list($key,$stuff) = preg_split("/\./", $apiKey);
+            $this->View()->assign('apiKey', $key);
+            $this->View()->assign('title', Helper::getTitle());
+            $this->View()->assign('description', Helper::getDescription());
+            $this->View()->assign('amount', $amount);
+            $this->View()->assign('prefix', '');
+            $this->View()->assign('suffix', '');
+            $this->View()->assign('displayForm', $displayFinance);
+            $this->View()->assign('displayWarning', $displayWarning);
+            $this->View()->assign(
+                'basket_plans', 
+                implode(",", $basket_plans)
+            );
+        }
     }
 
     /**
