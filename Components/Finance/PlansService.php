@@ -111,13 +111,8 @@ class PlansService
      * 
      * @return array
      */
-    public function getBasketPlans($products)
+    public function getBasketPlans(string $apiKey, array $products)
     {
-        $apiKey = Helper::getApiKey();
-        if (empty($apiKey)) {
-            return [];
-        }
-
         $plans_response = self::getPlansFromSDK($apiKey);
         $current_plans = [];
         if (true === $plans_response->error) {
@@ -149,8 +144,9 @@ class PlansService
                 }
             }
         }
-
-        if (true == $individual_plans) {
+        print_r($basket_plans);
+        print_r($current_plans);
+        if (true === $individual_plans) {
             return $basket_plans;
         } else {
             return $current_plans;
