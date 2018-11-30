@@ -48,7 +48,7 @@ class Request
      * 
      * @return void
      */
-    public function setCountryId($countryId):void
+    public function setCountryId($countryId)
     {
         $this->_countryId = $countryId;
     }
@@ -70,7 +70,7 @@ class Request
      * 
      * @return void
      */
-    public function setCurrencyId($currencyId):void
+    public function setCurrencyId($currencyId)
     {
         $this->_currencyId = $currencyId;
     }
@@ -92,7 +92,7 @@ class Request
      * 
      * @return void
      */
-    public function setLanguageId($languageId):void
+    public function setLanguageId($languageId)
     {
         $this->_languageId = $languageId;
     }
@@ -104,7 +104,7 @@ class Request
      * 
      * @return void
      */
-    public function setFinancePlanId($financePlanId):void
+    public function setFinancePlanId($financePlanId)
     {
         $this->_financePlanId = $financePlanId;
     }
@@ -126,7 +126,7 @@ class Request
      * 
      * @return void
      */
-    public function setMerchantChannelId($merchantChannelId):void
+    public function setMerchantChannelId($merchantChannelId)
     {
         $this->_merchantChannelId = $merchantChannelId;
     }
@@ -148,7 +148,7 @@ class Request
      * 
      * @return void
      */
-    public function setApplicants(array $applicants):void
+    public function setApplicants(array $applicants)
     {
         $this->_applicants = $applicants;
     }
@@ -160,7 +160,7 @@ class Request
      * 
      * @return void
      */
-    public function addApplicant(array $applicant):void
+    public function addApplicant(array $applicant)
     {
         $this->_applicants[] = $applicant;
     }
@@ -182,7 +182,7 @@ class Request
      * 
      * @return void
      */
-    public function setOrderItems(array $orderItems):void
+    public function setOrderItems(array $orderItems)
     {
         $this->_orderItems = $orderItems;
     }
@@ -204,7 +204,7 @@ class Request
      * 
      * @return void
      */
-    public function setDepositAmount($depositAmount):void
+    public function setDepositAmount($depositAmount)
     {
         $this->_depositAmount = $depositAmount;
     }
@@ -226,7 +226,7 @@ class Request
      * 
      * @return void
      */
-    public function setDepositPercentage($depositPercentage):void
+    public function setDepositPercentage($depositPercentage)
     {
         $this->_depositPercentage = $depositPercentage;
     }
@@ -248,7 +248,7 @@ class Request
      * 
      * @return void
      */
-    public function setFinalisationRequired($finalisationRequired):void
+    public function setFinalisationRequired($finalisationRequired)
     {
         $this->_finalisationRequired = $finalisationRequired;
     }
@@ -270,7 +270,7 @@ class Request
      * 
      * @return void
      */
-    public function setMerchantReference($merchantReference):void
+    public function setMerchantReference($merchantReference)
     {
         $this->_merchantReference = $merchantReference;
     }
@@ -292,7 +292,7 @@ class Request
      * 
      * @return void
      */
-    public function setUrls(array $urls):void
+    public function setUrls(array $urls)
     {
         $this->_urls = $urls;
     }
@@ -314,7 +314,7 @@ class Request
      * 
      * @return void
      */
-    public function setMetadata(array $metaData):void
+    public function setMetadata(array $metaData)
     {
         $this->_metaData = $metaData;
     }

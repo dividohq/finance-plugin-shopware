@@ -166,7 +166,7 @@ class PlansService
      * 
      * @return void
      */
-    public static function storePlans(array $plans):void
+    public static function storePlans(array $plans)
     {
         $now = time();
         foreach ($plans as &$plan) {
@@ -196,7 +196,7 @@ class PlansService
     public static function clearPlans()
     {
         // TODO: This needs to run only if the API Key changes
-        if (Shopware()->Db()->query("TRUNCATE TABLE `s_plans`")) {
+        if (Shopware()->Db()->query("TRUNCATE TABLE `s_plans`")) { 
             Shopware()->Db()->query("UPDATE `s_articles_attributes` SET `finance_plans` = NULL");
             return true;
         } else return false;
