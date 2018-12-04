@@ -39,10 +39,10 @@ class Shopware_Controllers_Frontend_FinancePlugin
           'This order is still waiting to receive payment confirmation. 
           It may just be the case that the confirmation hasn\'t quite 
           arrived yet. Please give it a couple of seconds and refresh 
-          this page. If the problem persists place contact the merchant',
-          ORDER_CREATION_ERROR_MSG = 'Could not create order',
+          this page. If the problem persists place contact the merchant.',
+          ORDER_CREATION_ERROR_MSG = 'Could not create order.',
           INVALID_TOKEN_ERROR_MSG = 'Invalid token.',
-          NO_RESPONSE_ERROR_MSG = 'Received response did not include status';
+          NO_RESPONSE_ERROR_MSG = 'Received response did not include status.';
           
      
 
@@ -479,10 +479,9 @@ class Shopware_Controllers_Frontend_FinancePlugin
                     $session = new \FinancePlugin\Models\Session;
                     $update = array(
                         "status" => $statusInfo['session_status'],
-                        "transactionID" => $transactionID,
-                        "temporaryID" => $paymentUniqueID
+                        "transactionID" => $transactionID
                     );
-                    $session->updateByReference($connection, $update, 'temporaryID');
+                    $session->updateByReference($connection, $update, 'transactionID');
                 }
 
                 $response = array(
