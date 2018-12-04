@@ -41,7 +41,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
           arrived yet. Please give it a couple of seconds and refresh 
           this page. If the problem persists place contact the merchant',
           ORDER_CREATION_ERROR_MSG = 'Could not create order',
-          INVALID_TOKEN_ERROR_MSG = 'Invalid token.';
+          INVALID_TOKEN_ERROR_MSG = 'Invalid token.',
+          NO_RESPONSE_ERROR_MSG = 'Received response did not include status';
           
      
 
@@ -421,6 +422,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function webhookAction()
     {
+        
         Helper::debug('Webhook', 'info');
 
         /*
@@ -432,72 +434,81 @@ class Shopware_Controllers_Frontend_FinancePlugin
             
         if (!$response->status) {
             Helper::debug('No Response Status', 'error');
-            die('no response');
-        }
-
-        $sign = Helper::hmacSign();
-
-        if (true === $sign) {
-
-            $transactionID = $response->proposal;
-            $paymentUniqueID = $response->token;
-
-            Helper::debug('Webhook data:'.serialize($response), 'error');
-            Helper::debug('Webhook TransactionID:'.$transactionId, 'info');
-            Helper::debug('Webhook Unique Payment ID:'.$paymentUniqueId, 'info');
-
-            $statusInfo = WebhookService::getStatusInfo($response->status);
-
-            $connection = $this->container->get('dbal_connection');
-
-            if (!is_null($statusInfo['order_status'])) {
-
-                $orderID = OrderService::getId(
-                    $transactionID,
-                    $paymentUniqueID,
-                    $connection
-                );
-
-                if($orderID){
-                    OrderService::setPaymentStatus(
-                        $orderID,
-                        $statusInfo['order_status']
-                    );
-                }
-            }
-            
-            if (!is_null($statusInfo['session_status'])) {
-                
-                $session = new \FinancePlugin\Models\Session;
-                $update = [
-                    "status" => $statusInfo['session_status'],
-                    "transactionID" => $transactionID,
-                    "temporaryID" => $paymentUniqueID
-                ];
-                $session->updateByReference($connection, $update, 'temporaryID');
-            }
-
+            $code = 400;
             $response = array(
-                'status' => $statusInfo['status'],
-                'message' => $statusInfo['message'],
+                'status' => 'error',
+                'message' => self::NO_RESPONSE_ERROR_MSG,
                 'platform' => 'Shopware',
                 'plugin_version' => self::PLUGIN_VERSION,
             );
         } else {
-            $session = new \FinancePlugin\Models\Session;
-            $update = [
-                "status" => WebhookService::PAYMENTREVIEWNEEDED,
-                "transactionID" => $transactionID,
-                "temporaryID" => $paymentUniqueID
-            ];
-            $session->updateByReference($connection, $update, 'temporaryID');
-            
-            $response = array(
-                'status' => 400,
-                'message' => self::SSA_DECLINE_MSG,
-                'platform' => 'Shopware',
-                'plugin_version' => self::PLUGIN_VERSION
-            );
+
+            $sign = Helper::hmacSign();
+
+            if (true === $sign) {
+
+                $transactionID = $response->proposal;
+                $paymentUniqueID = $response->token;
+
+                Helper::debug('Webhook data:'.serialize($response), 'error');
+                Helper::debug('Webhook TransactionID:'.$transactionId, 'info');
+                Helper::debug('Webhook Unique Payment ID:'.$paymentUniqueId, 'info');
+
+                $statusInfo = WebhookService::getStatusInfo($response->status);
+
+                $connection = $this->container->get('dbal_connection');
+
+                if (!is_null($statusInfo['order_status'])) {
+
+                    $orderID = OrderService::getId(
+                        $transactionID,
+                        $paymentUniqueID,
+                        $connection
+                    );
+
+                    if($orderID){
+                        OrderService::setPaymentStatus(
+                            $orderID,
+                            $statusInfo['order_status']
+                        );
+                    }
+                }
+                
+                if (!is_null($statusInfo['session_status'])) {
+                    
+                    $session = new \FinancePlugin\Models\Session;
+                    $update = array(
+                        "status" => $statusInfo['session_status'],
+                        "transactionID" => $transactionID,
+                        "temporaryID" => $paymentUniqueID
+                    );
+                    $session->updateByReference($connection, $update, 'temporaryID');
+                }
+
+                $response = array(
+                    'status' => $statusInfo['status'],
+                    'message' => $statusInfo['message'],
+                    'platform' => 'Shopware',
+                    'plugin_version' => self::PLUGIN_VERSION,
+                );
+                $code = $statusInfo['code'];
+            } else {
+                $code = 400;
+                $response = array(
+                    'status' => 'ok',
+                    'message' => self::SSA_DECLINE_MSG,
+                    'platform' => 'Shopware',
+                    'plugin_version' => self::PLUGIN_VERSION
+                );
+
+                $session = new \FinancePlugin\Models\Session;
+                $update = array(
+                    "status" => WebhookService::PAYMENTREVIEWNEEDED,
+                    "transactionID" => $transactionID,
+                    "temporaryID" => $paymentUniqueID
+                );
+                $session->updateByReference($connection, $update, 'temporaryID');
+            }
         }
 
         $body = json_encode(
@@ -515,7 +526,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             ->clearBody();
         $this->Response()->setBody($body);
         $this->Response()->setHeader('Content-type', 'application/json', true);
-        $this->Response()->setHttpResponseCode($statusInfo['code']);
+        $this->Response()->setHttpResponseCode($code);
     }
 
     /**

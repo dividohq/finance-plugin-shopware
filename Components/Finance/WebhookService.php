@@ -128,6 +128,11 @@ class WebhookService{
                 $statusInfo['message'] = 'Order Referred Success';
                 Helper::debug('Webhook: Referred', 'info');
                 break;
+                
+            case self::STATUS_READY:
+                $statusInfo['message'] = 'Status Ready';
+                Helper::debug('Webhook: Ready', 'info');
+                break;
 
             default:
                 $statusInfo['message'] = 'Empty Hook';
