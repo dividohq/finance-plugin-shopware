@@ -23,7 +23,7 @@ class OrderService
      * 
      * @return boolean
      */
-    public function retrieveOrderFromDb($id, $connection)
+    public static function retrieveOrderFromDb($id, $connection)
     {
         $get_order_query = $connection->createQueryBuilder();
         $get_order_query
@@ -47,7 +47,7 @@ class OrderService
      * 
      * @return int
      */
-    public function saveOrder($order)
+    public static function saveOrder($order)
     {
         $order->sCreateTemporaryOrder();
         $orderNumber = $order->sSaveOrder();
@@ -67,7 +67,7 @@ class OrderService
      * 
      * @return void
      */
-    public function getId($transactionID, $key, $connection)
+    public static function getId($transactionID, $key, $connection)
     {
         $get_id_query = $connection->createQueryBuilder();
         $get_id_query
@@ -95,7 +95,7 @@ class OrderService
      * 
      * @return boolean
      */
-    public function updateOrder($connection, $order, $reference_key)
+    public static function updateOrder($connection, $order, $reference_key)
     {
         if (!isset($order[$reference_key])) {
             Helper::debug(
@@ -126,7 +126,7 @@ class OrderService
      * 
      * @return boolean
      */
-    public function findOrders($criteria, $connection)
+    public static function findOrders($criteria, $connection)
     {
         $find_order_query = $connection->createQueryBuilder();
         $find_order_query->select('*')->from('s_order');
@@ -152,7 +152,7 @@ class OrderService
      * 
      * @return Boolean
      */
-    public function persistOrderAttributes($id, $attributes)
+    public static function persistOrderAttributes($id, $attributes)
     {
         $attributePersister = Shopware()->Container()->get(
             'shopware_attribute.data_persister'

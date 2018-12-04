@@ -11,6 +11,7 @@ use FinancePlugin\Components\Finance\PaymentService;
 use FinancePlugin\Components\Finance\RequestService;
 use FinancePlugin\Components\Finance\PlansService;
 use FinancePlugin\Components\Finance\OrderService;
+use FinancePlugin\Components\Finance\WebhookService;
 use FinancePlugin\Components\Finance\Helper;
 use FinancePlugin\Models\Request;
 use Shopware\Components\CSRFWhitelistAware;
@@ -26,53 +27,11 @@ class Shopware_Controllers_Frontend_FinancePlugin
     extends Shopware_Controllers_Frontend_Payment 
     implements CSRFWhitelistAware
 {
-    const
-        PLUGIN_VERSION = "0.0.0.1",
-        PAYMENTSTATUSPAID = 12,
-        PAYMENTSTATUSOPEN = 17,
-        PAYMENTREVIEWNEEDED = 21,
-        PAYMENTCANCELLED = 35,
-        STATUS_PROPOSAL      = 'PROPOSAL',
-        STATUS_ACCEPTED      = 'ACCEPTED',
-        STATUS_ACTION_LENDER = 'ACTION-LENDER',
-        STATUS_CANCELED      = 'CANCELED',
-        STATUS_COMPLETED     = 'COMPLETED',
-        STATUS_DEFERRED      = 'DEFERRED',
-        STATUS_DECLINED      = 'DECLINED',
-        STATUS_DEPOSIT_PAID  = 'DEPOSIT-PAID',
-        STATUS_FULFILLED     = 'FULFILLED',
-        STATUS_REFERRED      = 'REFERRED',
-        STATUS_SIGNED        = 'SIGNED',
-        STATUS_READY         = 'READY',
 
-        API_ERROR            = 'We are unable to process this order 
-        with the chosen payment method. Please choose another via the
-        <i>Change payment method</i> button.';
-
-
-     /**
-      * Order History Mesaages
-      *
-      * @category CategoryName
-      *
-      * @var array
-      */
-    public $historyMessages = array(
-        self::STATUS_ACCEPTED      => 'Credit request accepted',
-        self::STATUS_ACTION_LENDER => 'Lender notified',
-        self::STATUS_CANCELED      => 'Application canceled',
-        self::STATUS_COMPLETED     => 'Application completed',
-        self::STATUS_DEFERRED      => 'Application deferred by Underwriter,
-         waiting for new status',
-        self::STATUS_DECLINED      => 'Applicaiton declined by Underwriter',
-        self::STATUS_DEPOSIT_PAID  => 'Deposit paid by customer',
-        self::STATUS_FULFILLED     => 'Credit request fulfilled',
-        self::STATUS_REFERRED      => 'Credit request referred by Underwriter,
-         waiting for new status',
-        self::STATUS_SIGNED        => 'Customer have signed all contracts',
-        self::STATUS_READY         => 'Order ready to Ship',
-
-    );
+    const API_ERROR = 'We are unable to process this order 
+    with the chosen payment method. Please choose another 
+    method via the <i>Change payment method</i> button.';
+     
 
     /**
      * Allows webhooks to reach server
@@ -128,6 +87,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function directAction()
     {
+        ini_set('display_errors', 1);
         Helper::debug('Direct Action', 'info');
         
         $service = $this->container->get('finance_plugin.payment_service');
@@ -167,7 +127,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         );
         $session = new \FinancePlugin\Models\Session;
         $session->setKey($token);
-        $session->setStatus(self::PAYMENTSTATUSOPEN);
+        $session->setStatus(WebhookService::PAYMENTSTATUSOPEN);
         $session->setDataFromShopwareSession();
         $session->setPlan($planId);
         $session->setDeposit($deposit);
@@ -244,9 +204,6 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function financeAction()
     {
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
-
         Helper::debug('Finance view', 'info');
         header('Access-Control-Allow-Origin: *');
         
@@ -276,7 +233,6 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $displayFinance = false;
             $displayWarning[] =  self::API_ERROR;
         } else {
-        
             $basket_plans = PlansService::getBasketPlans($apiKey, $products);
             if (empty($basket_plans)) {
                 $displayFinance = false;
@@ -362,11 +318,11 @@ class Shopware_Controllers_Frontend_FinancePlugin
                             );
                             $order->setPaymentStatus(
                                 $orderID, 
-                                self::PAYMENTSTATUSPAID
+                                WebhookService::PAYMENTSTATUSPAID
                             );
                             
                             $data['ordernumber'] = $orderNumber;
-                            $data['cleared'] = self::PAYMENTSTATUSPAID;
+                            $data['cleared'] = WebhookService::PAYMENTSTATUSPAID;
                             
                             // Persist information to display on order in backend
                             $attributePersister = $this->container->get(
@@ -443,20 +399,35 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function webhookAction()
     {
+        ini_set('display_errors',1);
         Helper::debug('Webhook', 'info');
 
         /*
          * @var PaymentService $service 
          */
         $service = $this->container->get('finance_plugin.payment_service');
-        $response = $service->createWebhookResponse($this->Request());
+        $response = json_decode('{
+            "event" :"application-status-update" ,
+                "status" :"DEPOSIT-PAID" ,
+                "name" :"Ann Heselden" ,
+                "firstName" :"Ann" ,
+                "lastName" :"Heselden" ,
+                "email" :"andrew.smith@divido.com" ,
+                "phoneNumber" :"02012312312" ,
+                "proposal" :"b9e92b9a-f6ec-11e8-a30e-0242ac11000f" ,
+                "application" :"b9e92b9a-f6ec-11e8-a30e-0242ac11000f" ,
+                "reference" :"" ,
+                "metadata" : []
+        }');
+
+        //$response = $service->createWebhookResponse($this->Request());
             
         if (!$response->status) {
             Helper::debug('No Response Status', 'error');
             die('no response');
         }
 
-        //Helper::hmacSign();
+        $sign = Helper::hmacSign();
 
         $transactionID = $response->proposal;
         $paymentUniqueID = $response->token;
@@ -464,101 +435,61 @@ class Shopware_Controllers_Frontend_FinancePlugin
         Helper::debug('Webhook data:'.serialize($response), 'error');
         Helper::debug('Webhook TransactionID:'.$transactionId, 'info');
         Helper::debug('Webhook Unique Payment ID:'.$paymentUniqueId, 'info');
-        $message ='';
 
-        switch ($response->status) {
-        case self::STATUS_PROPOSAL:
-            Helper::debug('Webhook: Proposal', 'info');
-            $message ='Proposal Hook Success';
-            $session_status = self::PAYMENTSTATUSOPEN;
-            break;
+        $statusInfo = WebhookService::getStatusInfo($response->status);
 
-        case self::STATUS_ACCEPTED:
-            Helper::debug('Webhook: Accepted', 'info');
-            $message ='Accepted Hook Success';
-            $session_status = self::PAYMENTSTATUSOPEN;
-            break;
+        $connection = $this->container->get('dbal_connection');
 
-        case self::STATUS_SIGNED:
-            Helper::debug('Webhook: Signed', 'info');
-            $message ='Signed Hook Success';
-            $session_status = self::PAYMENTSTATUSPAID;
-            break;
+        if (!is_null($statusInfo['order_status'])) {
 
-        case self::STATUS_DECLINED:
-            Helper::debug('Webhook: Declined', 'info');
-            $message ='Declined Hook Success';
-            $order_status = self::PAYMENTREVIEWNEEDED;
-            $session_status = self::PAYMENTREVIEWNEEDED;
-            break;
-
-        case self::STATUS_CANCELED:
-            Helper::debug('Webhook: Canceled', 'info');
-            $message ='Canceled Hook Success';
-            $order_status = self::PAYMENTCANCELLED;
-            $session_status = self::PAYMENTCANCELLED;
-            break;
-
-        case self::STATUS_DEPOSIT_PAID:
-            Helper::debug('Webhook: Deposit Paid', 'info');
-            $message ='Deposit Paid Hook Success';
-            $session_status = self::PAYMENTSTATUSOPEN;
-            break;
-
-        case self::STATUS_ACTION_LENDER:
-            Helper::debug('Webhook: Deposit Paid', 'info');
-            break;
-            
-        case self::STATUS_COMPLETED:
-            $message ='Completed';
-            Helper::debug('Webhook: Completed', 'info');
-            break;
-
-        case self::STATUS_DEFERRED:
-            $message ='Deferred Success';
-            Helper::debug('Webhook: STATUS_DEFERRED', 'info');
-            break;
-
-        case self::STATUS_FULFILLED:
-            $message ='STATUS_FULFILLED Success';
-            Helper::debug('Webhook: STATUS_FULFILLED', 'info');
-            break;
-
-        case self::STATUS_REFERRED:
-            $message ='Order Referred Success';
-            Helper::debug('Webhook: Referred', 'info');
-            break;
-
-        default:
-            $message ='Empty Hook';
-            Helper::debug('Webhook: Empty webook', 'warning');
-            break;
-        }
-
-        if (isset($order_status)) {
-            $this->savePaymentStatus(
+            $orderID = OrderService::getId(
                 $transactionID,
                 $paymentUniqueID,
-                $order_status
+                $connection
             );
+
+            if($orderID){
+                OrderService::setPaymentStatus(
+                    $orderID,
+                    $statusInfo['order_status']
+                );
+            }
         }
         
-        if (isset($session_status)) {
-            $connection = $this->container->get('dbal_connection');
+        if (!is_null($statusInfo['session_status'])) {
+            
             $session = new \FinancePlugin\Models\Session;
             $update = [
-                "status" => $session_status,
+                "status" => $statusInfo['session_status'],
                 "transactionID" => $transactionID,
                 "temporaryID" => $paymentUniqueID
             ];
             $session->updateByReference($connection, $update, 'temporaryID');
         }
 
-        //update order based on whats sent through
-        //use signmature to determine if basket is set
-        //create order on signed
-        $this->respond(true, $message, false);
-        return;
+        $response = array(
+            'status' => $statusInfo['status'],
+            'message' => $statusInfo['message'],
+            'platform' => 'Shopware',
+            'plugin_version' => WebhookService::PLUGIN_VERSION,
+        );
+
+        $body = json_encode(
+            $response,
+            JSON_PRETTY_PRINT |
+                JSON_HEX_TAG |
+                JSON_HEX_APOS |
+                JSON_HEX_QUOT |
+                JSON_HEX_AMP
+        );
+
+        $this->Response()
+            ->clearHeaders()
+            ->clearRawHeaders()
+            ->clearBody();
+        $this->Response()->setBody($body);
+        $this->Response()->setHeader('Content-type', 'application/json', true);
+        $this->Response()->setHttpResponseCode($statusInfo['code']);
     }
 
     /**

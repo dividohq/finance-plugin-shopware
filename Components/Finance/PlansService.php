@@ -144,8 +144,6 @@ class PlansService
                 }
             }
         }
-        print_r($basket_plans);
-        print_r($current_plans);
         if (true === $individual_plans) {
             return $basket_plans;
         } else {

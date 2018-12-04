@@ -71,11 +71,16 @@ class UpdatePlans implements SubscriberInterface
                     $this->_refreshPlans($apiKey, $view);
                 }
             } else {
-                $view->assign(
+                $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
+                $view->extendsTemplate('backend/fp_extend_config/view/');
+                $view->assign('success', false);
+                $view->assign('message','BadBadNotGood');
+                /*
                     ['success' => false, 
-                    'message' => 'API key not entered. You will not be 
+                    'message'  => 'API key not entered. You will not be 
                     able to use this plugin as a payment method']
                 );
+                */
             }
         }
     }
@@ -117,7 +122,7 @@ class UpdatePlans implements SubscriberInterface
             $plans = $sdkResponse->plans;
             if (empty($plans)) {
                 $view->assign(
-                    ['success' => false,
+                    ['success' => true,
                     "message" => "There are no finance plans associated 
                     to this API Key. This plugin will not be able to 
                     process payments until this is rectified"]
@@ -127,8 +132,7 @@ class UpdatePlans implements SubscriberInterface
             }
         } else {
             $view->assign(
-                ['success' => false,
-                'message' => 'Nope'.$sdkResponse->errorMessage]
+                'message','Nope'
             );
         }
     }

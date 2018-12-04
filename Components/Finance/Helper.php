@@ -299,7 +299,7 @@ class Helper
             $data = file_get_contents('php://input');
         }
 
-        self::debug('Shared Secret:'.$this->getSharedSecret(), 'info');
+        self::debug('Shared Secret:'.self::getSharedSecret(), 'info');
 
         $sharedSecret = self::getSharedSecret();
         if (!empty($sharedSecret)) {

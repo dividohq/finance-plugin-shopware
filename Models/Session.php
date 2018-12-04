@@ -446,7 +446,7 @@ class Session extends ModelEntity
         return $find_session_query->fetch_all();
     }
 
-    public static function updateByRef($connection, $session, $reference_key){
+    public static function updateByReference($connection, $session, $reference_key){
         if(!isset($session[$reference_key])){
             Helper::Debug('Could not update session: Reference key not set or does not exist');
             return false;
