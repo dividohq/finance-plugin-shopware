@@ -280,7 +280,7 @@ class Session extends ModelEntity
         $session = $connection->fetchAll($session_sql,[':id' => $id]);
         if(isset($session[0])){
             $this->id = $id;
-            $this->orderNumber = $session[0]['order_number'];
+            $this->orderNumber = $session[0]['orderNumber'];
             $this->transactionID = $session[0]['transactionID'];
             $this->key = $session[0]['key'];
             $this->data = $this->decompress($session[0]['data']);
