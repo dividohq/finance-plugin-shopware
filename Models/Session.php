@@ -454,16 +454,16 @@ class Session extends ModelEntity
         $update_session_query = $connection->createQueryBuilder();
         $update_session_query->update(self::session_table);
 
-        foreach($order as $key=>$value){
+        foreach($session as $key=>$value){
             if($key == $reference_key){
                 $update_session_query->where("`$key` = :$key");
             }else{
-                $add_session_query->set("`$key`",":$key");
+                $update_session_query->set("`$key`",":$key");
             }
-            $add_session_query->setParameter(":$key", $value);
+            $update_session_query->setParameter(":$key", $value);
         }
 
-        return $add_session_query->execute();
+        return $update_session_query->execute();
     }
 
     /**
