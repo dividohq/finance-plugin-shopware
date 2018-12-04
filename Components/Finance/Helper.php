@@ -287,7 +287,6 @@ class Helper
      */
     public function hmacSign()
     {
-        //Not working
         if (isset($_SERVER['HTTP_RAW_POST_DATA']) 
             && $_SERVER['HTTP_RAW_POST_DATA']
         ) {
@@ -300,18 +299,16 @@ class Helper
         }
 
         self::debug('Shared Secret:'.self::getSharedSecret(), 'info');
-
         $sharedSecret = self::getSharedSecret();
         if (!empty($sharedSecret)) {
             $callback_sign = $_SERVER['HTTP_X_DIVIDO_HMAC_SHA256']; /* TODO: Can this change?  */
 
             self::debug('Callback Sign: '.$callback_sign, 'info');
-            print_r($callback_sign);
+
             self::debug('Callback DATA: '.$data, 'info');
-            print_r($data);
-
+            
             $sign = self::createSignature($data, $sharedSecret);
-
+            
             self::debug('Created Signature: '.$sign, 'info');
 
             if ($callback_sign !== $sign ) {

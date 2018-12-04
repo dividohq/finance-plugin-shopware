@@ -28,9 +28,21 @@ class Shopware_Controllers_Frontend_FinancePlugin
     implements CSRFWhitelistAware
 {
 
-    const API_ERROR = 'We are unable to process this order 
-    with the chosen payment method. Please choose another 
-    method via the <i>Change payment method</i> button.';
+    const PLUGIN_VERSION = "1.0.0",
+          API_ERROR_MSG = 
+          'We are unable to process this order 
+          with the chosen payment method. Please choose another 
+          method via the <i>Change payment method</i> button.',
+          SSA_DECLINE_MSG = 
+          'Shared secret authentication did not authenticate.',
+          NON_PAID_ERROR_MSG = 
+          'This order is still waiting to receive payment confirmation. 
+          It may just be the case that the confirmation hasn\'t quite 
+          arrived yet. Please give it a couple of seconds and refresh 
+          this page. If the problem persists place contact the merchant',
+          ORDER_CREATION_ERROR_MSG = 'Could not create order',
+          INVALID_TOKEN_ERROR_MSG = 'Invalid token.';
+          
      
 
     /**
@@ -38,7 +50,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
      *
      * @return void
      */
-    public function getWhitelistedCSRFActions()
+    public function getWhitelistedCSRFActions ()
     {
         return [
             'return',
@@ -87,7 +99,6 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function directAction()
     {
-        ini_set('display_errors', 1);
         Helper::debug('Direct Action', 'info');
         
         $service = $this->container->get('finance_plugin.payment_service');
@@ -231,12 +242,12 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $apiKey = Helper::getApiKey();
         if (empty($apiKey)) {
             $displayFinance = false;
-            $displayWarning[] =  self::API_ERROR;
+            $displayWarning[] =  self::API_ERROR_MSG;
         } else {
             $basket_plans = PlansService::getBasketPlans($apiKey, $products);
             if (empty($basket_plans)) {
                 $displayFinance = false;
-                $displayWarning[] = self::API_ERROR;
+                $displayWarning[] = self::API_ERROR_MSG;
             }
 
             list($key,$stuff) = preg_split("/\./", $apiKey);
@@ -289,84 +300,95 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $session = new \FinancePlugin\Models\Session;
             
             if ($session->retrieveFromDb($sessionId, $connection)) {
-                $data = $session->getData();
-                
-                $customer_number 
-                    = $data['sUserData']['additional']['user']['customernumber'];
-                $amount = $data['sBasket']['sAmount'];
-                /*
-                /   If response token matches the information in the session 
-                /   $service = /Components/Finance/PaymentService.php 
-                */
-                if ($paymentService->isValidToken(
-                    $amount, 
-                    $customer_number, 
-                    $response->token
-                )
-                ) {
-                    // If we haven't already generated the order already:
-                    if (is_null($session->getOrderNumber())) {
-                        $device = $this->Request()->getDeviceType();
-                        $order = $session->createOrder($device);
-
-                        $orderNumber = $orderService->saveOrder($order);
-                        if ($orderNumber) {
-                            $orderID = $orderService->getId(
-                                $session->getTransactionID(),
-                                $session->getKey(),
-                                $connection
-                            );
-                            $order->setPaymentStatus(
-                                $orderID, 
-                                WebhookService::PAYMENTSTATUSPAID
-                            );
-                            
-                            $data['ordernumber'] = $orderNumber;
-                            $data['cleared'] = WebhookService::PAYMENTSTATUSPAID;
-                            
-                            // Persist information to display on order in backend
-                            $attributePersister = $this->container->get(
-                                'shopware_attribute.data_persister'
-                            );
-
-                            $attributeData = array(
-                                'finance_id' => $session->getPlan(),
-                                'deposit_value' => $session->getDeposit()
-                            );
-                            
-                            $attributePersister->persist(
-                                $attributeData,
-                                's_order_attributes',
-                                $orderID
-                            );
-
-                            $session->setOrderNumber($orderNumber);
-                            $session->update($connection);
-
-                            session_write_close();
-                        } else {
-                            $this->View()->assign('error', 'Could not create order');
-                            $this->View()->assign(
-                                'template', 
-                                'frontend/finance_plugin/error.tpl'
-                            );
-                            return;
-                        }
-                    } else {
-                        $data['ordernumber'] = $session->getOrderNumber();
-                    }
-
+                if($session->status !== WebhookService::PAYMENTSTATUSPAID){
+                    $data = $session->getData();
+                    
+                    $customer_number 
+                        = $data['sUserData']['additional']['user']['customernumber'];
+                    $amount = $data['sBasket']['sAmount'];
                     /*
-                    /   Assign the relevant stored session information 
-                    /   to the appropriate Smarty variables
+                    /   If response token matches the information in the session 
+                    /   $service = /Components/Finance/PaymentService.php 
                     */
-                    $this->sendDataToSmarty($data);
-                    $this->View()->assign(
-                        'template', 
-                        'frontend/finance_plugin/success.tpl'
-                    );
+                    if ($paymentService->isValidToken(
+                        $amount, 
+                        $customer_number, 
+                        $response->token
+                    )
+                    ) {
+                        // If we haven't already generated the order already:
+                        if (is_null($session->getOrderNumber())) {
+                            $device = $this->Request()->getDeviceType();
+                            $order = $session->createOrder($device);
+
+                            $orderNumber = $orderService->saveOrder($order);
+                            if ($orderNumber) {
+                                $orderID = $orderService->getId(
+                                    $session->getTransactionID(),
+                                    $session->getKey(),
+                                    $connection
+                                );
+                                $order->setPaymentStatus(
+                                    $orderID, 
+                                    WebhookService::PAYMENTSTATUSPAID
+                                );
+                                
+                                $data['ordernumber'] = $orderNumber;
+                                $data['cleared'] = WebhookService::PAYMENTSTATUSPAID;
+                                
+                                // Persist information to display on order in backend
+                                $attributePersister = $this->container->get(
+                                    'shopware_attribute.data_persister'
+                                );
+
+                                $attributeData = array(
+                                    'finance_id' => $session->getPlan(),
+                                    'deposit_value' => $session->getDeposit()
+                                );
+                                
+                                $attributePersister->persist(
+                                    $attributeData,
+                                    's_order_attributes',
+                                    $orderID
+                                );
+
+                                $session->setOrderNumber($orderNumber);
+                                $session->update($connection);
+
+                                session_write_close();
+                            } else {
+                                $this->View()->assign(
+                                    'error', 
+                                    self::ORDER_CREATION_ERROR_MSG
+                                );
+                                $this->View()->assign(
+                                    'template', 
+                                    'frontend/finance_plugin/error.tpl'
+                                );
+                                return;
+                            }
+                        } else {
+                            $data['ordernumber'] = $session->getOrderNumber();
+                        }
+
+                        /*
+                        /   Assign the relevant stored session information 
+                        /   to the appropriate Smarty variables
+                        */
+                        $this->sendDataToSmarty($data);
+                        $this->View()->assign(
+                            'template', 
+                            'frontend/finance_plugin/success.tpl'
+                        );
+                    } else {
+                        $this->View()->assign('error', self::INVALID_TOKEN_ERROR_MSG);
+                        $this->View()->assign(
+                            'template',
+                            'frontend/finance_plugin/error.tpl'
+                        );
+                    }
                 } else {
-                    $this->View()->assign('error', 'Invalid token.');
+                    $this->View()->assign('error', self::NON_PAID_ERROR_MSG);
                     $this->View()->assign(
                         'template',
                         'frontend/finance_plugin/error.tpl'
@@ -399,28 +421,14 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function webhookAction()
     {
-        ini_set('display_errors',1);
         Helper::debug('Webhook', 'info');
 
         /*
          * @var PaymentService $service 
          */
         $service = $this->container->get('finance_plugin.payment_service');
-        $response = json_decode('{
-            "event" :"application-status-update" ,
-                "status" :"DEPOSIT-PAID" ,
-                "name" :"Ann Heselden" ,
-                "firstName" :"Ann" ,
-                "lastName" :"Heselden" ,
-                "email" :"andrew.smith@divido.com" ,
-                "phoneNumber" :"02012312312" ,
-                "proposal" :"b9e92b9a-f6ec-11e8-a30e-0242ac11000f" ,
-                "application" :"b9e92b9a-f6ec-11e8-a30e-0242ac11000f" ,
-                "reference" :"" ,
-                "metadata" : []
-        }');
-
-        //$response = $service->createWebhookResponse($this->Request());
+        
+        $response = $service->createWebhookResponse($this->Request());
             
         if (!$response->status) {
             Helper::debug('No Response Status', 'error');
@@ -429,50 +437,68 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
         $sign = Helper::hmacSign();
 
-        $transactionID = $response->proposal;
-        $paymentUniqueID = $response->token;
+        if (true === $sign) {
 
-        Helper::debug('Webhook data:'.serialize($response), 'error');
-        Helper::debug('Webhook TransactionID:'.$transactionId, 'info');
-        Helper::debug('Webhook Unique Payment ID:'.$paymentUniqueId, 'info');
+            $transactionID = $response->proposal;
+            $paymentUniqueID = $response->token;
 
-        $statusInfo = WebhookService::getStatusInfo($response->status);
+            Helper::debug('Webhook data:'.serialize($response), 'error');
+            Helper::debug('Webhook TransactionID:'.$transactionId, 'info');
+            Helper::debug('Webhook Unique Payment ID:'.$paymentUniqueId, 'info');
 
-        $connection = $this->container->get('dbal_connection');
+            $statusInfo = WebhookService::getStatusInfo($response->status);
 
-        if (!is_null($statusInfo['order_status'])) {
+            $connection = $this->container->get('dbal_connection');
 
-            $orderID = OrderService::getId(
-                $transactionID,
-                $paymentUniqueID,
-                $connection
-            );
+            if (!is_null($statusInfo['order_status'])) {
 
-            if($orderID){
-                OrderService::setPaymentStatus(
-                    $orderID,
-                    $statusInfo['order_status']
+                $orderID = OrderService::getId(
+                    $transactionID,
+                    $paymentUniqueID,
+                    $connection
                 );
+
+                if($orderID){
+                    OrderService::setPaymentStatus(
+                        $orderID,
+                        $statusInfo['order_status']
+                    );
+                }
             }
-        }
-        
-        if (!is_null($statusInfo['session_status'])) {
             
+            if (!is_null($statusInfo['session_status'])) {
+                
+                $session = new \FinancePlugin\Models\Session;
+                $update = [
+                    "status" => $statusInfo['session_status'],
+                    "transactionID" => $transactionID,
+                    "temporaryID" => $paymentUniqueID
+                ];
+                $session->updateByReference($connection, $update, 'temporaryID');
+            }
+
+            $response = array(
+                'status' => $statusInfo['status'],
+                'message' => $statusInfo['message'],
+                'platform' => 'Shopware',
+                'plugin_version' => self::PLUGIN_VERSION,
+            );
+        } else {
             $session = new \FinancePlugin\Models\Session;
             $update = [
-                "status" => $statusInfo['session_status'],
+                "status" => WebhookService::PAYMENTREVIEWNEEDED,
                 "transactionID" => $transactionID,
                 "temporaryID" => $paymentUniqueID
             ];
             $session->updateByReference($connection, $update, 'temporaryID');
+            
+            $response = array(
+                'status' => 400,
+                'message' => self::SSA_DECLINE_MSG,
+                'platform' => 'Shopware',
+                'plugin_version' => self::PLUGIN_VERSION
+            );
         }
-
-        $response = array(
-            'status' => $statusInfo['status'],
-            'message' => $statusInfo['message'],
-            'platform' => 'Shopware',
-            'plugin_version' => WebhookService::PLUGIN_VERSION,
-        );
 
         $body = json_encode(
             $response,

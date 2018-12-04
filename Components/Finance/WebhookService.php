@@ -14,7 +14,6 @@ namespace FinancePlugin\Components\Finance;
  */
 class WebhookService{
     const
-        PLUGIN_VERSION = "1.0.0",
         PAYMENTSTATUSPAID = 12,
         PAYMENTSTATUSOPEN = 17,
         PAYMENTREVIEWNEEDED = 21,
@@ -32,7 +31,6 @@ class WebhookService{
         STATUS_REFERRED = 'REFERRED',
         STATUS_SIGNED = 'SIGNED',
         STATUS_READY = 'READY';
-
 
 
     /**
