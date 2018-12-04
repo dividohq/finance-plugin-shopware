@@ -300,7 +300,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $session = new \FinancePlugin\Models\Session;
             
             if ($session->retrieveFromDb($sessionId, $connection)) {
-                if($session->status !== WebhookService::PAYMENTSTATUSPAID){
+                if($session->getStatus() !== WebhookService::PAYMENTSTATUSPAID){
                     $data = $session->getData();
                     
                     $customer_number 
