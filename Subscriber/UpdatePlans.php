@@ -19,6 +19,8 @@ use FinancePlugin\Components\Finance\Helper;
 class UpdatePlans implements SubscriberInterface
 {
     /**
+     * The directory of the plugin
+     * 
      * @var string
      */
     private $_pluginDirectory;
@@ -73,14 +75,11 @@ class UpdatePlans implements SubscriberInterface
             } else {
                 $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
                 $view->extendsTemplate('backend/fp_extend_config/view/');
-                $view->assign('success', false);
-                $view->assign('message','BadBadNotGood');
-                /*
+                $view->assign(
                     ['success' => false, 
                     'message'  => 'API key not entered. You will not be 
                     able to use this plugin as a payment method']
                 );
-                */
             }
         }
     }
@@ -110,7 +109,7 @@ class UpdatePlans implements SubscriberInterface
      * and validating the API Key
      *
      * @param string $apiKey The API Key in the config
-     * @param View $view Smarty view
+     * @param View   $view   Smarty view
      * 
      * @return void
      */
@@ -131,9 +130,7 @@ class UpdatePlans implements SubscriberInterface
                 PlansService::storePlans($plans);
             }
         } else {
-            $view->assign(
-                'message','Nope'
-            );
+            $view->assign('message', 'This API Key could not be validated');
         }
     }
 }

@@ -29,14 +29,14 @@ class Shopware_Controllers_Frontend_FinancePlugin
 {
 
     const PLUGIN_VERSION = "1.0.0",
-          API_ERROR_MSG = 
-          'We are unable to process this order 
+          API_ERROR_MSG 
+              = 'We are unable to process this order 
           with the chosen payment method. Please choose another 
           method via the <i>Change payment method</i> button.',
-          SSA_DECLINE_MSG = 
-          'Shared secret authentication did not authenticate.',
-          NON_PAID_ERROR_MSG = 
-          'This order is still waiting to receive payment confirmation. 
+          SSA_DECLINE_MSG 
+              = 'Shared secret authentication did not authenticate.',
+          NON_PAID_ERROR_MSG 
+              = 'This order is still waiting to receive payment confirmation. 
           It may just be the case that the confirmation hasn\'t quite 
           arrived yet. Please give it a couple of seconds and refresh 
           this page. If the problem persists place contact the merchant.',
@@ -51,7 +51,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
      *
      * @return void
      */
-    public function getWhitelistedCSRFActions ()
+    public function getWhitelistedCSRFActions() 
     {
         return [
             'return',
@@ -301,7 +301,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $session = new \FinancePlugin\Models\Session;
             
             if ($session->retrieveFromDb($sessionId, $connection)) {
-                if($session->getStatus() === WebhookService::PAYMENTSTATUSPAID){
+                if ($session->getStatus() == WebhookService::PAYMENTSTATUSPAID) {
                     $data = $session->getData();
                     
                     $customer_number 
@@ -422,7 +422,6 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function webhookAction()
     {
-        
         Helper::debug('Webhook', 'info');
 
         /*
@@ -466,7 +465,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
                         $connection
                     );
 
-                    if($orderID){
+                    if ($orderID) {
                         OrderService::setPaymentStatus(
                             $orderID,
                             $statusInfo['order_status']
@@ -477,11 +476,17 @@ class Shopware_Controllers_Frontend_FinancePlugin
                 if (!is_null($statusInfo['session_status'])) {
                     
                     $session = new \FinancePlugin\Models\Session;
+                    
                     $update = array(
                         "status" => $statusInfo['session_status'],
                         "transactionID" => $transactionID
                     );
-                    $session->updateByReference($connection, $update, 'transactionID');
+
+                    $session->updateByReference(
+                        $connection, 
+                        $update, 
+                        'transactionID'
+                    );
                 }
 
                 $response = array(

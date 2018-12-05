@@ -31,7 +31,7 @@ for(let k = 0; k < inputs.length; k++){
     var calcWidget = mainCalcWidget.cloneNode(true);
     calcWidget.setAttribute('id','dividoCalc'+k);
     calcWidget.style.display = 'block';
-    input.parentNode.insertBefore(calcWidget,dividoInput.nextSibling);
+    input.parentNode.insertBefore(calcWidget, input.nextSibling);
     input.value = calcWidget.getAttribute('data-divido-amount');
     if(input.classList.contains('finance-popup')){
         calcWidget.setAttribute('data-divido-mode','popup');

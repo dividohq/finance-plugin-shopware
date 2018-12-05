@@ -29,8 +29,8 @@ You also have the ability to incorporate Divido widgets into your custom pages. 
 2. Go to the "Shop pages" subsection of the "Content" section
 3. Select the directory and the page you would like to edit / add a new page to the shop
 4. Click on the HTML Source Editor button in the text editor
-5. Insert the html for an input field, including the class name ‘finance-calculator’ (ie. <input type=“number” class=“finance-calculator” />). This will generate the block version of the widget (fig.9)
-6. If you wish to use a pop-up version of the widget (fig.10), include the class ‘finance-popup’ also (ie. <input type=“number” class=“finance-calculator finance-popup” />)
+5. Insert the html for an input field, including the class name ‘finance-calculator’ (ie. <input type='number' class='finance-calculator' />). This will generate the block version of the widget (fig.9)
+6. If you wish to use a pop-up version of the widget (fig.10), include the class ‘finance-popup’ also (ie. <input type='number' class='finance-calculator finance-popup' />)
 7. Click on the Update button in the HTML Source Editor window
 8. Click on the Save button on the Shop pages page
 9. The block payment calculator widget will generate directly below the input box

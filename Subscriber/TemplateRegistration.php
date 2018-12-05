@@ -93,6 +93,10 @@ class TemplateRegistration implements SubscriberInterface
 
             $config = Helper::getConfig();
             
+            $apiKey = Helper::getApiKey();
+            $key = preg_split("/\./", $apiKey);
+            $view->assign('apiKey', $key[0]);
+
             $show_widget = false;
             if ($config['Show Widget']) {
                
@@ -107,9 +111,6 @@ class TemplateRegistration implements SubscriberInterface
                 );
 
                 if ($product_price > $min_product_amount) {
-                    $apiKey = $config["API Key"];
-                    $key = preg_split("/\./", $apiKey);
-                    $view->assign('apiKey', $key[0]);
                     
                     $view->assign('plans', implode(",", $plans_ids));
 

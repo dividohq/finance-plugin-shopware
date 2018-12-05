@@ -322,21 +322,19 @@ class Helper
     /**
      * Checks the SDK's Environment class for the given environment type
      *
-     * @param string $environment environment string usually taken from API Key
+     * @param string $apiKey The config API key
      * 
      * @return void
      */
     public function getEnvironment($apiKey=false)
     {
-        if (!$apiKey) {
-           $apiKey = Helper::getApiKey();
-        }
+        $apiKey = (false === $apiKey) ? Helper::getApiKey() : $apiKey;
         
         if (empty($apiKey)) {
             self::debug('Empty API key', 'error');
             return false;
         } else {
-            list($environment, $key) = explode("_",$apiKey);
+            list($environment, $key) = explode("_", $apiKey);
             $environment = strtoupper($environment);
             if (!is_null(constant("\Divido\MerchantSDK\Environment::$environment"))) {
                 $environment = constant("\Divido\MerchantSDK\Environment::$environment");
