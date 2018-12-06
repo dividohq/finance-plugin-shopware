@@ -57,7 +57,7 @@ class FinancePlugin extends Plugin
             'float',
             [
             'displayInBackend' => true,
-            'label' => 'Finance Plugin',
+            'label' => 'Deposit Value',
             'supportText' => 'The value of the deposit taken',
             'helpText' => 'Deposit value'
             ]

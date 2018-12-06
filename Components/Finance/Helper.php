@@ -301,7 +301,7 @@ class Helper
         self::debug('Shared Secret:'.self::getSharedSecret(), 'info');
         $sharedSecret = self::getSharedSecret();
         if (!empty($sharedSecret)) {
-            $callback_sign = $_SERVER['HTTP_X_DIVIDO_HMAC_SHA256']; /* TODO: Can this change?  */
+            $callback_sign = $_SERVER['HTTP_X_DIVIDO_HMAC_SHA256'];
 
             self::debug('Callback Sign: '.$callback_sign, 'info');
 
@@ -336,8 +336,12 @@ class Helper
         } else {
             list($environment, $key) = explode("_", $apiKey);
             $environment = strtoupper($environment);
-            if (!is_null(constant("\Divido\MerchantSDK\Environment::$environment"))) {
-                $environment = constant("\Divido\MerchantSDK\Environment::$environment");
+            if (!is_null(
+                constant("\Divido\MerchantSDK\Environment::$environment")
+            )
+            ) {
+                $environment 
+                    = constant("\Divido\MerchantSDK\Environment::$environment");
                 return $environment;
             } else {
                 self::debug('Environment does not exist in the SDK', 'error');   

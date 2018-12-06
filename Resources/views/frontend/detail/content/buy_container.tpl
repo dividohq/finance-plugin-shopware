@@ -7,11 +7,6 @@
     var dividoKey = "{$apiKey}";
   </script>
   <style>
-    .divido-widget-logo{ 
-      display:inline-block;
-      position:relative;
-      top:2px;
-    } 
     #divido-widget{
         padding-bottom:5px;
     }
@@ -22,7 +17,6 @@
     id="divido-widget"
     data-divido-widget
     data-divido-mode="popup"
-    data-divido-title-logo
     data-divido-plans="{$plans}"
     data-divido-prefix="{$prefix}"
     data-divido-suffix="{$suffix}"

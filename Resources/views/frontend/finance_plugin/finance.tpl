@@ -10,7 +10,7 @@
       <script src="https://cdn.divido.com/calculator/v2.1/production/js/template.divido.js"></script>
     
       {if $displayForm}
-      <form id="dividoFinanceForm" action="{url controller='FinancePlugin' action='direct'}" method="post" >
+      <form id="financePluginForm" action="{url controller='FinancePlugin' action='direct'}" method="post" >
         <div
           data-divido-widget
           data-divido-prefix="{$prefix}"
@@ -22,7 +22,7 @@
           data-divido-plans="{$basket_plans}"
           >
         </div>
-        <button id="divido-finance-submit-button" type="submit"
+        <button id="finance-plugin-submit-button" type="submit"
           title="finance"
           class="finance-action btn is--primary"
           data-product-compare-add="true">
@@ -60,13 +60,11 @@
       document.addEventListener("DOMContentLoaded", function(
         
       ){
-        var button = document.querySelectorAll("#divido-finance-submit-button")[0];
+        var button = document.querySelectorAll("#finance-plugin-submit-button")[0];
         button.addEventListener("click", function(){
           this.setAttribute("disabled", true);
-          console.log('true disbaled');
-          document.getElementById("dividoFinanceForm").submit();
+          document.getElementById("financePluginForm").submit();
         })
-        console.log('loaded');
       })
     </script>
 {/block}

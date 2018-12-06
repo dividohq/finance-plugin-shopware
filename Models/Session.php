@@ -1,4 +1,10 @@
 <?php
+/**
+ * File for the Session class
+ * 
+ * PHP version 5.6
+ * 
+ */
 
 namespace FinancePlugin\Models;
 
@@ -89,7 +95,7 @@ class Session extends ModelEntity
      * Array of the keys of fields we want to retain in the session table in
      * case the session times out before the customer completes the signing process
      */
-    private $retained_session_keys = array(
+    private $_retained_session_keys = array(
         'sUserData',
         'sBasket',
         'sAmount',
@@ -97,12 +103,12 @@ class Session extends ModelEntity
         'sDispatch'
     );
 
-    const session_table = 's_sessions';
+    const SESSION_TABLE = 's_sessions';
 
     /**
      * Compression method for session data. Currently either SERIAL or JSON
      */
-    const compression_method = 'SERIAL';
+    const COMPRESSION_METHOD = 'SERIAL';
 
     /**
      * @return int
@@ -178,12 +184,15 @@ class Session extends ModelEntity
     }
 
     /**
+     * Set session based on Shopwares saved variables
      * 
+     * @return void
      */
-    public function setDataFromShopwareSession(){
+    public function setDataFromShopwareSession()
+    {
         $session_data = Shopware()->Session()->sOrderVariables;
         $data = [];
-        foreach($this->retained_session_keys as $key){
+        foreach ($this->retained_session_keys as $key) {
             if(isset($session_data[$key]))
                $data[$key] = $session_data[$key];
         }
@@ -263,7 +272,11 @@ class Session extends ModelEntity
     }
 
     /**
-     * @param int $plan
+     * Set the Plan variable
+     * 
+     * @param string $plan 
+     * 
+     * @return void
      */
     public function setPlan($plan)
     {
@@ -273,12 +286,20 @@ class Session extends ModelEntity
 
     /**
      * Retrieve session from database via session id
+     * and set the class variables accordingly
+     * 
+     * @param string     $id         The session ID
+     * @param connection $connection An open DBAL DB connection
+     * 
+     * @return boolean
      */
-    public function retrieveFromDb($id, $connection){
+    public function retrieveFromDb($id, $connection)
+    {
         $get_session_query = $connection->createQueryBuilder();
-        $session_sql = "SELECT * FROM `".self::session_table."` WHERE `id`= :id LIMIT 1";
-        $session = $connection->fetchAll($session_sql,[':id' => $id]);
-        if(isset($session[0])){
+        $session_sql 
+            = "SELECT * FROM `".self::SESSION_TABLE."` WHERE `id`= :id LIMIT 1";
+        $session = $connection->fetchAll($session_sql, [':id' => $id]);
+        if (isset($session[0])) {
             $this->id = $id;
             $this->orderNumber = $session[0]['orderNumber'];
             $this->transactionID = $session[0]['transactionID'];
@@ -293,30 +314,42 @@ class Session extends ModelEntity
         }else return false;
     }
 
-    public function store($connection){
-        $ip_address = (!empty($this->ip_address)) ? $this->ip_address : $_SERVER['REMOTE_ADDR'] ;
+    /**
+     * Store a session based on the class variables
+     *
+     * @param connection $connection An open DBAL DB query
+     * 
+     * @return string
+     */
+    public function store($connection) 
+    {
+        $ip_address 
+            = (!empty($this->ip_address)) 
+            ? $this->ip_address 
+            : $_SERVER['REMOTE_ADDR'] ;
+
         $add_session_query = $connection->createQueryBuilder();
         $created_on = (!empty($this->created_on)) ? $this->createdon : time();
         $add_session_query
-            ->insert(self::session_table)
-            ->setValue('`orderNumber`','?')
-            ->setValue('`transactionID`','?')
-            ->setValue('`key`','?')
-            ->setValue('`status`','?')
-            ->setValue('`data`','?')
-            ->setValue('`plan`','?')
-            ->setValue('`deposit`','?')
-            ->setValue('`ip_address`','?')
-            ->setValue('`created_on`','?')
-            ->setParameter(0,$this->orderNumber)
-            ->setParameter(1,$this->transactionID)
-            ->setParameter(2,$this->getKey())
-            ->setParameter(3,$this->getStatus())
-            ->setParameter(4,$this->compress($this->data))
-            ->setParameter(5,$this->plan)
-            ->setParameter(6,$this->deposit)
-            ->setParameter(7,$ip_address)
-            ->setParameter(8,$created_on);
+            ->insert(self::SESSION_TABLE)
+            ->setValue('`orderNumber`', '?')
+            ->setValue('`transactionID`', '?')
+            ->setValue('`key`', '?')
+            ->setValue('`status`', '?')
+            ->setValue('`data`', '?')
+            ->setValue('`plan`', '?')
+            ->setValue('`deposit`', '?')
+            ->setValue('`ip_address`', '?')
+            ->setValue('`created_on`', '?')
+            ->setParameter(0, $this->orderNumber)
+            ->setParameter(1, $this->transactionID)
+            ->setParameter(2, $this->getKey())
+            ->setParameter(3, $this->getStatus())
+            ->setParameter(4, $this->compress($this->data))
+            ->setParameter(5, $this->plan)
+            ->setParameter(6, $this->deposit)
+            ->setParameter(7, $ip_address)
+            ->setParameter(8, $created_on);
         
         $add_session_query->execute();
 
@@ -325,66 +358,74 @@ class Session extends ModelEntity
         return $this->id;
     }
 
-    public function update($connection){
-        if(!isset($this->id)){
+    /**
+     * Update the session based on the class varaibles
+     *
+     * @param connection $connection An open DBAL DB connection
+     * 
+     * @return void
+     */
+    public function update($connection) 
+    {
+        if (!isset($this->id)) {
             Helper::Debug('Could not update session: No unique id to reference');
             return false;
         }
 
         $update_session_query = $connection->createQueryBuilder();
-        $update_session_query->update(self::session_table);
+        $update_session_query->update(self::SESSION_TABLE);
         
-        if(!is_null($this->orderNumber)){
+        if (!is_null($this->orderNumber)) {
             $update_session_query
-                ->set('`orderNumber`',':orderNumber')
+                ->set('`orderNumber`', ':orderNumber')
                 ->setParameter(':orderNumber', $this->orderNumber);
         }
 
-        if(!is_null($this->transactionID)){
+        if (!is_null($this->transactionID)) {
             $update_session_query
-                ->set('`transactionID`',':transactionID')
+                ->set('`transactionID`', ':transactionID')
                 ->setParameter(':transactionID', $this->transactionID);
         }
 
-        if(!is_null($this->key)){
+        if (!is_null($this->key)) {
             $update_session_query
-                ->set('`key`',':key')
+                ->set('`key`', ':key')
                 ->setParameter(':key', $this->key);
         }
 
-        if(!is_null($this->status)){
+        if (!is_null($this->status)) {
             $update_session_query
-                ->set('`status`',':status')
+                ->set('`status`', ':status')
                 ->setParameter(':status', $this->status);
         }
 
-        if(!is_null($this->data)){
+        if (!is_null($this->data)) {
             $update_session_query
-                ->set('`data`',':data')
+                ->set('`data`', ':data')
                 ->setParameter(':data', $this->compress($this->data));
         }
 
-        if(!is_null($this->plan)){
+        if (!is_null($this->plan)) {
             $update_session_query
-                ->set('`plan`',':plan')
+                ->set('`plan`', ':plan')
                 ->setParameter(':plan', $this->plan);
         }
 
-        if(!is_null($this->deposit)){
+        if (!is_null($this->deposit)) {
             $update_session_query
-                ->set('`deposit`',':deposit')
+                ->set('`deposit`', ':deposit')
                 ->setParameter(':deposit', $this->deposit);
         }
 
-        if(!is_null($this->ip_address)){
+        if (!is_null($this->ip_address)) {
             $update_session_query
-                ->set('`ip_address`',':ip_address')
+                ->set('`ip_address`', ':ip_address')
                 ->setParameter(':ip_address', $this->ip_address);
         }
 
-        if(!is_null($this->created_on)){
+        if (!is_null($this->created_on) ) {
             $update_session_query
-                ->set('`created_on`',':created_on')
+                ->set('`created_on`', ':created_on')
                 ->setParameter(':created_on', $this->created_on);
         }
 
@@ -400,9 +441,10 @@ class Session extends ModelEntity
      * 
      * @param string $device The type of device used when making this request
      * 
-     * @return orderNumber (string) The order number of the new Order stored in s_order
+     * @return orderNumber (string) The number of the new Order stored in s_order
      */
-    public function createOrder($device=''){
+    public function createOrder($device='')
+    {
         $session = $this->getData();
         $basket = $session['sBasket'];
         $order = Shopware()->Modules()->Order();
@@ -410,8 +452,8 @@ class Session extends ModelEntity
         $order->sComment = "";
         $order->sBasketData = $basket;
         $order->sAmount = $basket['sAmount'];
-        $order->sAmountWithTax = 
-            !empty($basket['AmountWithTaxNumeric']) ? $basket['AmountWithTaxNumeric'] : $basket['AmountNumeric'];
+        $order->sAmountWithTax 
+            = !empty($basket['AmountWithTaxNumeric']) ? $basket['AmountWithTaxNumeric'] : $basket['AmountNumeric'];
         $order->sAmountNet = $basket['AmountNetNumeric'];
         $order->sShippingcosts = $basket['sShippingcosts'];
         $order->sShippingcostsNumeric = $basket['sShippingcostsWithTax'];
@@ -425,40 +467,78 @@ class Session extends ModelEntity
         return $order;
     }
 
-    public static function delete($connection, $where){
+    /**
+     * Delete sessions based on an array of parameters
+     *
+     * @param connection $connection Open DBAL DB connection
+     * @param array      $where      Array of sessions to match
+     * 
+     * @return void
+     */
+    public static function delete($connection, $where)
+    {
         $del_session_query = $connection->createQueryBuilder();
-        $del_session_query->delete(self::session_table)->where("`id`='{$where['id']}'");
+        $del_session_query
+            ->delete(self::SESSION_TABLE)
+            ->where("`id`='{$where['id']}'");
         
-        foreach($where as $key => $value)
-            $del_session_query->where("{$key} = :{$key}")->setParameter(":{$key}",$value);
-        
+        foreach ($where as $key => $value) {
+            $del_session_query
+                ->where("{$key} = :{$key}")
+                ->setParameter(":{$key}", $value);
+        }
+
         return $del_session_query->execute();
     }
 
-    public static function findSessions($criteria,$connection){
+    /**
+     * Find a session based on an array of parameters
+     *
+     * @param array      $criteria   The search criteria
+     * @param connection $connection An open DBAL DB connection
+     * 
+     * @return void
+     */
+    public static function findSessions($criteria, $connection)
+    {
         $find_session_query = $connection->createQueryBuilder();
-        $find_session_query->select(self::session_table);
+        $find_session_query->select(self::SESSION_TABLE);
         
-        foreach($criteria as $key=>$value)
-            $find_session_query->where("`{$key}`= :{$key}")->setParameter(":{$key}",$value);
-        
+        foreach ($criteria as $key=>$value) {
+            $find_session_query
+                ->where("`{$key}`= :{$key}")
+                ->setParameter(":{$key}", $value);
+        }
+
         $find_session_query->execute();
         return $find_session_query->fetch_all();
     }
 
-    public static function updateByReference($connection, $session, $reference_key){
-        if(!isset($session[$reference_key])){
-            Helper::Debug('Could not update session: Reference key not set or does not exist');
+    /**
+     * Update a session based on it's reference key
+     *
+     * @param connection $connection    Open DBAL DB connection
+     * @param array      $session       The updated parameters
+     * @param string     $reference_key The unique key within the session array
+     * 
+     * @return void
+     */
+    public static function updateByReference($connection, $session, $reference_key)
+    {
+        if (!isset($session[$reference_key])) {
+            Helper::Debug(
+                'Could not update session: Reference key not set or does not exist'
+            );
             return false;
         }
         $update_session_query = $connection->createQueryBuilder();
-        $update_session_query->update(self::session_table);
+        $update_session_query->update(self::SESSION_TABLE);
 
-        foreach($session as $key=>$value){
-            if($key == $reference_key){
+        foreach ($session as $key=>$value) {
+            if ($key == $reference_key) {
                 $update_session_query->where("`$key` = :$key");
-            }else{
-                $update_session_query->set("`$key`",":$key");
+            } else {
+                $update_session_query->set("`$key`", ":$key");
             }
             $update_session_query->setParameter(":$key", $value);
         }
@@ -469,16 +549,21 @@ class Session extends ModelEntity
     /**
      * Wrapper function to overwrite if you wanted to,
      * say json_encode the data instead
+     *
+     * @param array $data Array of data to compress
+     * 
+     * @return string
      */
-    protected function compress($data){
-        switch(self::compression_method){
-            case 'JSON':
-                $return = json_encode($data);
-                break;
-            case 'SERIAL':
-            default:
-                $return = serialize($data);
-                break;
+    protected function compress($data) 
+    {
+        switch(self::COMPRESSION_METHOD){
+        case 'JSON':
+            $return = json_encode($data);
+            break;
+        case 'SERIAL':
+        default:
+            $return = serialize($data);
+            break;
         }
         return $return;
     }
@@ -486,16 +571,21 @@ class Session extends ModelEntity
     /**
      * Wrapper function to overwrite if you wanted to,
      * say json_unencode the data instead
+     *
+     * @param string $data Data to uncompress
+     * 
+     * @return void
      */
-    protected function decompress($data){
-        switch(self::compression_method){
-            case 'JSON':
-                $return = json_decode($data);
-                break;
-            case 'SERIAL':
-            default:
-                $return = unserialize($data);
-                break;
+    protected function decompress($data)
+    {
+        switch(self::COMPRESSION_METHOD){
+        case 'JSON':
+            $return = json_decode($data);
+            break;
+        case 'SERIAL':
+        default:
+            $return = unserialize($data);
+            break;
         }
         return $return;
     }

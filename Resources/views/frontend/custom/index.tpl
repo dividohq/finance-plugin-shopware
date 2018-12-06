@@ -7,15 +7,14 @@
     var dividoKey = "{$apiKey}";
 </script>
 <style>
-.dividoCalcWidget{
+#calcWidget{
     display:none;
 }
 </style>
 <script src="http://cdn.divido.com/calculator/v2.1/production/js/template.divido.js"></script>
 
-<div class="dividoCalcWidget"
+<div id="calcWidget"
               data-divido-widget
-              data-divido-title-logo
               data-divido-amount="2000"
               data-divido-plans
               data-divido-logo
@@ -24,12 +23,12 @@
 </div>
 {literal}
 <script>
-var mainCalcWidget = document.getElementsByClassName('dividoCalcWidget')[0];
+var mainCalcWidget = document.getElementById('calcWidget');
 var inputs = document.getElementsByClassName('finance-calculator');
 for(let k = 0; k < inputs.length; k++){
     let input = inputs[k];
     var calcWidget = mainCalcWidget.cloneNode(true);
-    calcWidget.setAttribute('id','dividoCalc'+k);
+    calcWidget.setAttribute('id','financeCalc'+k);
     calcWidget.style.display = 'block';
     input.parentNode.insertBefore(calcWidget, input.nextSibling);
     input.value = calcWidget.getAttribute('data-divido-amount');

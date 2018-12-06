@@ -100,6 +100,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function directAction()
     {
+        ini_set('display_errors', 1);
         Helper::debug('Direct Action', 'info');
         
         $service = $this->container->get('finance_plugin.payment_service');
