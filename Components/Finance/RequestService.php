@@ -64,17 +64,18 @@ class RequestService
      * Search through basket for all products
      *
      * @param array $basket Array of products
+     * @param float $shipping float value of shipping cost
      * 
      * @return array
      */
-    public static function setOrderItemsFromBasket(array $basket)
+    public static function setOrderItemsFromBasket(array $basket, float $shipping = 0)
     {
         $productsArray = array();
         foreach ($basket['content'] as $id => $product) {
             $row = [
                 'name' => $product['articlename'],
                 'quantity' => intval($product['quantity']),
-                'price' => $product['price']*100,
+                'price' => $product['priceNumeric']*100,
             ];
             if ('0' == $product['modus']) {
                 $row['plans']
@@ -82,6 +83,14 @@ class RequestService
                         ->get('finance_plans');
             }
             $productsArray[] = $row;
+        }
+        if($shipping > 0){
+            $shipping_row = [
+                'name' => 'Shipping',
+                'quantity' => 1,
+                'price' => $shipping*100
+            ];
+            $productsArray[] = $shipping_row;
         }
 
         return $productsArray;
@@ -132,8 +141,8 @@ class RequestService
                 ->withFinancePlanId($request->getFinancePlanId())
                 ->withApplicants($request->getApplicants())
                 ->withOrderItems($request->getOrderItems())
-                //->withDepositPercentage($request->getDepositPercentage())
-                ->withDepositAmount($request->getDepositAmount())
+                ->withDepositPercentage($request->getDepositPercentage())
+                //->withDepositAmount($request->getDepositAmount())
                 ->withFinalisationRequired($request->getFinalisationRequired())
                 ->withMerchantReference($request->getMerchantReference())
                 ->withUrls($request->getUrls());

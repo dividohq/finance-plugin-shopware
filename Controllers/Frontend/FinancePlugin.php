@@ -121,7 +121,6 @@ class Shopware_Controllers_Frontend_FinancePlugin
             FILTER_SANITIZE_EMAIL
         );
         
-
         $deposit = (empty($deposit_percentage))
             ? 0
             : Helper::getDepositAmount(
@@ -177,8 +176,9 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $request->setCurrencyId($basket['sCurrencyName']);
         $request->setApplicants(RequestService::setApplicantsFromUser($user));
         $request->setLanguageId(RequestService::getLanguageId());
-        $request->setOrderItems(RequestService::setOrderItemsFromBasket($basket));
-        $request->setDepositAmount($deposit*100);
+        $order_items = RequestService::setOrderItemsFromBasket($basket, $this->getShipment());
+        $request->setOrderItems($order_items);
+        //$request->setDepositAmount($deposit*100);
         $request->setDepositPercentage($deposit_percentage/100);
         $request->setUrls(
             [
@@ -308,6 +308,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
                     $customer_number 
                         = $data['sUserData']['additional']['user']['customernumber'];
                     $amount = $data['sBasket']['sAmount'];
+                    
                     /*
                     /   If response token matches the information in the session 
                     /   $service = /Components/Finance/PaymentService.php 

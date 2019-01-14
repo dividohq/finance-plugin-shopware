@@ -222,11 +222,11 @@ class Request
     /**
      * Set decimal value of deposit
      *
-     * @param decimal $depositPercentage New deposit decimal
+     * @param float $depositPercentage New deposit decimal
      * 
      * @return void
      */
-    public function setDepositPercentage($depositPercentage)
+    public function setDepositPercentage(float $depositPercentage)
     {
         $this->_depositPercentage = $depositPercentage;
     }
@@ -234,9 +234,9 @@ class Request
     /**
      * Get the Deposit Percentage
      *
-     * @return decimal
+     * @return float
      */
-    public function getDepositPercentage():decimal
+    public function getDepositPercentage():float
     {
         return $this->_depositPercentage;
     }
@@ -244,11 +244,11 @@ class Request
     /**
      * Set whether finalisation is required
      *
-     * @param boolean $finalisationRequired Finalisation Required?
+     * @param bool $finalisationRequired Finalisation Required?
      * 
      * @return void
      */
-    public function setFinalisationRequired($finalisationRequired)
+    public function setFinalisationRequired(bool $finalisationRequired)
     {
         $this->_finalisationRequired = $finalisationRequired;
     }
@@ -256,9 +256,9 @@ class Request
     /**
      * Get whether Finalisation is required
      *
-     * @return boolean
+     * @return bool
      */
-    public function getFinalisationRequired()
+    public function getFinalisationRequired():bool
     {
         return $this->_finalisationRequired;
     }
