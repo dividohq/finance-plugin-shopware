@@ -192,7 +192,7 @@ class Session extends ModelEntity
     {
         $session_data = Shopware()->Session()->sOrderVariables;
         $data = [];
-        foreach ($this->retained_session_keys as $key) {
+        foreach ($this->_retained_session_keys as $key) {
             if(isset($session_data[$key]))
                $data[$key] = $session_data[$key];
         }
