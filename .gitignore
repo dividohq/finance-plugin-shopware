@@ -1,4 +1,9 @@
 .DS_Store
 composer.lock
 phpunit.xml.dist
-vendor
+vendor/phpunit
+vendor/bin
+vendor/composer
+vendor/squizlabs
+vendor/mockery
+vendor/phpdocumentor

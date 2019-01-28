@@ -43,6 +43,8 @@ class TemplateRegistration implements SubscriberInterface
     ) {
         $this->_pluginDirectory = $pluginDirectory;
         $this->_templateManager = $templateManager;
+
+        require_once($pluginDirectory.'/vendor/autoload.php');
     }
 
     /**
@@ -85,6 +87,7 @@ class TemplateRegistration implements SubscriberInterface
      */
     public function onPostDispatchSecure(\Enlight_Controller_ActionEventArgs $args)
     {
+        ini_set('display_errors',1);
         $controller = $args->get('subject');
         $view = $controller->View();
         

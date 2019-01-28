@@ -1,7 +1,8 @@
 {
     "require": {
         "php": ">=7",
-        "divido/merchant-sdk":"dev-master"
+        "divido/merchant-sdk":"v2.0.0",
+        "divido/merchant-sdk-guzzle-6": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^5",
@@ -10,8 +11,13 @@
     "repositories": [
         {
             "type":"vcs",
-            "url": "git@github.com:DividoFinancialServices/php-merchant-sdk.git"
-       }
+            "url": "git@github.com:dividohq/merchant-api-pub-sdk-php.git"
+        }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Shopware\\Plugins\\FinancePlugin\\" : "src/"
+        }
+    }
 }

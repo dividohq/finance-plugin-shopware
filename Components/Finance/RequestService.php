@@ -117,11 +117,21 @@ class RequestService
     public static function makeRequest(\FinancePlugin\Models\Request $request)
     {
         $apiKey = Helper::getApiKey();
-        $environment = Helper::GetEnvironment($apiKey);
+
+        $environment = Helper::getEnvironment($apiKey);
         
         if ($environment) {
+            $httpClient = new \GuzzleHttp\Client();
+    
+            $guzzleClient = new \Divido\MerchantSDKGuzzle6\GuzzleAdapter($httpClient);
+
+            $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper($guzzleClient,
+                \Divido\MerchantSDK\Environment::CONFIGURATION[$environment]['base_uri'],
+                $apiKey
+            );
+    
             $sdk = new Client(
-                $apiKey,
+                $httpClientWrapper,
                 $environment
             );
 

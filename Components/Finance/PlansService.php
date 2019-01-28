@@ -7,8 +7,6 @@
 
 namespace FinancePlugin\Components\Finance;
 
-require_once __DIR__ . '../../../vendor/autoload.php';
-
 use FinancePlugin\Models\Plan;
 use Divido\MerchantSDK\Client;
 use Divido\MerchantSDK\Environment;
@@ -72,11 +70,20 @@ class PlansService
     public static function getPlansFromSDK(string $apiKey):PlansResponse
     {
         $environment = Helper::getEnvironment($apiKey);
-        
+
+        $httpClient = new \GuzzleHttp\Client();
+        $guzzleClient = new \Divido\MerchantSDKGuzzle6\GuzzleAdapter($httpClient);
+
+        $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper($guzzleClient,
+            \Divido\MerchantSDK\Environment::CONFIGURATION[$environment]['base_uri'],
+            $apiKey
+        );
+
         $sdk = new Client(
-            $apiKey,
+            $httpClientWrapper,
             $environment
         );
+        
         $requestOptions = (new ApiRequestOptions());
         // Retrieve all finance plans for the merchant.
         try{
