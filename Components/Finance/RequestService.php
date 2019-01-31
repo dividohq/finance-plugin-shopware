@@ -142,13 +142,17 @@ class RequestService
                 ->withFinancePlanId($request->getFinancePlanId())
                 ->withApplicants($request->getApplicants())
                 ->withOrderItems($request->getOrderItems())
-                //->withDepositPercentage($request->getDepositPercentage())
-                ->withDepositAmount($request->getDepositAmount())
+                ->withDepositPercentage($request->getDepositPercentage())
+                //->withDepositAmount($request->getDepositAmount())
                 ->withFinalisationRequired($request->getFinalisationRequired())
                 ->withMerchantReference($request->getMerchantReference())
                 ->withUrls($request->getUrls());
 
-            $response = $sdk->applications()->createApplication($application);
+            $response = $sdk->applications()->createApplication(
+                $application,
+            [],
+            ['Content-Type' => 'application/json']
+        );
 
             $applicationResponseBody = $response->getBody()->getContents();
             

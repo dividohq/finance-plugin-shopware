@@ -236,7 +236,7 @@ class Request
      *
      * @return decimal
      */
-    public function getDepositPercentage():decimal
+    public function getDepositPercentage()
     {
         return $this->_depositPercentage;
     }
