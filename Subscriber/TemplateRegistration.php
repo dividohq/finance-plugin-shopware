@@ -87,7 +87,6 @@ class TemplateRegistration implements SubscriberInterface
      */
     public function onPostDispatchSecure(\Enlight_Controller_ActionEventArgs $args)
     {
-        ini_set('display_errors',1);
         $controller = $args->get('subject');
         $view = $controller->View();
         
