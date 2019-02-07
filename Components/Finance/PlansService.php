@@ -72,7 +72,7 @@ class PlansService
         $environment = Helper::getEnvironment($apiKey);
 
         $httpClient = new \GuzzleHttp\Client();
-        $guzzleClient = new \Divido\MerchantSDKGuzzle6\GuzzleAdapter($httpClient);
+        $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
 
         $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper($guzzleClient,
             \Divido\MerchantSDK\Environment::CONFIGURATION[$environment]['base_uri'],

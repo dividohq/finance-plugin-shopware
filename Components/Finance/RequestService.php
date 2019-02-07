@@ -123,7 +123,7 @@ class RequestService
         if ($environment) {
             $httpClient = new \GuzzleHttp\Client();
     
-            $guzzleClient = new \Divido\MerchantSDKGuzzle6\GuzzleAdapter($httpClient);
+            $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
 
             $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper($guzzleClient,
                 \Divido\MerchantSDK\Environment::CONFIGURATION[$environment]['base_uri'],
@@ -143,7 +143,6 @@ class RequestService
                 ->withApplicants($request->getApplicants())
                 ->withOrderItems($request->getOrderItems())
                 ->withDepositPercentage($request->getDepositPercentage())
-                //->withDepositAmount($request->getDepositAmount())
                 ->withFinalisationRequired($request->getFinalisationRequired())
                 ->withMerchantReference($request->getMerchantReference())
                 ->withUrls($request->getUrls());
