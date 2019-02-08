@@ -5,8 +5,6 @@
  * PHP version 7.1
  */
 
-require_once __DIR__ . '../../../vendor/autoload.php';
-
 use FinancePlugin\Components\Finance\PaymentService;
 use FinancePlugin\Components\Finance\RequestService;
 use FinancePlugin\Components\Finance\PlansService;
@@ -39,7 +37,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
               = 'This order is still waiting to receive payment confirmation. 
           It may just be the case that the confirmation hasn\'t quite 
           arrived yet. Please give it a couple of seconds and refresh 
-          this page. If the problem persists place contact the merchant.',
+          this page. Please contact the merchant if the problem persists.',
           ORDER_CREATION_ERROR_MSG = 'Could not create order.',
           INVALID_TOKEN_ERROR_MSG = 'Invalid token.',
           NO_RESPONSE_ERROR_MSG = 'Received response did not include status.';
@@ -76,6 +74,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $this->get('template')->addTemplateDir(
             $plugin->getPath() . '/Resources/views/'
         );
+
+        require_once($plugin->getPath().'/vendor/autoload.php');
     }
 
     /**
@@ -200,7 +200,6 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $this->forward('cancel');
         } else {
             $payload = $response->data;
-
             $session->setTransactionID($payload->id);
             $session->update($connection);
             

@@ -117,11 +117,21 @@ class RequestService
     public static function makeRequest(\FinancePlugin\Models\Request $request)
     {
         $apiKey = Helper::getApiKey();
-        $environment = Helper::GetEnvironment($apiKey);
+
+        $environment = Helper::getEnvironment($apiKey);
         
         if ($environment) {
+            $httpClient = new \GuzzleHttp\Client();
+    
+            $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
+
+            $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper($guzzleClient,
+                \Divido\MerchantSDK\Environment::CONFIGURATION[$environment]['base_uri'],
+                $apiKey
+            );
+    
             $sdk = new Client(
-                $apiKey,
+                $httpClientWrapper,
                 $environment
             );
 
@@ -132,13 +142,16 @@ class RequestService
                 ->withFinancePlanId($request->getFinancePlanId())
                 ->withApplicants($request->getApplicants())
                 ->withOrderItems($request->getOrderItems())
-                //->withDepositPercentage($request->getDepositPercentage())
-                ->withDepositAmount($request->getDepositAmount())
+                ->withDepositPercentage($request->getDepositPercentage())
                 ->withFinalisationRequired($request->getFinalisationRequired())
                 ->withMerchantReference($request->getMerchantReference())
                 ->withUrls($request->getUrls());
 
-            $response = $sdk->applications()->createApplication($application);
+            $response = $sdk->applications()->createApplication(
+                $application,
+            [],
+            ['Content-Type' => 'application/json']
+        );
 
             $applicationResponseBody = $response->getBody()->getContents();
             

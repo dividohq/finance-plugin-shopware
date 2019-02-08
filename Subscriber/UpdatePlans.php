@@ -35,6 +35,8 @@ class UpdatePlans implements SubscriberInterface
     public function __construct($pluginDirectory)
     {
         $this->_pluginDirectory = $pluginDirectory;
+        
+        require_once($pluginDirectory.'/vendor/autoload.php');
     }
 
     /**

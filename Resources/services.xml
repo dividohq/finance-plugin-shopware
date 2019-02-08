@@ -15,6 +15,7 @@
         </service>
         <service id="finance_plugin.plans_service"
                  class="FinancePlugin\Components\Finance\PlansService">
+            <argument>%finance_plugin.plugin_dir%</argument>
         </service>
         <!-- Register TemplateRegistration subscriber -->
         <service id="finance_plugin.subscriber.template_registration" class="FinancePlugin\Subscriber\TemplateRegistration">

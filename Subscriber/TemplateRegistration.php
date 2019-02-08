@@ -43,6 +43,8 @@ class TemplateRegistration implements SubscriberInterface
     ) {
         $this->_pluginDirectory = $pluginDirectory;
         $this->_templateManager = $templateManager;
+
+        require_once($pluginDirectory.'/vendor/autoload.php');
     }
 
     /**
