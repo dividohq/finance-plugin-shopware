@@ -31,7 +31,7 @@ class SDKErrorHandler
         switch ($e->getCode()) {
         case self::UNAUTHORISED:
             $error_message
-                = "The API Key seems to bee invalid. Please go to the plugins
+                = "The API Key seems to be invalid. Please go to the plugins
                 config page and double check the information is correct.";
             break;
         default:
