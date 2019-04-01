@@ -5,21 +5,21 @@
       <h2>{$title}</h2>
       <p>{$description}</p>
       <script> 
-        var dividoKey = "{$apiKey}";
+        var {$env}Key = "{$apiKey}";
       </script>
-      <script src="https://cdn.divido.com/calculator/v2.1/production/js/template.divido.js"></script>
+      <script src="https://cdn.divido.com/calculator/v2.1/production/js/template.{$env}.js"></script>
     
       {if $displayForm}
       <form id="financePluginForm" action="{url controller='FinancePlugin' action='direct'}" method="post" >
         <div
-          data-divido-widget
-          data-divido-prefix="{$prefix}"
-          data-divido-suffix="{$suffix}"
-          data-divido-title-logo
-          data-divido-amount="{$amount}"
-          data-divido-apply="true"
-          data-divido-apply-label="Apply Now"
-          data-divido-plans="{$basket_plans}"
+          data-{$env}-widget
+          data-{$env}-prefix="{$prefix}"
+          data-{$env}-suffix="{$suffix}"
+          data-{$env}-title-logo
+          data-{$env}-amount="{$amount}"
+          data-{$env}-apply="true"
+          data-{$env}-apply-label="Apply Now"
+          data-{$env}-plans="{$basket_plans}"
           >
         </div>
         <button id="finance-plugin-submit-button" type="submit"

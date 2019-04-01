@@ -14,7 +14,6 @@ use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Models\Payment\Payment;
-use FinancePlugin\Components\Finance\PlansService;
 
 /**
  * Finance Plugin
@@ -77,9 +76,10 @@ class FinancePlugin extends Plugin
         $em = $this->container->get('models');
         $schemaTool = new SchemaTool($em);
         $schemaTool->updateSchema(
-            [ 
-                $em->getClassMetadata(\FinancePlugin\Models\Plan::class), 
-                $em->getClassMetadata(\FinancePlugin\Models\Session::class) 
+            [
+                $em->getClassMetadata(\FinancePlugin\Models\Plan::class),
+                $em->getClassMetadata(\FinancePlugin\Models\Session::class),
+                $em->getClassMetadata(\FinancePlugin\Models\Environment::class),
             ],
             true
         );

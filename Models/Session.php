@@ -1,9 +1,9 @@
 <?php
 /**
  * File for the Session class
- * 
+ *
  * PHP version 5.6
- * 
+ *
  */
 
 namespace FinancePlugin\Models;
@@ -34,7 +34,7 @@ class Session extends ModelEntity
      * @ORM\Column(type="integer", length=10, nullable=true)
      */
     private $orderNumber;
-    
+
     /**
      * @var integer $status
      *
@@ -185,7 +185,7 @@ class Session extends ModelEntity
 
     /**
      * Set session based on Shopwares saved variables
-     * 
+     *
      * @return void
      */
     public function setDataFromShopwareSession()
@@ -230,7 +230,7 @@ class Session extends ModelEntity
     {
         $this->created_on = $created_on;
     }
-    
+
     /**
      * @return int
      */
@@ -273,9 +273,9 @@ class Session extends ModelEntity
 
     /**
      * Set the Plan variable
-     * 
-     * @param string $plan 
-     * 
+     *
+     * @param string $plan
+     *
      * @return void
      */
     public function setPlan($plan)
@@ -287,16 +287,16 @@ class Session extends ModelEntity
     /**
      * Retrieve session from database via session id
      * and set the class variables accordingly
-     * 
+     *
      * @param string     $id         The session ID
      * @param connection $connection An open DBAL DB connection
-     * 
+     *
      * @return boolean
      */
     public function retrieveFromDb($id, $connection)
     {
         $get_session_query = $connection->createQueryBuilder();
-        $session_sql 
+        $session_sql
             = "SELECT * FROM `".self::SESSION_TABLE."` WHERE `id`= :id LIMIT 1";
         $session = $connection->fetchAll($session_sql, [':id' => $id]);
         if (isset($session[0])) {
@@ -311,21 +311,21 @@ class Session extends ModelEntity
             $this->created_on = $session[0]['created_on'];
             $this->status = $session[0]['status'];
             return true;
-        }else return false;
+        } else return false;
     }
 
     /**
      * Store a session based on the class variables
      *
      * @param connection $connection An open DBAL DB query
-     * 
+     *
      * @return string
      */
-    public function store($connection) 
+    public function store($connection)
     {
-        $ip_address 
-            = (!empty($this->ip_address)) 
-            ? $this->ip_address 
+        $ip_address
+            = (!empty($this->ip_address))
+            ? $this->ip_address
             : $_SERVER['REMOTE_ADDR'] ;
 
         $add_session_query = $connection->createQueryBuilder();
@@ -350,11 +350,11 @@ class Session extends ModelEntity
             ->setParameter(6, $this->deposit)
             ->setParameter(7, $ip_address)
             ->setParameter(8, $created_on);
-        
+
         $add_session_query->execute();
 
         $this->id = $connection->lastInsertId();
-        
+
         return $this->id;
     }
 
@@ -362,10 +362,10 @@ class Session extends ModelEntity
      * Update the session based on the class varaibles
      *
      * @param connection $connection An open DBAL DB connection
-     * 
+     *
      * @return void
      */
-    public function update($connection) 
+    public function update($connection)
     {
         if (!isset($this->id)) {
             Helper::Debug('Could not update session: No unique id to reference');
@@ -374,7 +374,7 @@ class Session extends ModelEntity
 
         $update_session_query = $connection->createQueryBuilder();
         $update_session_query->update(self::SESSION_TABLE);
-        
+
         if (!is_null($this->orderNumber)) {
             $update_session_query
                 ->set('`orderNumber`', ':orderNumber')
@@ -432,15 +432,15 @@ class Session extends ModelEntity
         $update_session_query
             ->where('`id` = :id')
             ->setParameter(':id', $this->id);
-        
+
         return $update_session_query->execute();
     }
 
     /**
      * Generate an order based on the session data stored in the session table
-     * 
+     *
      * @param string $device The type of device used when making this request
-     * 
+     *
      * @return orderNumber (string) The number of the new Order stored in s_order
      */
     public function createOrder($device='')
@@ -452,7 +452,7 @@ class Session extends ModelEntity
         $order->sComment = "";
         $order->sBasketData = $basket;
         $order->sAmount = $basket['sAmount'];
-        $order->sAmountWithTax 
+        $order->sAmountWithTax
             = !empty($basket['AmountWithTaxNumeric']) ? $basket['AmountWithTaxNumeric'] : $basket['AmountNumeric'];
         $order->sAmountNet = $basket['AmountNetNumeric'];
         $order->sShippingcosts = $basket['sShippingcosts'];
@@ -463,7 +463,7 @@ class Session extends ModelEntity
         $order->sNet = empty($session['sUserData']['additional']['charge_vat']);
         $order->uniqueID = $this->getKey();
         $order->deviceType = $device;
-        
+
         return $order;
     }
 
@@ -472,7 +472,7 @@ class Session extends ModelEntity
      *
      * @param connection $connection Open DBAL DB connection
      * @param array      $where      Array of sessions to match
-     * 
+     *
      * @return void
      */
     public static function delete($connection, $where)
@@ -481,7 +481,7 @@ class Session extends ModelEntity
         $del_session_query
             ->delete(self::SESSION_TABLE)
             ->where("`id`='{$where['id']}'");
-        
+
         foreach ($where as $key => $value) {
             $del_session_query
                 ->where("{$key} = :{$key}")
@@ -496,14 +496,14 @@ class Session extends ModelEntity
      *
      * @param array      $criteria   The search criteria
      * @param connection $connection An open DBAL DB connection
-     * 
+     *
      * @return void
      */
     public static function findSessions($criteria, $connection)
     {
         $find_session_query = $connection->createQueryBuilder();
         $find_session_query->select(self::SESSION_TABLE);
-        
+
         foreach ($criteria as $key=>$value) {
             $find_session_query
                 ->where("`{$key}`= :{$key}")
@@ -520,7 +520,7 @@ class Session extends ModelEntity
      * @param connection $connection    Open DBAL DB connection
      * @param array      $session       The updated parameters
      * @param string     $reference_key The unique key within the session array
-     * 
+     *
      * @return void
      */
     public static function updateByReference($connection, $session, $reference_key)
@@ -551,10 +551,10 @@ class Session extends ModelEntity
      * say json_encode the data instead
      *
      * @param array $data Array of data to compress
-     * 
+     *
      * @return string
      */
-    protected function compress($data) 
+    protected function compress($data)
     {
         switch(self::COMPRESSION_METHOD){
         case 'JSON':
@@ -573,7 +573,7 @@ class Session extends ModelEntity
      * say json_unencode the data instead
      *
      * @param string $data Data to uncompress
-     * 
+     *
      * @return void
      */
     protected function decompress($data)

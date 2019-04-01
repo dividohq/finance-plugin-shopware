@@ -1,7 +1,7 @@
 <?php
 /**
  * File for TemplateRegistration class
- * 
+ *
  * PHP version 7.1
  */
 
@@ -10,6 +10,7 @@ namespace FinancePlugin\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use FinancePlugin\Components\Finance\PaymentService;
 use FinancePlugin\Components\Finance\PlansService;
+use FinancePlugin\Components\Finance\EnvironmentService;
 use FinancePlugin\Components\Finance\Helper;
 
 /**
@@ -33,14 +34,15 @@ class TemplateRegistration implements SubscriberInterface
 
     /**
      * Constructor function
-     * 
+     *
      * @param string                    $pluginDirectory The plugin directory
      * @param \Enlight_Template_Manager $templateManager The Template Manager
      */
     public function __construct(
-        $pluginDirectory, 
+        $pluginDirectory,
         \Enlight_Template_Manager $templateManager
     ) {
+        ini_set('display_errors',1);
         $this->_pluginDirectory = $pluginDirectory;
         $this->_templateManager = $templateManager;
 
@@ -49,15 +51,15 @@ class TemplateRegistration implements SubscriberInterface
 
     /**
      * {@inheritdoc}
-     * 
+     *
      * @return array
      */
     public static function getSubscribedEvents()
     {
         return [
-            'Enlight_Controller_Action_PreDispatch_Frontend' 
+            'Enlight_Controller_Action_PreDispatch_Frontend'
                 => 'onPreDispatch',
-            'Enlight_Controller_Action_PostDispatchSecure_Frontend' 
+            'Enlight_Controller_Action_PostDispatchSecure_Frontend'
                 => 'onPostDispatchSecure',
         ];
     }
@@ -66,7 +68,7 @@ class TemplateRegistration implements SubscriberInterface
      * Class run before dispatch
      *
      * @param \Enlight_Controller_ActionEventArgs $args Arguments
-     * 
+     *
      * @return void
      */
     public function onPreDispatch(\Enlight_Controller_ActionEventArgs $args)
@@ -82,49 +84,69 @@ class TemplateRegistration implements SubscriberInterface
      * Class run after dispatch
      *
      * @param \Enlight_Controller_ActionEventArgs $args Arguments
-     * 
+     *
      * @return void
      */
     public function onPostDispatchSecure(\Enlight_Controller_ActionEventArgs $args)
     {
         $controller = $args->get('subject');
         $view = $controller->View();
-        
+
         if ($controller->Request()->getActionName() == 'index') {
             $product = $view->sArticle;
 
             $config = Helper::getConfig();
-            
+
             $apiKey = Helper::getApiKey();
             $key = preg_split("/\./", $apiKey);
             $view->assign('apiKey', $key[0]);
 
+            /*
+            $environment = EnvironmentService::retrieveEnvironmentFromDbByPluginId(1);
+            if($environment) {
+                $env = $environment->getEnvironment();
+            }
+
+            if(!isset($env)) {
+                $environmentResponse = EnvironmentService::getEnvironmentFromSDK($apiKey);
+                if($environment->getError() == false) {
+                    $environment = EnvironmentService::constructEnvironmentFromResponse($environmentResponse);
+                    $env = $environment->getEnvironment();
+                }
+            }
+            */
+            if(!isset($env)) $env = 'divido';
+
+            // Get environment from the database instead
+
+            $view->assign('env', $env);
+
             $show_widget = false;
             if ($config['Show Widget']) {
-               
-                $min_product_amount 
-                    = (isset($config['Widget Minimum'])) 
-                    ? $config['Widget Minimum']*100 
+
+                $min_product_amount
+                    = (isset($config['Widget Minimum']))
+                    ? $config['Widget Minimum']*100
                     : 0;
-                
+
                 $product_price = filter_var(
-                    $product['price'], 
+                    $product['price'],
                     FILTER_SANITIZE_NUMBER_INT
                 );
 
                 if ($product_price > $min_product_amount) {
-                    
+
                     $view->assign('plans', implode(",", $plans_ids));
 
-                    $suffix 
-                        = ($config['Widget Suffix']) 
-                        ? strip_tags($config['Widget Suffix']) 
+                    $suffix
+                        = ($config['Widget Suffix'])
+                        ? strip_tags($config['Widget Suffix'])
                         : "";
                     $view->assign('suffix', $suffix);
 
-                    $prefix 
-                        = ($config['Widget Prefix']) 
-                        ? strip_tags($config['Widget Prefix']) 
+                    $prefix
+                        = ($config['Widget Prefix'])
+                        ? strip_tags($config['Widget Prefix'])
                         : "";
                     $view->assign('prefix', $prefix);
 
@@ -143,7 +165,7 @@ class TemplateRegistration implements SubscriberInterface
                                 $show_widget = true;
                             }
                         } else $show_widget = true;
-                        
+
                         foreach ($plans as $plan) $plans_ids[] = $plan->getId();
                     } else $show_widget = true;
 

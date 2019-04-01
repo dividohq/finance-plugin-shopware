@@ -1,7 +1,7 @@
 <?php
 /**
  * File for the UpdatePlans class
- * 
+ *
  * PHP version 5.6
  */
 
@@ -10,7 +10,9 @@ namespace FinancePlugin\Subscriber;
 use Enlight\Event\SubscriberInterface;
 use FinancePlugin\Models\Plan;
 use FinancePlugin\Components\Finance\PlansService;
+use FinancePlugin\Components\Finance\EnvironmentService;
 use FinancePlugin\Components\Finance\Helper;
+use \Shopware_Components_Config;
 
 /**
  * Backend listener which updates plans when the merchant heads
@@ -20,22 +22,22 @@ class UpdatePlans implements SubscriberInterface
 {
     /**
      * The directory of the plugin
-     * 
+     *
      * @var string
      */
     private $_pluginDirectory;
 
     /**
      * Class constructor
-     * 
+     *
      * @param string $pluginDirectory The plugin location
-     * 
+     *
      * @return void;
      */
     public function __construct($pluginDirectory)
     {
         $this->_pluginDirectory = $pluginDirectory;
-        
+
         require_once($pluginDirectory.'/vendor/autoload.php');
     }
 
@@ -56,7 +58,7 @@ class UpdatePlans implements SubscriberInterface
      * Set plans if we are in the index
      *
      * @param \Enlight_Event_EventArgs $args Arguments
-     * 
+     *
      * @return void
      */
     public function onArticlePostDispatch(\Enlight_Event_EventArgs $args)
@@ -64,7 +66,7 @@ class UpdatePlans implements SubscriberInterface
         $controller = $args->getSubject();
 
         $request = $controller->Request();
-        
+
         if ($request->getActionName() == 'index') {
             $apiKey = Helper::getApiKey();
             $view = $controller->View();
@@ -74,14 +76,15 @@ class UpdatePlans implements SubscriberInterface
                 if (empty($plans)) {
                     $this->_refreshPlans($apiKey, $view);
                 }
+
             } else {
                 $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
                 $view->extendsTemplate('backend/fp_extend_config/view/');
-                $view->assign(
-                    ['success' => false, 
-                    'message'  => 'API key not entered. You will not be 
-                    able to use this plugin as a payment method']
-                );
+                $view->assign([
+                    'success' => false,
+                    'message'  =>   'API key not entered. You will not be
+                                    able to use this plugin as a payment method'
+                ]);
             }
         }
     }
@@ -90,11 +93,12 @@ class UpdatePlans implements SubscriberInterface
      * Remove plans if config updated
      *
      * @param \Enlight_Event_EventArgs $args Arguments
-     * 
+     *
      * @return void
      */
     public function onConfigPostDispatch(\Enlight_Event_EventArgs $args)
     {
+        Helper::log('Updating Config', 'info');
         $controller = $args->getSubject();
 
         $request = $controller->Request();
@@ -102,7 +106,10 @@ class UpdatePlans implements SubscriberInterface
         if ($request->getActionName() == 'saveForm') {
             PlansService::clearPlans();
             $apiKey = Helper::getApiKey();
+
             $this->_refreshPlans($apiKey, $controller->View());
+
+            //$this->_setEnvironment($apiKey, $controller->View());
         }
     }
 
@@ -112,20 +119,20 @@ class UpdatePlans implements SubscriberInterface
      *
      * @param string $apiKey The API Key in the config
      * @param View   $view   Smarty view
-     * 
+     *
      * @return void
      */
     private function _refreshPlans($apiKey, $view)
     {
         $sdkResponse = PlansService::getPlansFromSDK($apiKey);
-        
+
         if ($sdkResponse->error === false) {
             $plans = $sdkResponse->plans;
             if (empty($plans)) {
                 $view->assign(
                     ['success' => true,
-                    "message" => "There are no finance plans associated 
-                    to this API Key. This plugin will not be able to 
+                    "message" => "There are no finance plans associated
+                    to this API Key. This plugin will not be able to
                     process payments until this is rectified"]
                 );
             } else {
@@ -134,5 +141,31 @@ class UpdatePlans implements SubscriberInterface
         } else {
             $view->assign('message', 'This API Key could not be validated');
         }
+    }
+
+    private function _setEnvironment($apiKey, $view) {
+        $environmentResponse = EnvironmentService::getEnvironmentFromSDK($apiKey);
+            if($environmentResponse->error == false) {
+                $environment = EnvironmentService::constructEnvironmentFromResponse($environmentResponse);
+                EnvironmentService::storeEnvironment($environment);
+                /*
+                $imgUrl = "https://s3-eu-west-1.amazonaws.com/content.divido.com/plugins/powered-by-divido/".
+                    $environment->getEnvironment().
+                    "/shopware/images/logo.png";
+                if(file_exists($imgUrl)) {
+                    $destination = "./plugin.png";
+                    file_put_contents($imgUrl, $destination);
+                }
+                */
+            } else {
+                Helper::log('Could not get environment', 'error');
+                $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
+                $view->extendsTemplate('backend/fp_extend_config/view/');
+                $view->assign([
+                    'success' => false,
+                    'message'  =>   'Could not fetch your merchant environment.
+                                    Please consult your payment provider'
+                ]);
+            }
     }
 }
