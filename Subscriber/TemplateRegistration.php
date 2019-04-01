@@ -42,7 +42,6 @@ class TemplateRegistration implements SubscriberInterface
         $pluginDirectory,
         \Enlight_Template_Manager $templateManager
     ) {
-        ini_set('display_errors',1);
         $this->_pluginDirectory = $pluginDirectory;
         $this->_templateManager = $templateManager;
 
@@ -92,35 +91,37 @@ class TemplateRegistration implements SubscriberInterface
         $controller = $args->get('subject');
         $view = $controller->View();
 
+        $config = Helper::getConfig();
+
+        $apiKey = Helper::getApiKey();
+        $key = preg_split("/\./", $apiKey);
+        $view->assign('apiKey', $key[0]);
+
+
+        $environment = EnvironmentService::retrieveEnvironmentFromDbByPluginId(1);
+        if($environment) {
+            $env = $environment->getEnvironment();
+        }
+
+        if(!isset($env)) {
+            $environmentResponse = EnvironmentService::getEnvironmentResponse($apiKey);
+            if($environmentResponse->Error == false) {
+                $environment = EnvironmentService::constructEnvironmentFromResponse($environmentResponse);
+                EnvironmentService::storeEnvironment($environment);
+                $env = $environment->getEnvironment();
+            }
+        }
+
+        if(!isset($env)) $env = 'dividoo';
+
+        // Get environment from the database instead
+
+        $view->assign('env', $env);
+
         if ($controller->Request()->getActionName() == 'index') {
             $product = $view->sArticle;
 
-            $config = Helper::getConfig();
 
-            $apiKey = Helper::getApiKey();
-            $key = preg_split("/\./", $apiKey);
-            $view->assign('apiKey', $key[0]);
-
-
-            $environment = EnvironmentService::retrieveEnvironmentFromDbByPluginId(1);
-            if($environment) {
-                $env = $environment->getEnvironment();
-            }
-
-            if(!isset($env)) {
-                $environmentResponse = EnvironmentService::getEnvironmentResponse($apiKey);
-                if($environmentResponse->Error == false) {
-                    $environment = EnvironmentService::constructEnvironmentFromResponse($environmentResponse);
-                    EnvironmentService::storeEnvironment($environment);
-                    $env = $environment->getEnvironment();
-                }
-            }
-
-            if(!isset($env)) $env = 'dividoo';
-
-            // Get environment from the database instead
-
-            $view->assign('env', $env);
 
             $show_widget = false;
             if ($config['Show Widget']) {

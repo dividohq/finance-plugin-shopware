@@ -51,7 +51,7 @@ class FinancePlugin extends Plugin
 
         $service = $this->container->get('shopware_attribute.crud_service');
         $service->update(
-            's_order_attributes',
+            's_order_basket_attributes',
             'deposit_value',
             'float',
             [
@@ -62,7 +62,7 @@ class FinancePlugin extends Plugin
             ]
         );
         $service->update(
-            's_order_attributes',
+            's_order_basket_attributes',
             'finance_id',
             'string',
             [
@@ -110,8 +110,8 @@ class FinancePlugin extends Plugin
     public function uninstall(UninstallContext $context)
     {
         $service = $this->container->get('shopware_attribute.crud_service');
-        $service->delete('s_order_attributes', 'finance_id');
-        $service->delete('s_order_attributes', 'deposit_value');
+        $service->delete('s_order_basket_attributes', 'finance_id');
+        $service->delete('s_order_basket_attributes', 'deposit_value');
         $service->delete('s_articles_attributes', 'finance_plans');
         $this->_setActiveFlag($context->getPlugin()->getPayments(), false);
     }
