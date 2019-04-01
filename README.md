@@ -1,5 +1,5 @@
 # Finance Plugin
-# HIya
+
 # Installation
 
 For manual installation of the most recent version of the plugin follow all steps.
