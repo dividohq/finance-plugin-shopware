@@ -66,49 +66,50 @@ class EnvironmentService
         $environment->setUpdatedOn($now);
 
         $values = [
-            $environment->getId(),
             $environment->getPluginId(),
             $environment->getEnvironment(),
             $environment->getUpdatedOn()
         ];
 
-        //self::clearEnvironmentsByPluginId(self::PLUGIN_ID);
+        self::clearEnvironmentsByPluginId(self::PLUGIN_ID);
         $sql = 'INSERT INTO `s_environments`
-                    (`id`, `plugin_id`, `environment`, `updated_on`)
+                    (`plugin_id`, `environment`, `updated_on`)
                 VALUES
-                    (?, ?, ?, ?)';
+                    (?, ?, ?)';
 
-        Shopware()->Db()->query($sql, $values);
+        $id = Shopware()->Db()->query($sql, $values);
+
+        $environment->setId($id);
     }
 
     public static function retrieveEnvironmentFromDb(int $id) {
-        $get_session_query = $connection->createQueryBuilder();
         $session_sql
             = "SELECT * FROM `s_environments` WHERE `id`= :id LIMIT 1";
-        $session = $connection->fetchAll($session_sql, [':id' => $id]);
-        if (isset($session[0])) {
+        $sessions = Shopware()->Db()->query($session_sql, [':id' => $id]);
+        foreach($sessions as $session) {
             $environment = new Environment;
             $environment->setId($id);
-            $environment->setPluginId($session[0]['plugin_id']);
-            $environment->setEnvironment($session[0]['environment']);
-            $environment->setUpdatedOn($session[0]['updated_on']);
+            $environment->setPluginId($session['plugin_id']);
+            $environment->setEnvironment($session['environment']);
+            $environment->setUpdatedOn($session['updated_on']);
             return $environment;
-        } else return false;
+        }
+        return false;
     }
 
     public static function retrieveEnvironmentFromDbByPluginId(int $pluginId) {
-        $get_session_query = $connection->createQueryBuilder();
         $session_sql
             = "SELECT * FROM `s_environments` WHERE `plugin_id`= :plugin_id ORDER BY `updated_on` DESC LIMIT 1";
-        $session = $connection->fetchAll($session_sql, [':plugin_id' => $pluginId]);
-        if (isset($session[0])) {
+        $sessions = Shopware()->Db()->query($session_sql, [':plugin_id' => $pluginId]);
+        foreach($sessions as $session) {
             $environment = new Environment;
             $environment->setId($id);
-            $environment->setPluginId($session[0]['plugin_id']);
-            $environment->setEnvironment($session[0]['environment']);
-            $environment->setUpdatedOn($session[0]['updated_on']);
+            $environment->setPluginId($session['plugin_id']);
+            $environment->setEnvironment($session['environment']);
+            $environment->setUpdatedOn($session['updated_on']);
             return $environment;
-        } else return false;
+        }
+        return false;
     }
 
     public static function constructEnvironmentFromResponse(EnvironmentResponse $response) {

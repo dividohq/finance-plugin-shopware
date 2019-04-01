@@ -20,7 +20,7 @@ class Environment extends ModelEntity
     /**
      * @var integer $id
      *
-     * @ORM\Column(type="string", length=8, nullable=false)
+     * @ORM\Column(type="integer", length=8, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
@@ -47,6 +47,18 @@ class Environment extends ModelEntity
      * @ORM\Column(type="integer", length=10, nullable=false)
      */
     private $updated_on;
+
+    /**
+     * Set the ID
+     *
+     * @param string $name ID
+     *
+     * @return void
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     /**
      * Get the ID

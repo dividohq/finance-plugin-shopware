@@ -76,6 +76,7 @@ class UpdatePlans implements SubscriberInterface
                 if (empty($plans)) {
                     $this->_refreshPlans($apiKey, $view);
                 }
+                $this->_setEnvironment($apiKey, $view);
 
             } else {
                 $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
@@ -109,7 +110,7 @@ class UpdatePlans implements SubscriberInterface
 
             $this->_refreshPlans($apiKey, $controller->View());
 
-            //$this->_setEnvironment($apiKey, $controller->View());
+            $this->_setEnvironment($apiKey, $controller->View());
         }
     }
 
@@ -144,28 +145,28 @@ class UpdatePlans implements SubscriberInterface
     }
 
     private function _setEnvironment($apiKey, $view) {
-        $environmentResponse = EnvironmentService::getEnvironmentFromSDK($apiKey);
-            if($environmentResponse->error == false) {
-                $environment = EnvironmentService::constructEnvironmentFromResponse($environmentResponse);
-                EnvironmentService::storeEnvironment($environment);
-                /*
-                $imgUrl = "https://s3-eu-west-1.amazonaws.com/content.divido.com/plugins/powered-by-divido/".
-                    $environment->getEnvironment().
-                    "/shopware/images/logo.png";
-                if(file_exists($imgUrl)) {
-                    $destination = "./plugin.png";
-                    file_put_contents($imgUrl, $destination);
-                }
-                */
-            } else {
-                Helper::log('Could not get environment', 'error');
-                $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
-                $view->extendsTemplate('backend/fp_extend_config/view/');
-                $view->assign([
-                    'success' => false,
-                    'message'  =>   'Could not fetch your merchant environment.
-                                    Please consult your payment provider'
-                ]);
+        $environmentResponse = EnvironmentService::getEnvironmentResponse($apiKey);
+        if($environmentResponse->Error == false) {
+            $environment = EnvironmentService::constructEnvironmentFromResponse($environmentResponse);
+            EnvironmentService::storeEnvironment($environment);
+
+            $imgUrl = "https://s3-eu-west-1.amazonaws.com/content.divido.com/plugins/powered-by-divido/".
+                $environment->getEnvironment().
+                "/shopware/images/logo.png";
+            if(file_exists($imgUrl)) {
+                $destination = "./plugin.png";
+                file_put_contents($imgUrl, $destination);
             }
+
+        } else {
+            Helper::log('Could not get environment', 'error');
+            $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
+            $view->extendsTemplate('backend/fp_extend_config/view/');
+            $view->assign([
+                'success' => false,
+                'message'  =>   'Could not fetch your merchant environment.
+                                Please consult your payment provider'
+            ]);
+        }
     }
 }

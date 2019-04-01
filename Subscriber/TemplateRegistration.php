@@ -101,21 +101,22 @@ class TemplateRegistration implements SubscriberInterface
             $key = preg_split("/\./", $apiKey);
             $view->assign('apiKey', $key[0]);
 
-            /*
+
             $environment = EnvironmentService::retrieveEnvironmentFromDbByPluginId(1);
             if($environment) {
                 $env = $environment->getEnvironment();
             }
 
             if(!isset($env)) {
-                $environmentResponse = EnvironmentService::getEnvironmentFromSDK($apiKey);
-                if($environment->getError() == false) {
+                $environmentResponse = EnvironmentService::getEnvironmentResponse($apiKey);
+                if($environmentResponse->Error == false) {
                     $environment = EnvironmentService::constructEnvironmentFromResponse($environmentResponse);
+                    EnvironmentService::storeEnvironment($environment);
                     $env = $environment->getEnvironment();
                 }
             }
-            */
-            if(!isset($env)) $env = 'divido';
+
+            if(!isset($env)) $env = 'dividoo';
 
             // Get environment from the database instead
 
