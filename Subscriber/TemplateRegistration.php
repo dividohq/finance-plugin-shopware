@@ -112,7 +112,7 @@ class TemplateRegistration implements SubscriberInterface
             }
         }
 
-        if(!isset($env)) $env = 'dividoo';
+        if(!isset($env)) $env = 'divido';
 
         // Get environment from the database instead
 

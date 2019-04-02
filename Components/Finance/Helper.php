@@ -202,7 +202,7 @@ class Helper
             $productsArray[$i]['name']     = $product['articlename'];
             $productsArray[$i]['quantity'] = $product['quantity'];
             $productsArray[$i]['price']    = $product['price'];
-            if ($product['modus'] == '0') {
+            if ($product['modus'] == '0' && isset($product['additional_details']['attributes']['core'])) {
                 $productsArray[$i]['plans']
                     = $product['additional_details']['attributes']['core']
                     ->get('finance_plans');
