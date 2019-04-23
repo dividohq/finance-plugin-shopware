@@ -45,19 +45,19 @@ class Helper
     {
         switch ($type) {
         case 'warning':
-            Shopware()->PluginLogger()->warning("Warning: ". $msg);
+            Shopware()->Container()->get('pluginlogger')->warning("Warning: ". $msg);
             break;
 
         case 'info':
-            Shopware()->PluginLogger()->info("Info: " . $msg);
+            Shopware()->Container()->get('pluginlogger')->info("Info: " . $msg);
             break;
 
         case 'error':
-            Shopware()->PluginLogger()->error("Error: " . $msg);
+            Shopware()->Container()->get('pluginlogger')->error("Error: " . $msg);
             break;
 
         default:
-            Shopware()->PluginLogger()->info("Default info: " . $msg);
+            Shopware()->Container()->get('pluginlogger')->info("Default info: " . $msg);
             break;
         }
         return;
@@ -344,7 +344,7 @@ class Helper
                     = constant("\Divido\MerchantSDK\Environment::$environment");
                 return $environment;
             } else {
-                self::debug('Environment does not exist in the SDK', 'error');
+                self::debug('Environment "'.$environment.'" does not exist in the SDK', 'error');
                 return false;
             }
         }
