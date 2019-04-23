@@ -2,7 +2,7 @@
 
 /**
  * File containing OrderService class
- * 
+ *
  * PHP version 7.1
  */
 
@@ -20,7 +20,7 @@ class OrderService
      *
      * @param int    $id         The unique Order ID
      * @param object $connection Open dbal connection
-     * 
+     *
      * @return boolean
      */
     public static function retrieveOrderFromDb($id, $connection)
@@ -37,14 +37,43 @@ class OrderService
         if (isset($order[0])) {
             return $order[0];
         }else return false;
-        
+
+    }
+
+    /**
+     * Retrieve order and session info by order ID
+     *
+     * @param int    $id         The unique Order ID
+     * @param object $connection Open dbal connection
+     *
+     * @return boolean
+     */
+    public static function retrieveAllFromDB($id, $connection)
+    {
+        $builder = $connection->createQueryBuilder();
+        $builder
+            ->select('orders.*', 'session.transactionID', 'session.status as finance_status', 'session.key', 'session.plan', 'session.deposit', 'session.ip_address')
+            ->from(\Shopware\Models\Order\Order::class, 'orders')
+            ->leftJoin('orders', \FinancePlugin\Models\Session::class, 'session', 'session.orderNumber = orders.ordernumber')
+            ->where('orders.id = :id')
+            ->setParameter(':id', $id)
+            ->setMaxResult(1);
+        $all = $builder->getQuery()->getArrayResult();
+
+        if (!isset($all[0])) return false;
+
+        return $all[0];
+    }
+
+    public static function retrieveItems($orderId, $connection) {
+
     }
 
     /**
      * Save order in s_orders table
      *
      * @param array $order Array with order information
-     * 
+     *
      * @return int
      */
     public static function saveOrder($order)
@@ -59,12 +88,12 @@ class OrderService
 
     /**
      * Function to get the ID based on the transactionID and
-     * temporaryID in the database. 
+     * temporaryID in the database.
      *
      * @param string $transactionID The order ID
      * @param string $key           The session ID
      * @param object $connection    Open dbal connection
-     * 
+     *
      * @return void
      */
     public static function getId($transactionID, $key, $connection)
@@ -83,7 +112,7 @@ class OrderService
         if (isset($orders)) {
             return $orders[0]['id'];
         }else return false;
-        
+
     }
 
     /**
@@ -91,8 +120,8 @@ class OrderService
      *
      * @param object $connection    Open dbal connection
      * @param array  $order         Array of fields to update
-     * @param string $reference_key The key in the order array 
-     * 
+     * @param string $reference_key The key in the order array
+     *
      * @return boolean
      */
     public static function updateOrder($connection, $order, $reference_key)
@@ -123,14 +152,14 @@ class OrderService
      *
      * @param array  $criteria   The variables to search by
      * @param object $connection Open dbal connection
-     * 
+     *
      * @return boolean
      */
     public static function findOrders($criteria, $connection)
     {
         $find_order_query = $connection->createQueryBuilder();
         $find_order_query->select('*')->from('s_order');
-        
+
         $first = true;
         foreach ($criteria as $key=>$value) {
             if ($first) {
@@ -149,7 +178,7 @@ class OrderService
      *
      * @param int   $id         Order ID
      * @param array $attributes The order attributes
-     * 
+     *
      * @return Boolean
      */
     public static function persistOrderAttributes($id, $attributes)
@@ -157,8 +186,8 @@ class OrderService
         $attributePersister = Shopware()->Container()->get(
             'shopware_attribute.data_persister'
         );
-        
-        return 
+
+        return
             $attributePersister->persist(
                 $attributes,
                 's_order_attributes',

@@ -1,7 +1,7 @@
 <?php
 /**
  * File for FinancePlugin class
- * 
+ *
  * PHP version 7.1
  */
 
@@ -16,40 +16,40 @@ use Shopware\Components\CSRFWhitelistAware;
 
 /**
  * Controller class which handles the payment flow
- * 
+ *
  * @category CategoryName
  * @package  FinancePlugin
  * @since    File available since Release 1.0.0
  */
-class Shopware_Controllers_Frontend_FinancePlugin 
-    extends Shopware_Controllers_Frontend_Payment 
+class Shopware_Controllers_Frontend_FinancePlugin
+    extends Shopware_Controllers_Frontend_Payment
     implements CSRFWhitelistAware
 {
 
     const PLUGIN_VERSION = "1.0.0",
-          API_ERROR_MSG 
-              = 'We are unable to process this order 
-          with the chosen payment method. Please choose another 
+          API_ERROR_MSG
+              = 'We are unable to process this order
+          with the chosen payment method. Please choose another
           method via the <i>Change payment method</i> button.',
-          SSA_DECLINE_MSG 
+          SSA_DECLINE_MSG
               = 'Shared secret authentication did not authenticate.',
-          NON_PAID_ERROR_MSG 
-              = 'This order is still waiting to receive payment confirmation. 
-          It may just be the case that the confirmation hasn\'t quite 
-          arrived yet. Please give it a couple of seconds and refresh 
+          NON_PAID_ERROR_MSG
+              = 'This order is still waiting to receive payment confirmation.
+          It may just be the case that the confirmation hasn\'t quite
+          arrived yet. Please give it a couple of seconds and refresh
           this page. Please contact the merchant if the problem persists.',
           ORDER_CREATION_ERROR_MSG = 'Could not create order.',
           INVALID_TOKEN_ERROR_MSG = 'Invalid token.',
           NO_RESPONSE_ERROR_MSG = 'Received response did not include status.';
-          
-     
+
+
 
     /**
      * Allows webhooks to reach server
      *
      * @return void
      */
-    public function getWhitelistedCSRFActions() 
+    public function getWhitelistedCSRFActions()
     {
         return [
             'return',
@@ -68,7 +68,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
     public function preDispatch()
     {
         /*
-        * @var \Shopware\Components\Plugin $plugin 
+        * @var \Shopware\Components\Plugin $plugin
         */
         $plugin = $this->get('kernel')->getPlugins()['FinancePlugin'];
         $this->get('template')->addTemplateDir(
@@ -100,16 +100,15 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function directAction()
     {
-        ini_set('display_errors', 1);
         Helper::debug('Direct Action', 'info');
-        
+
         $service = $this->container->get('finance_plugin.payment_service');
         $router = $this->Front()->Router();
         $apiKey = Helper::getApiKey();
 
         $user = $this->getUser();
         $customer = Helper::getFormattedCustomerDetails($user);
-        
+
         $basket = $this->getBasket();
         $amount = $this->getAmount();
         $deposit_percentage = filter_var(
@@ -120,7 +119,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $_POST['divido_plan'], //TODO: Ubrand: Can't Change
             FILTER_SANITIZE_EMAIL
         );
-        
+
 
         $deposit = (empty($deposit_percentage))
             ? 0
@@ -128,13 +127,13 @@ class Shopware_Controllers_Frontend_FinancePlugin
                 $deposit_percentage,
                 $amount
             );
-        
-        
+
+
         $token = $service->createPaymentToken(
             $amount,
             $user['additional']['user']['customernumber']
         );
-        
+
         $checkout_url= $router->assemble(
             ['action' => 'cancel', 'forceSecure' => true]
         );
@@ -147,24 +146,24 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
         $connection = $this->container->get('dbal_connection');
         $sessionId = $session->store($connection);
-        
+
         $metadata = [
             'token' => $service->createPaymentToken(
-                $amount, 
+                $amount,
                 $user['additional']['user']['customernumber']
             ),
             'amount' => $amount
         ];
-        
+
         $response_url = $router->assemble(
             [
-            'action' => 'webhook', 
+            'action' => 'webhook',
             'forceSecure' => true
             ]
         );
         $redirect_url = $router->assemble(
             [
-            'action' => 'return', 
+            'action' => 'return',
             'forceSecure' => true
             ]
         );
@@ -202,7 +201,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $payload = $response->data;
             $session->setTransactionID($payload->id);
             $session->update($connection);
-            
+
             $this->redirect($payload->urls->application_url);
         }
     }
@@ -218,7 +217,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
     {
         Helper::debug('Finance view', 'info');
         header('Access-Control-Allow-Origin: *');
-        
+
         $basket = $this->getBasket();
         $products = Helper::getOrderProducts($basket);
 
@@ -261,7 +260,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $this->View()->assign('displayForm', $displayFinance);
             $this->View()->assign('displayWarning', $displayWarning);
             $this->View()->assign(
-                'basket_plans', 
+                'basket_plans',
                 implode(",", $basket_plans)
             );
         }
@@ -287,33 +286,33 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
         /**
          * A simple response object
-         * 
-         * @var FinancePlugin\Components\Finance\PaymentResponse $response  
+         *
+         * @var FinancePlugin\Components\Finance\PaymentResponse $response
          */
         $response = $paymentService->createPaymentResponse($this->Request());
 
         if (isset($response->sessionId) && isset($response->token)) {
             $sessionId = filter_var(
-                $response->sessionId, 
+                $response->sessionId,
                 FILTER_SANITIZE_NUMBER_INT
             );
             $connection = $this->container->get('dbal_connection');
             $session = new \FinancePlugin\Models\Session;
-            
+
             if ($session->retrieveFromDb($sessionId, $connection)) {
                 if ($session->getStatus() == WebhookService::PAYMENTSTATUSPAID) {
                     $data = $session->getData();
-                    
-                    $customer_number 
+
+                    $customer_number
                         = $data['sUserData']['additional']['user']['customernumber'];
                     $amount = $data['sBasket']['sAmount'];
                     /*
-                    /   If response token matches the information in the session 
-                    /   $service = /Components/Finance/PaymentService.php 
+                    /   If response token matches the information in the session
+                    /   $service = /Components/Finance/PaymentService.php
                     */
                     if ($paymentService->isValidToken(
-                        $amount, 
-                        $customer_number, 
+                        $amount,
+                        $customer_number,
                         $response->token
                     )
                     ) {
@@ -330,13 +329,13 @@ class Shopware_Controllers_Frontend_FinancePlugin
                                     $connection
                                 );
                                 $order->setPaymentStatus(
-                                    $orderID, 
+                                    $orderID,
                                     WebhookService::PAYMENTSTATUSPAID
                                 );
-                                
+
                                 $data['ordernumber'] = $orderNumber;
                                 $data['cleared'] = WebhookService::PAYMENTSTATUSPAID;
-                                
+
                                 // Persist information to display on order in backend
                                 $attributePersister = $this->container->get(
                                     'shopware_attribute.data_persister'
@@ -346,7 +345,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
                                     'finance_id' => $session->getPlan(),
                                     'deposit_value' => $session->getDeposit()
                                 );
-                                
+
                                 $attributePersister->persist(
                                     $attributeData,
                                     's_order_attributes',
@@ -359,11 +358,11 @@ class Shopware_Controllers_Frontend_FinancePlugin
                                 session_write_close();
                             } else {
                                 $this->View()->assign(
-                                    'error', 
+                                    'error',
                                     self::ORDER_CREATION_ERROR_MSG
                                 );
                                 $this->View()->assign(
-                                    'template', 
+                                    'template',
                                     'frontend/finance_plugin/error.tpl'
                                 );
                                 return;
@@ -373,12 +372,12 @@ class Shopware_Controllers_Frontend_FinancePlugin
                         }
 
                         /*
-                        /   Assign the relevant stored session information 
+                        /   Assign the relevant stored session information
                         /   to the appropriate Smarty variables
                         */
                         $this->sendDataToSmarty($data);
                         $this->View()->assign(
-                            'template', 
+                            'template',
                             'frontend/finance_plugin/success.tpl'
                         );
                     } else {
@@ -414,7 +413,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
     /**
      * Call back
      *
-     * A listener that can receive calls from 
+     * A listener that can receive calls from
      * the platform to update an order in shopware
      * In the shopware documentation this webhook=notify
      *
@@ -425,12 +424,12 @@ class Shopware_Controllers_Frontend_FinancePlugin
         Helper::debug('Webhook', 'info');
 
         /*
-         * @var PaymentService $service 
+         * @var PaymentService $service
          */
         $service = $this->container->get('finance_plugin.payment_service');
-        
+
         $response = $service->createWebhookResponse($this->Request());
-            
+
         if (!$response->status) {
             Helper::debug('No Response Status', 'error');
             $code = 400;
@@ -472,19 +471,19 @@ class Shopware_Controllers_Frontend_FinancePlugin
                         );
                     }
                 }
-                
+
                 if (!is_null($statusInfo['session_status'])) {
-                    
+
                     $session = new \FinancePlugin\Models\Session;
-                    
+
                     $update = array(
                         "status" => $statusInfo['session_status'],
                         "transactionID" => $transactionID
                     );
 
                     $session->updateByReference(
-                        $connection, 
-                        $update, 
+                        $connection,
+                        $update,
                         'transactionID'
                     );
                 }
@@ -536,10 +535,10 @@ class Shopware_Controllers_Frontend_FinancePlugin
     /**
      * Take order information as received from s_finance_sessions table
      * and assign the data to the relevant Smarty variables
-     * 
-     * @param array $order The session information stored in 
+     *
+     * @param array $order The session information stored in
      *                     `s_finance_sessions` table `data` column
-     * 
+     *
      * @return void
      */
     protected function sendDataToSmarty($order)

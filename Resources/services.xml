@@ -7,6 +7,10 @@
             <argument>%finance_plugin.plugin_dir%</argument>
             <tag name="shopware.event_subscriber"/>
         </service>
+        <service id="financePlugin.subscriber.templates" class="FinancePlugin\Subscriber\ExtendOrder">
+            <argument>%finance_plugin.plugin_dir%</argument>
+            <tag name="shopware.event_subscriber"/>
+        </service>
         <service id="finance_plugin.payment_service"
                  class="FinancePlugin\Components\Finance\PaymentService">
         </service>
@@ -16,6 +20,9 @@
         <service id="finance_plugin.plans_service"
                  class="FinancePlugin\Components\Finance\PlansService">
             <argument>%finance_plugin.plugin_dir%</argument>
+        </service>
+        <service id="finance_plugin.activate_service"
+                 class="FinancePlugin\Components\Finance\ActivateService">
         </service>
         <!-- Register TemplateRegistration subscriber -->
         <service id="finance_plugin.subscriber.template_registration" class="FinancePlugin\Subscriber\TemplateRegistration">
