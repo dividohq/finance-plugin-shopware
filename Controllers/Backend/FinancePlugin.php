@@ -63,7 +63,7 @@ class Shopware_Controllers_Backend_FinancePlugin extends Shopware_Controllers_Ba
 
         $order_amount = $order[0]['invoice_amount']*100;
 
-        $activateResponse = ActivateService::activateApplication($order[0]['transactionID'], $order_amount, $items);
+        $activateResponse = $activateService::activateApplication($order[0]['transactionID'], $order_amount, $items);
 
         if($activateResponse->error == true) {
             $this->View()->assign([
