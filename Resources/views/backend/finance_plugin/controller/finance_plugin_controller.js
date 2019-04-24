@@ -22,8 +22,7 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
 
     },
 
-    onActivateOrder: function (record) {
-        console.log(record);
+    onActivateOrder: function (record, obj) {
         Ext.Ajax.request({
             url: '{url controller=FinancePlugin action="activateOrder"}',
             method: 'POST',
@@ -33,6 +32,7 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
             success: function (response) {
                 var status = Ext.decode(response.responseText);
                 if (status.success) {
+                    obj.setDisabled(true);
                     Shopware.Notification.createGrowlMessage('{s name=activationSuccess}Order Activated{/s}', status.message);
                 } else {
                     Shopware.Notification.createGrowlMessage('{s name=activationError}Order was not activated{/s}', status.message);

@@ -18,14 +18,34 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
             text: "activate",
             action: 'activate-order',
             cls: 'primary',
+            hidden: true,
             handler: function () {
-                me.editForm.getForm().updateRecord(me.record);
-                me.fireEvent('activateOrder', me.record, {
+                me.fireEvent('activateOrder', me.record, this, {
                     callback: function (order) {
                         console.log(order);
                         //me.fireEvent('activateOrder', order, me.up('window'));
                     }
                 });
+            },
+            listeners: {
+                beforeRender: {
+                    fn: function(){
+                        var btn = this;
+                        Ext.Ajax.request({
+                            url: '{url controller=FinancePlugin action="checkStatus"}',
+                            method: 'POST',
+                            params: {
+                                orderId: me.record.get('id')
+                            },
+                            success: function (response) {
+                                var data = Ext.decode(response.responseText);
+                                if (data.status == 'READY') {
+                                    btn.show();
+                                }
+                            }
+                        });
+                    }
+                }
             }
         });
 
@@ -36,6 +56,8 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
             dock: 'bottom',
             items: buttons
         });
+
+
 
         return me.toolbar;
     },

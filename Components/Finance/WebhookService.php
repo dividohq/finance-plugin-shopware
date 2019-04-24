@@ -2,7 +2,7 @@
 
 /**
  * File for Webhook Service class
- * 
+ *
  * PHP version 5.6
  */
 
@@ -10,7 +10,7 @@ namespace FinancePlugin\Components\Finance;
 
 /**
  * Service that handles webhooks
- * 
+ *
  */
 class WebhookService
 {
@@ -19,11 +19,13 @@ class WebhookService
         PAYMENTSTATUSOPEN = 17,
         PAYMENTREVIEWNEEDED = 21,
         PAYMENTCANCELLED = 35,
+        PAYMENTSTATUSAWAITINGACTIVATION = 40,
+        PAYMENTSTATUSREFUNDED = 41,
 
         STATUS_PROPOSAL = 'PROPOSAL',
         STATUS_ACCEPTED = 'ACCEPTED',
         STATUS_ACTION_LENDER = 'ACTION-LENDER',
-        STATUS_CANCELED = 'CANCELED',
+        STATUS_CANCELED = 'CANCELLED',
         STATUS_COMPLETED = 'COMPLETED',
         STATUS_DEFERRED = 'DEFERRED',
         STATUS_DECLINED = 'DECLINED',
@@ -31,7 +33,10 @@ class WebhookService
         STATUS_FULFILLED = 'FULFILLED',
         STATUS_REFERRED = 'REFERRED',
         STATUS_SIGNED = 'SIGNED',
-        STATUS_READY = 'READY';
+        STATUS_READY = 'READY',
+        STATUS_ACTIVATED = 'ACTIVATED',
+        STATUS_REFUNDED = 'REFUNDED',
+        STATUS_AWAITING_ACTIVATION = 'AWAITING-ACTIVATION';
 
 
     /**
@@ -62,7 +67,7 @@ class WebhookService
      * webhook status
      *
      * @param string $status Received Status
-     * 
+     *
      * @return array
      */
     public function getStatusInfo(string $status)
@@ -115,6 +120,18 @@ class WebhookService
             $statusInfo['session_status'] = self::PAYMENTSTATUSOPEN;
             break;
 
+        case self::STATUS_REFUNDED:
+            Helper::debug('Webhook: Deposit Refunded', 'info');
+            $statusInfo['message'] = 'Deposit Refunded Hook Success';
+            $statusInfo['session_status'] = self::PAYMENTSTATUSREFUNDED;
+            break;
+
+        case self::STATUS_AWAITING_ACTIVATION:
+            Helper::debug('Webhook: Awating Activation', 'info');
+            $statusInfo['message'] = 'Awaiting Activation Hook Success';
+            $statusInfo['session_status'] = self::PAYMENTSTATUSAWAITINGACTIVATION;
+            break;
+
         case self::STATUS_ACTION_LENDER:
             Helper::debug('Webhook: Deposit Paid', 'info');
             break;
@@ -138,8 +155,13 @@ class WebhookService
             $statusInfo['message'] = 'Order Referred Success';
             Helper::debug('Webhook: Referred', 'info');
             break;
-            
+
         case self::STATUS_READY:
+            $statusInfo['message'] = 'Status Ready';
+            Helper::debug('Webhook: Ready', 'info');
+            break;
+
+        case self::STATUS_REFUNDED:
             $statusInfo['message'] = 'Status Ready';
             Helper::debug('Webhook: Ready', 'info');
             break;

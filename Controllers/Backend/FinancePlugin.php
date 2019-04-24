@@ -2,7 +2,6 @@
 
 use FinancePlugin\Components\Finance\Helper;
 use Divido\MerchantSDK\Environment;
-use FinancePlugin\Components\Finance\ActivateService;
 
 class Shopware_Controllers_Backend_FinancePlugin extends Shopware_Controllers_Backend_ExtJs {
 
@@ -81,5 +80,44 @@ class Shopware_Controllers_Backend_FinancePlugin extends Shopware_Controllers_Ba
             ]);
             return;
         }
+    }
+
+    public function checkStatusAction() {
+        $webhookService = $this->container->get('finance_plugin.webhook_service');
+
+        $orderId = $_POST['orderId'];
+
+        $orderBuilder = $this->get('dbal_connection')->createQueryBuilder();
+        $order = $orderBuilder
+            ->select(['sessions.status'])
+            ->from('s_order', 'orders')
+            ->leftJoin('orders', 's_sessions', 'sessions', 'orders.ordernumber = sessions.orderNumber')
+            ->where('orders.id = :id')
+            ->setParameter(':id', $orderId)
+            ->execute()
+            ->fetchAll();
+
+        if(isset($order[0]['status'])) {
+            switch($order[0]['status']) {
+                case $webhookService::PAYMENTSTATUSAWAITINGACTIVATION:
+                    $status = $webhookService::STATUS_AWAITING_ACTIVATION;
+                    break;
+                case $webhookService::PAYMENTCANCELLED:
+                    $status = $webhookService::STATUS_CANCELLED;
+                    break;
+                case $webhookService::PAYMENTSTATUSREFUNDED:
+                    $status = $webhookService::STATUS_REFUNDED;
+                    break;
+                default:
+                    $status = $webhookService::STATUS_READY;
+                    break;
+            }
+        } else $status = 'N/A';
+
+        $this->View()->assign([
+            'status' => $status,
+            'orderId' => $orderId
+        ]);
+        return;
     }
 }
