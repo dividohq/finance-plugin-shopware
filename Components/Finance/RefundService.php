@@ -65,13 +65,13 @@ class RefundService
             ->withOrderItems($items);
 
         // Create a new activation for the application.
-        $response = $sdk->applicationActivations()->createApplicationActivation(
+        $response = $sdk->applicationRefunds()->createApplicationRefund(
             $application,
-            $applicationActivation
+            $applicationRefund
         );
 
         $applicationResponseBody = $response->getBody()->getContents();
-        Helper::debug("Received response: ".$refundResponseBody, 'info');
+        Helper::debug("Received response: ".$applicationResponseBody, 'info');
         $responseObj = json_decode($applicationResponseBody);
 
         $response = new MerchantResponse($responseObj);
