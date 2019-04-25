@@ -8,7 +8,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
     override: 'Shopware.apps.Order.view.detail.Overview',
 
     registerEvents: function(){
-        this.addEvents('activateOrder');
+        this.addEvents('activateOrder', 'refundOrder');
     },
 
     createToolbar: function () {
@@ -52,7 +52,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
         var refundButton = Ext.create('Ext.button.Button', {
             text: "refund",
             action: 'refund-order',
-            cls: 'secondary',
+            cls: 'primary',
             hidden: true,
             handler: function () {
                 me.fireEvent('refundOrder', me.record, this, {
@@ -80,8 +80,6 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
                 }
             }
         });
-
-
 
         var buttons = me.getEditFormButtons();
         buttons.push(activateButton);
