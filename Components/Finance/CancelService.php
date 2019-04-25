@@ -75,7 +75,7 @@ class CancelService
 
         $responseObj = json_decode($applicationResponseBody);
 
-        $response = new MerchantResponse($responseObj->data);
+        $response = new MerchantResponse($responseObj);
         return $response;
 
     }
