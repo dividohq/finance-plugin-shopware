@@ -25,7 +25,7 @@ class WebhookService
         STATUS_PROPOSAL = 'PROPOSAL',
         STATUS_ACCEPTED = 'ACCEPTED',
         STATUS_ACTION_LENDER = 'ACTION-LENDER',
-        STATUS_CANCELED = 'CANCELLED',
+        STATUS_CANCELLED = 'CANCELLED',
         STATUS_COMPLETED = 'COMPLETED',
         STATUS_DEFERRED = 'DEFERRED',
         STATUS_DECLINED = 'DECLINED',
@@ -36,6 +36,7 @@ class WebhookService
         STATUS_READY = 'READY',
         STATUS_ACTIVATED = 'ACTIVATED',
         STATUS_REFUNDED = 'REFUNDED',
+        STATUS_AWAITING_CANCELLATION = 'AWAITING-CANCELLATION',
         STATUS_AWAITING_ACTIVATION = 'AWAITING-ACTIVATION';
 
 
@@ -49,7 +50,7 @@ class WebhookService
     public $historyMessages = array (
         self::STATUS_ACCEPTED => 'Credit request accepted',
         self::STATUS_ACTION_LENDER => 'Lender notified',
-        self::STATUS_CANCELED => 'Application canceled',
+        self::STATUS_CANCELLED => 'Application cancelled',
         self::STATUS_COMPLETED => 'Application completed',
         self::STATUS_DEFERRED => 'Application deferred by Underwriter,
          waiting for new status',
@@ -107,9 +108,16 @@ class WebhookService
             $statusInfo['session_status'] = self::PAYMENTREVIEWNEEDED;
             break;
 
-        case self::STATUS_CANCELED:
-            Helper::debug('Webhook: Canceled', 'info');
-            $statusInfo['message'] = 'Canceled Hook Success';
+        case self::STATUS_CANCELLED:
+            Helper::debug('Webhook: Cancelled', 'info');
+            $statusInfo['message'] = 'Cancelled Hook Success';
+            $statusInfo['order_status'] = self::PAYMENTCANCELLED;
+            $statusInfo['session_status'] = self::PAYMENTCANCELLED;
+            break;
+
+        case self::STATUS_AWAITING_CANCELLATION:
+            Helper::debug('Webhook: Awaiting Cancellation', 'info');
+            $statusInfo['message'] = 'Awaiting Cancellation Hook Success';
             $statusInfo['order_status'] = self::PAYMENTCANCELLED;
             $statusInfo['session_status'] = self::PAYMENTCANCELLED;
             break;
