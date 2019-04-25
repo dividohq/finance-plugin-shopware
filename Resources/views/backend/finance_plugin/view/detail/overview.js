@@ -81,19 +81,50 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
             }
         });
 
+        var cancelButton = Ext.create('Ext.button.Button', {
+            text: "cancel",
+            action: 'cancel-order',
+            cls: 'secondary',
+            hidden: true,
+            handler: function () {
+                me.fireEvent('cancelOrder', me.record, this, {
+                    callback: function (order) { }
+                });
+            },
+            listeners: {
+                beforeRender: {
+                    fn: function () {
+                        var btn = this;
+                        Ext.Ajax.request({
+                            url: '{url controller=FinancePlugin action="checkStatus"}',
+                            method: 'GET',
+                            params: {
+                                orderId: me.record.get('id')
+                            },
+                            success: function (response) {
+                                var data = Ext.decode(response.responseText);
+                                if (data.status == 'READY') {
+                                    btn.show();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
         var buttons = me.getEditFormButtons();
         buttons.push(activateButton);
         buttons.push(refundButton);
+        buttons.push(cancelButton);
 
         me.toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock: 'bottom',
             items: buttons
         });
 
-
-
         return me.toolbar;
-    },
+    }
 
 });
 //{/block}

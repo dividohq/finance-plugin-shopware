@@ -167,6 +167,87 @@ class Shopware_Controllers_Backend_FinancePlugin extends Shopware_Controllers_Ba
         }
     }
 
+    /**
+     * Endpoint for a cancel request from the backend
+     *
+     * @return void
+     */
+    public function cancelOrderAction() {
+        /**
+         * Autoload the vendor files first
+         */
+        $plugin = $this->get('kernel')->getPlugins()['FinancePlugin'];
+        $this->get('template')->addTemplateDir(
+            $plugin->getPath() . '/Resources/views/'
+        );
+
+        require_once($plugin->getPath().'/vendor/autoload.php');
+        /**
+         * Autoload the vendor files first
+         */
+
+        $orderId = $_POST['orderId'];
+
+        $cancelService = $this->container->get('finance_plugin.cancel_service');
+        $orderService = $this->container->get('finance_plugin.order_service');
+
+        $orderBuilder = $this->get('dbal_connection')->createQueryBuilder();
+        $order = $orderBuilder
+            ->select(['orders.invoice_amount', 'orders.orderNumber', 'orders.invoice_shipping', 'sessions.transactionID'])
+            ->from('s_order', 'orders')
+            ->leftJoin('orders', 's_sessions', 'sessions', 'orders.ordernumber = sessions.orderNumber')
+            ->where('orders.id = :id')
+            ->setParameter(':id', $orderId)
+            ->execute()
+            ->fetchAll();
+
+        $itemBuilder = $this->get('dbal_connection')->createQueryBuilder();
+        $itemList = $itemBuilder
+            ->select(['item.name', 'item.price', 'item.quantity'])
+            ->from('s_order_details', 'item')
+            ->where('item.orderID = :id')
+            ->setParameter(':id', $orderId)
+            ->execute()
+            ->fetchAll();
+
+        $items = [];
+        foreach($itemList as $item) {
+            $items[] = [
+                'name' => $item['name'],
+                'quantity' => intval($item['quantity']),
+                'price' => $item['price']*100
+            ];
+        }
+
+        if($order[0]['invoice_shipping'] > 0) {
+            $items[] = [
+                'name' => 'Shipping',
+                'quantity' => 1,
+                'price' => $order[0]['invoice_shipping']*100
+            ];
+        }
+
+        $order_amount = $order[0]['invoice_amount']*100;
+
+        $cancelResponse = $cancelService::cancelApplication($order[0]['transactionID'], $order_amount, $items, $order[0]['orderNumber']);
+
+        if($cancelResponse->error == true) {
+            $this->View()->assign([
+                'success' => false,
+                'message' => "Could not cancel order: ".$cancelResponse->message,
+                "response" => $cancelResponse
+            ]);
+            return;
+        } else {
+            $this->View()->assign([
+                'success' => true,
+                'message' => "Order Cancelled",
+                "response" => $cancelResponse
+            ]);
+            return;
+        }
+    }
+
     public function checkStatusAction() {
         $webhookService = $this->container->get('finance_plugin.webhook_service');
 
