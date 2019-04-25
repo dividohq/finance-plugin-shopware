@@ -39,5 +39,24 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
                 }
             }
         });
+    },
+
+    onRefundOrder: function (record, obj) {
+        Ext.Ajax.request({
+            url: '{url controller=FinancePlugin action="refundOrder"}',
+            method: 'POST',
+            params: {
+                orderId: record.get('id')
+            },
+            success: function (response) {
+                var status = Ext.decode(response.responseText);
+                if (status.success) {
+                    obj.setDisabled(true);
+                    Shopware.Notification.createGrowlMessage('{s name=refundSuccess}Order Refunded{/s}', status.message);
+                } else {
+                    Shopware.Notification.createGrowlMessage('{s name=refundError}Order was not refunded{/s}', status.message);
+                }
+            }
+        });
     }
 });

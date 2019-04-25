@@ -33,7 +33,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
                         var btn = this;
                         Ext.Ajax.request({
                             url: '{url controller=FinancePlugin action="checkStatus"}',
-                            method: 'POST',
+                            method: 'GET',
                             params: {
                                 orderId: me.record.get('id')
                             },
@@ -48,6 +48,40 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
                 }
             }
         });
+
+        var refundButton = Ext.create('Ext.button.Button', {
+            text: "refund",
+            action: 'refund-order',
+            cls: 'secondary',
+            hidden: true,
+            handler: function () {
+                me.fireEvent('refundOrder', me.record, this, {
+                    callback: function (order) {}
+                });
+            },
+            listeners: {
+                beforeRender: {
+                    fn: function () {
+                        var btn = this;
+                        Ext.Ajax.request({
+                            url: '{url controller=FinancePlugin action="checkStatus"}',
+                            method: 'GET',
+                            params: {
+                                orderId: me.record.get('id')
+                            },
+                            success: function (response) {
+                                var data = Ext.decode(response.responseText);
+                                if (data.status == 'AWAITING-ACTIVATION') {
+                                    btn.show();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+
 
         var buttons = me.getEditFormButtons();
         buttons.push(activateButton);
