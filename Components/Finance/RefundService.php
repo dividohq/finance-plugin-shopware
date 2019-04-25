@@ -74,7 +74,7 @@ class RefundService
         Helper::debug("Received response: ".$applicationResponseBody, 'info');
         $responseObj = json_decode($applicationResponseBody);
 
-        $response = new MerchantResponse($responseObj);
+        $response = new MerchantResponse($responseObj->data);
         return $response;
 
     }

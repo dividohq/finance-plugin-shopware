@@ -72,9 +72,22 @@ class CancelService
 
         $applicationResponseBody = $response->getBody()->getContents();
         Helper::debug("Received response: ".$applicationResponseBody, 'info');
-        $responseObj = json_decode($applicationResponseBody);
+        $example = '{
+    "data": {
+        "id": "ceac5dc6-6772-11e9-973b-0242ac110022",
+        "amount": 63650,
+        "status": "PENDING",
+        "reference": "Order Ref.20003",
+        "data": [],
+        "comment": "As per merchant request.",
+        "created_at": "2019-04-25T15:57:20+00:00",
+        "updated_at": "2019-04-25T15:57:20+00:00"
+    }
+}';
+        //$responseObj = json_decode($applicationResponseBody);
+        $responseObj = json_decode($example);
 
-        $response = new MerchantResponse($responseObj);
+        $response = new MerchantResponse($responseObj->data);
         return $response;
 
     }
