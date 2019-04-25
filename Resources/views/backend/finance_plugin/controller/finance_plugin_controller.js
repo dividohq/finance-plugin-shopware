@@ -14,6 +14,7 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
         me.control({
             'order-detail-window order-overview-panel': {
                 activateOrder: me.onActivateOrder,
+                refundOrder: me.onRefundOrder
             }
         });
         // me.callParent will execute the init function of the overridden controller
