@@ -85,6 +85,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
 
         var buttons = me.getEditFormButtons();
         buttons.push(activateButton);
+        buttons.push(refundButton);
 
         me.toolbar = Ext.create('Ext.toolbar.Toolbar', {
             dock: 'bottom',
