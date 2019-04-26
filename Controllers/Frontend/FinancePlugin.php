@@ -465,9 +465,10 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
                     if ($orderID) {
                         // get order
-                        $order = $this->get('models')->find(Order::class, $orderID);
-                        $order->setPaymentStatus(
-                            $orderID,
+                        $modelManager = $this->get('models');
+                        $order = $modelManager->find(Order::class, $orderID);
+                        $order->setOrderStatus(
+                            $modelManager->find(Status::class),
                             $statusInfo['order_status']
                         );
                         Helper::debug('Updated Order Status of :'.$orderID, 'info');
