@@ -4,21 +4,21 @@
 {$smarty.block.parent}
 {if $apiKey}
 <script>
-    var dividoKey = "{$apiKey}";
+    var {$env}Key = "{$apiKey}";
 </script>
 <style>
 #calcWidget{
     display:none;
 }
 </style>
-<script src="http://cdn.divido.com/calculator/v2.1/production/js/template.divido.js"></script>
+<script src="http://cdn.divido.com/calculator/v2.1/production/js/template.{$env}.js"></script>
 
 <div id="calcWidget"
-              data-divido-widget
-              data-divido-amount="2000"
-              data-divido-plans
-              data-divido-logo
-              data-divido-mode
+              data-{$env}-widget
+              data-{$env}-amount="2000"
+              data-{$env}-plans
+              data-{$env}-logo
+              data-{$env}-mode
               >
 </div>
 {literal}
@@ -31,16 +31,16 @@ for(let k = 0; k < inputs.length; k++){
     calcWidget.setAttribute('id','financeCalc'+k);
     calcWidget.style.display = 'block';
     input.parentNode.insertBefore(calcWidget, input.nextSibling);
-    input.value = calcWidget.getAttribute('data-divido-amount');
+    input.value = calcWidget.getAttribute('data-{$env}-amount');
     if(input.classList.contains('finance-popup')){
-        calcWidget.setAttribute('data-divido-mode','popup');
+        calcWidget.setAttribute('data-{$env}-mode','popup');
         calcWidget.style.marginLeft = '50px';
     }
     input
         .addEventListener("keyup",function(event){
             let input = event.target.value;
             if(input >= 250 && input<=25000){
-                calcWidget.setAttribute('data-divido-amount',input);
+                calcWidget.setAttribute('data-{$env}-amount',input);
                 calcWidget.style.display = 'block';
             }else {
                 calcWidget.style.display = 'none';

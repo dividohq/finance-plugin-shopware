@@ -18,8 +18,8 @@ Login to your shopware backend, and open the plugin manager.
 10. Click Configuration > Payment Methods
 11. Click into the Finance Plugin method
 12. Click Active to selected
-13. Hit Save - The plugin is now installed configured and active you may also need to clear your caches for the plugin to be visible 
-14. To clear the cache go to Configuration > Cache/Performance 
+13. Hit Save - The plugin is now installed configured and active 
+14. It is recommended that you clear your website's cache at this point. To clear the cache go to Configuration > Cache/Performance 
 
 ## Custom Finance Calculator
 

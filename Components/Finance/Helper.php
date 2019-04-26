@@ -1,7 +1,7 @@
 <?php
 /**
  * File containing Helper class
- * 
+ *
  * PHP version 7.1
  */
 
@@ -45,19 +45,19 @@ class Helper
     {
         switch ($type) {
         case 'warning':
-            Shopware()->PluginLogger()->warning("Warning: ". $msg);
+            Shopware()->Container()->get('pluginlogger')->warning("Warning: ". $msg);
             break;
-            
+
         case 'info':
-            Shopware()->PluginLogger()->info("Info: " . $msg);
+            Shopware()->Container()->get('pluginlogger')->info("Info: " . $msg);
             break;
 
         case 'error':
-            Shopware()->PluginLogger()->error("Error: " . $msg);
+            Shopware()->Container()->get('pluginlogger')->error("Error: " . $msg);
             break;
-            
+
         default:
-            Shopware()->PluginLogger()->info("Default info: " . $msg);
+            Shopware()->Container()->get('pluginlogger')->info("Default info: " . $msg);
             break;
         }
         return;
@@ -81,9 +81,9 @@ class Helper
 
     /**
      * Helper to grab the conf by key
-     * 
+     *
      * @param string $key API key
-     * 
+     *
      * @return string
      */
     public static function getConfByKey($key)
@@ -171,7 +171,7 @@ class Helper
          $shopwareAddressArray['street'] . ' ' .
          $shopwareAddressArray['city'] . ' ' .
          $shopwareAddressArray['zipcode'];
-         
+
         $addressArray = array();
         $addressArray['postcode'] = $shopwareAddressArray['zipcode'];
         $addressArray['street'] = $shopwareAddressArray['street'];
@@ -184,7 +184,7 @@ class Helper
 
         return $addressArray;
     }
-    
+
     /**
      * Create order detail for plugin credit request
      *
@@ -197,12 +197,12 @@ class Helper
         $productsArray = array();
         //Add tax
         $i=0;
-            
+
         foreach ($shopwareBasketArray['content'] as $id => $product) {
             $productsArray[$i]['name']     = $product['articlename'];
             $productsArray[$i]['quantity'] = $product['quantity'];
             $productsArray[$i]['price']    = $product['price'];
-            if ($product['modus'] == '0') {
+            if ($product['modus'] == '0' && isset($product['additional_details']['attributes']['core'])) {
                 $productsArray[$i]['plans']
                     = $product['additional_details']['attributes']['core']
                     ->get('finance_plans');
@@ -212,11 +212,11 @@ class Helper
         $productsArray[$i]['name'] = 'Shipping';
         $productsArray[$i]['quantity'] = '1';
         $productsArray[$i]['price'] = $shopwareBasketArray['sShippingcosts'];
-        
+
         return $productsArray;
     }
 
-    /** 
+    /**
      * Work out the total deposit amount from  the percentage and round it
      *
      * @param float $total   total of the order
@@ -227,14 +227,14 @@ class Helper
     public function getDepositAmount($total, $deposit)
     {
         if (empty($deposit)) return 0;
-        
+
         $depositPercentage = $deposit / 100;
         return round($depositPercentage * $total, 2);
     }
 
     /**
      * Create customer details for credit request
-     * 
+     *
      * @param array $user Shopware user array
      *
      * @return Array
@@ -287,7 +287,7 @@ class Helper
      */
     public function hmacSign()
     {
-        if (isset($_SERVER['HTTP_RAW_POST_DATA']) 
+        if (isset($_SERVER['HTTP_RAW_POST_DATA'])
             && $_SERVER['HTTP_RAW_POST_DATA']
         ) {
             self::debug('Raw Data :', 'info');
@@ -306,9 +306,9 @@ class Helper
             self::debug('Callback Sign: '.$callback_sign, 'info');
 
             self::debug('Callback DATA: '.$data, 'info');
-            
+
             $sign = self::createSignature($data, $sharedSecret);
-            
+
             self::debug('Created Signature: '.$sign, 'info');
 
             if ($callback_sign !== $sign ) {
@@ -323,13 +323,13 @@ class Helper
      * Checks the SDK's Environment class for the given environment type
      *
      * @param string $apiKey The config API key
-     * 
+     *
      * @return void
      */
     public function getEnvironment($apiKey=false)
     {
         $apiKey = (false === $apiKey) ? Helper::getApiKey() : $apiKey;
-        
+        self::debug('Getting environment for API: '.$apiKey, 'info');
         if (empty($apiKey)) {
             self::debug('Empty API key', 'error');
             return false;
@@ -340,11 +340,11 @@ class Helper
                 constant("\Divido\MerchantSDK\Environment::$environment")
             )
             ) {
-                $environment 
+                $environment
                     = constant("\Divido\MerchantSDK\Environment::$environment");
                 return $environment;
             } else {
-                self::debug('Environment does not exist in the SDK', 'error');   
+                self::debug('Environment "'.$environment.'" does not exist in the SDK', 'error');
                 return false;
             }
         }
