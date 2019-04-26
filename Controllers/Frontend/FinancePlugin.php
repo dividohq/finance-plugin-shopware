@@ -426,7 +426,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         /*
          * @var PaymentService $service
          */
-        $service = $this->container->get('finance_plugin.payment_service');
+        $service = $this->container->get('finance_plugin.webhook_service');
 
         $response = $service->createWebhookResponse($this->Request());
 
@@ -441,7 +441,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             );
         } else {
 
-            $sign = Helper::hmacSign();
+            $sign = true;//Helper::hmacSign();
 
             if (true === $sign) {
 

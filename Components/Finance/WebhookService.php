@@ -185,4 +185,33 @@ class WebhookService
         return $statusInfo;
     }
 
+
+    /**
+     * Webhook Helper
+     *
+     * @param \Enlight_Controller_Request_Request $request Data received
+     *
+     * @return WebhookResponse
+     */
+    public function createWebhookResponse(
+        \Enlight_Controller_Request_Request $request
+    ) {
+
+        $data = json_decode($request->getRawBody());
+
+        $webhookResponse = new WebhookResponse();
+
+        $webhookResponse->event       = $data->event;
+        $webhookResponse->status      = $data->status;
+        $webhookResponse->name        = $data->name;
+        $webhookResponse->email       = $data->email;
+        $webhookResponse->proposal    = $data->proposal;
+        $webhookResponse->application = $data->application;
+        $webhookResponse->signature   = $data->metadata->signature;
+        $webhookResponse->token       = $data->metadata->token;
+        $webhookResponse->amount      = $data->metadata->amount;
+
+        return $webhookResponse;
+    }
+
 }
