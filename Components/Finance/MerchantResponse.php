@@ -1,8 +1,17 @@
 <?php
+/**
+ * File for Merchant Response class
+ *
+ * PHP version 5.6
+ */
 
 namespace FinancePlugin\Components\Finance;
 
-class ActivateResponse
+/**
+ * Class used to break the merchant SDK request responses up into a more
+ * readable format
+ */
+class MerchantResponse
 {
     public $id;
 
@@ -30,13 +39,13 @@ class ActivateResponse
         if(isset($responseObj->id)) {
 
             $this->id = $responseObj->id;
-            $this->amount = $responseObj->id;
-            $this->status = $responseObj->id;
-            $this->reference = $responseObj->id;
-            $this->data = $responseObj->id;
-            $this->comment = $responseObj->id;
-            $this->created_at = $responseObj->id;
-            $this->updated_at = $responseObj->id;
+            $this->amount = $responseObj->amount;
+            $this->status = $responseObj->status;
+            $this->reference = $responseObj->reference;
+            $this->data = $responseObj->data;
+            $this->comment = $responseObj->comment;
+            $this->created_at = $responseObj->created_at;
+            $this->updated_at = $responseObj->updated_at;
 
             $this->error = false;
 
@@ -47,7 +56,6 @@ class ActivateResponse
         } else {
             $responseObj->error = true;
             $responseObj->message = "Unknown error";
-
         }
     }
 

@@ -19,24 +19,28 @@ use Divido\MerchantSDK\Models\Application;
  * @package  FinancePlugin
  * @since    File available since Release 1.0.0
  */
-class ActivateService
+class RefundService
 {
     /**
-     * Make an activate request via the SDK from the order
+     * Make a refund request via the merchant SDK
      *
-     * @param \FinancePlugin\Models\Request $request Request Model
-     *
+     * @param string $application_id Divido Order Reference ID
+     * @param int    $total          Amount (in pence) being refunded
+     * @param array  $items          Array of items in the order
+     * @param string $order_id       Merchant's Order Reference ID
      * @return void
      */
-    public static function activateApplication($application_id, $total, $items)
+    public static function refundApplication($application_id, $total, $items, $order_id=null)
     {
+        $order_id = $order_id ?? $application_id;
+
         $apiKey = Helper::getApiKey();
 
         $environment = Helper::getEnvironment($apiKey);
 
         if(!$environment) return false;
 
-        Helper::debug("Activating order '$application_id'", 'info');
+        Helper::debug("Refunding order '$application_id'", 'info');
         $httpClient = new \GuzzleHttp\Client();
 
         $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
@@ -51,20 +55,19 @@ class ActivateService
             $environment
         );
 
-        $application = (new \Divido\MerchantSDK\Models\Application())
+        $application = (new Application())
             ->withId($application_id);
 
-        $applicationActivation = (new \Divido\MerchantSDK\Models\ApplicationActivation())
+        $applicationRefund = (new \Divido\MerchantSDK\Models\ApplicationRefund())
             ->withAmount($total)
-            ->withReference("Order ".$application_id)
-            ->withComment('Order was dispatched by merchant.')
-            ->withOrderItems($items)
-            ->withDeliveryMethod('delivery');
+            ->withReference("Order Ref.".$order_id)
+            ->withComment('As per merchant request.')
+            ->withOrderItems($items);
 
         // Create a new activation for the application.
-        $response = $sdk->applicationActivations()->createApplicationActivation(
+        $response = $sdk->applicationRefunds()->createApplicationRefund(
             $application,
-            $applicationActivation
+            $applicationRefund
         );
 
         $applicationResponseBody = $response->getBody()->getContents();
