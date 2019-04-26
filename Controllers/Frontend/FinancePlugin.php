@@ -14,6 +14,7 @@ use FinancePlugin\Components\Finance\Helper;
 use FinancePlugin\Models\Request;
 use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Models\Order\Order;
+use Shopware\Models\Order\Status;
 
 /**
  * Controller class which handles the payment flow
