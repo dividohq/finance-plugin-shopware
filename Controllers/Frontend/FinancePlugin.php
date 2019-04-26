@@ -13,6 +13,7 @@ use FinancePlugin\Components\Finance\WebhookService;
 use FinancePlugin\Components\Finance\Helper;
 use FinancePlugin\Models\Request;
 use Shopware\Components\CSRFWhitelistAware;
+use Shopware\Models\Order\Order;
 
 /**
  * Controller class which handles the payment flow
@@ -446,7 +447,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
                 $transactionID = $response->proposal;
                 $paymentUniqueID = $response->token;
 
-                Helper::debug('Webhook data:'.serialize($response), 'error');
+                Helper::debug('Webhook data:'.serialize($response), 'info');
                 Helper::debug('Webhook TransactionID:'.$transactionId, 'info');
                 Helper::debug('Webhook Unique Payment ID:'.$paymentUniqueId, 'info');
 
@@ -463,13 +464,15 @@ class Shopware_Controllers_Frontend_FinancePlugin
                     );
 
                     if ($orderID) {
-                        OrderService::setPaymentStatus(
+                        // get order
+                        $order = $this->get('models')->find(Order::class, $orderID);
+                        $order->setPaymentStatus(
                             $orderID,
                             $statusInfo['order_status']
                         );
-                        Helper::debug('Updating Order Status of :'.$orderID, 'info');
+                        Helper::debug('Updated Order Status of :'.$orderID, 'info');
                     } else {
-                        Helper::debug('Could not find order #'.$orderID.' with token '.$paymentUniqueID, 'info');
+                        Helper::debug('Could not find order #'.$orderID.' with token '.$paymentUniqueID, 'error');
                     }
                 }
 
