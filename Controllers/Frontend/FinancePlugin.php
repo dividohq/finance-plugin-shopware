@@ -112,11 +112,11 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $basket = $this->getBasket();
         $amount = $this->getAmount();
         $deposit_percentage = filter_var(
-            $_POST['divido_deposit'], //TODO: Ubrand: Can't Change
+            $_POST['divido_deposit'],
             FILTER_SANITIZE_NUMBER_INT
         );
         $planId = filter_var(
-            $_POST['divido_plan'], //TODO: Ubrand: Can't Change
+            $_POST['divido_plan'],
             FILTER_SANITIZE_EMAIL
         );
 
@@ -148,10 +148,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $sessionId = $session->store($connection);
 
         $metadata = [
-            'token' => $service->createPaymentToken(
-                $amount,
-                $user['additional']['user']['customernumber']
-            ),
+            'token' => $token,
             'amount' => $amount
         ];
 
@@ -186,6 +183,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             'merchant_response_url' => $response_url
             ]
         );
+        $request->setMetadata($metadata);
         $response = RequestService::makeRequest($request);
 
         // Create session if request is okay and forward to the payment platform
