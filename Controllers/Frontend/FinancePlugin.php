@@ -332,6 +332,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
                                     $orderID,
                                     WebhookService::PAYMENTSTATUSPAID
                                 );
+                                $this->get('models')->flush($order);
 
                                 $data['ordernumber'] = $orderNumber;
                                 $data['cleared'] = WebhookService::PAYMENTSTATUSPAID;
@@ -422,7 +423,6 @@ class Shopware_Controllers_Frontend_FinancePlugin
     public function webhookAction()
     {
         Helper::debug('Webhook', 'info');
-
         /*
          * @var PaymentService $service
          */
@@ -441,7 +441,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             );
         } else {
 
-            $sign = true;//Helper::hmacSign();
+            $sign = Helper::hmacSign();
 
             if (true === $sign) {
 
@@ -464,15 +464,19 @@ class Shopware_Controllers_Frontend_FinancePlugin
                         $connection
                     );
 
-                    if ($orderID) {
+                    if (!empty($orderID)) {
                         // get order
                         $modelManager = $this->get('models');
                         $order = $modelManager->find(Order::class, $orderID);
-                        $order->setOrderStatus(
-                            $modelManager->find(Status::class),
-                            $statusInfo['order_status']
+                        $currentStatus = $order->getPaymentStatus();
+                        $order->setPaymentStatus(
+                            $modelManager->find(Status::class, $statusInfo['order_status'])
                         );
-                        Helper::debug('Updated Order Status of :'.$orderID, 'info');
+                        $modelManager->flush($order);
+                        Helper::debug(
+                            'Updated Order Status of :'.$orderID.' from '.$currentStatus.' to '.$statusInfo['order_status'],
+                            'info'
+                        );
                     } else {
                         Helper::debug('Could not find order #'.$orderID.' with token '.$paymentUniqueID, 'error');
                     }
