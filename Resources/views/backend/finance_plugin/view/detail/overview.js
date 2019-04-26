@@ -8,7 +8,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
     override: 'Shopware.apps.Order.view.detail.Overview',
 
     registerEvents: function(){
-        this.addEvents('activateOrder', 'refundOrder');
+        this.addEvents('activateOrder', 'refundOrder', 'cancelOrder');
     },
 
     createToolbar: function () {
@@ -81,7 +81,40 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
             }
         });
 
+        var cancelButton = Ext.create('Ext.button.Button', {
+            text: "cancel order",
+            action: 'cancel-order',
+            cls: 'secondary',
+            hidden: true,
+            handler: function () {
+                me.fireEvent('cancelOrder', me.record, this, {
+                    callback: function (order) { }
+                });
+            },
+            listeners: {
+                beforeRender: {
+                    fn: function () {
+                        var btn = this;
+                        Ext.Ajax.request({
+                            url: '{url controller=FinancePlugin action="checkStatus"}',
+                            method: 'GET',
+                            params: {
+                                orderId: me.record.get('id')
+                            },
+                            success: function (response) {
+                                var data = Ext.decode(response.responseText);
+                                if (data.status == 'READY') {
+                                    btn.show();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
         var buttons = me.getEditFormButtons();
+        buttons.push(cancelButton);
         buttons.push(activateButton);
         buttons.push(refundButton);
 
@@ -90,10 +123,8 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
             items: buttons
         });
 
-
-
         return me.toolbar;
-    },
+    }
 
 });
 //{/block}

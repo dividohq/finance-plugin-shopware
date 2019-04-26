@@ -36,16 +36,16 @@ class MerchantResponse
     public $message;
 
     public function __construct($responseObj){
-        if(isset($responseObj->id)) {
+        if(isset($responseObj->data->id)) {
 
-            $this->id = $responseObj->id;
-            $this->amount = $responseObj->amount;
-            $this->status = $responseObj->status;
-            $this->reference = $responseObj->reference;
-            $this->data = $responseObj->data;
-            $this->comment = $responseObj->comment;
-            $this->created_at = $responseObj->created_at;
-            $this->updated_at = $responseObj->updated_at;
+            $this->id = $responseObj->data->id;
+            $this->amount = $responseObj->data->amount;
+            $this->status = $responseObj->data->status;
+            $this->reference = $responseObj->data->reference;
+            $this->data = $responseObj->data->data;
+            $this->comment = $responseObj->data->comment;
+            $this->created_at = $responseObj->data->created_at;
+            $this->updated_at = $responseObj->data->updated_at;
 
             $this->error = false;
 

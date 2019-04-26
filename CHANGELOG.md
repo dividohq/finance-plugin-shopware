@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 - Added activation functionality
 - Replaced deprecated logger code
 
-
 ## [1.0.0.2] - 2019-04-25
 - Added refund functionality
+
+## [1.0.0.3] - 2019-04-25
+- Added cancel functionality
