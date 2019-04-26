@@ -467,6 +467,9 @@ class Shopware_Controllers_Frontend_FinancePlugin
                             $orderID,
                             $statusInfo['order_status']
                         );
+                        Helper::debug('Updating Order Status of :'.$orderID, 'info');
+                    } else {
+                        Helper::debug('Could not find order #'.$orderID.' with token '.$paymentUniqueID, 'info');
                     }
                 }
 
