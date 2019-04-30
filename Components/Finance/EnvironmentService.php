@@ -49,15 +49,21 @@ class EnvironmentService
 
         $requestOptions = (new ApiRequestOptions());
         // Retrieve all finance plans for the merchant.
-        try{
+        try {
             $response = $sdk->platformEnvironments()->getPlatformEnvironment();
-            $finance_env = $response->getBody()->getContents();
-            $response = new EnvironmentResponse($finance_env);
-            return $response;
-        }catch(MerchantApiBadResponseException $e){
+            $responseStr = $response->getBody()->getContents();
+            $responseJson = json_decode($responseStr);
+            if(isset($responseJson->data->environment)) {
+                $responseObj = new EnvironmentResponse($responseJson->data->environment);
+            } elseif (isset($responseJson->error)) {
+                $responseObj = new EnvironmentResponse("", true, $responseJson->code, $responseJson->message);
+            }
+            Helper::log("Response: ".$responseObj->_toString(), 'info');
+            return $responseObj;
+        } catch(MerchantApiBadResponseException $e) {
             $errorMessage = SDKErrorHandler::getMessage($e);
-            $response = new EnvironmentResponse("{}", true, $e->getCode(), $errorMessage);
-            return $response;
+            $responseObj = new EnvironmentResponse("", true, $e->getCode(), $errorMessage);
+            return $responseObj;
         }
     }
 
@@ -113,11 +119,10 @@ class EnvironmentService
     }
 
     public static function constructEnvironmentFromResponse(EnvironmentResponse $response) {
-        if ($response->error === false) {
-            $response_array = json_decode($response->environment, true);
+        if (false === $response->error) {
             $environment = new Environment;
             $environment->setPluginId(self::PLUGIN_ID);
-            $environment->setEnvironment($response_array['data']['environment']);
+            $environment->setEnvironment($response->environment);
             $environment->setUpdatedOn(time());
             return $environment;
         } else return false;

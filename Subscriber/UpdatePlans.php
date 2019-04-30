@@ -146,7 +146,7 @@ class UpdatePlans implements SubscriberInterface
 
     private function _setEnvironment($apiKey, $view) {
         $environmentResponse = EnvironmentService::getEnvironmentResponse($apiKey);
-        if($environmentResponse->Error == false) {
+        if(false == $environmentResponse->error) {
             $environment = EnvironmentService::constructEnvironmentFromResponse($environmentResponse);
             EnvironmentService::storeEnvironment($environment);
 
@@ -161,12 +161,12 @@ class UpdatePlans implements SubscriberInterface
         } else {
             Helper::log('Could not get environment', 'error');
             $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
-            $view->extendsTemplate('backend/fp_extend_config/view/');
             $view->assign([
                 'success' => false,
-                'message'  =>   'Could not fetch your merchant environment.
-                                Please consult your payment provider'
+                'message' => 'Could not fetch your merchant environment.
+                              Please consult your payment provider'
             ]);
+
         }
     }
 }
