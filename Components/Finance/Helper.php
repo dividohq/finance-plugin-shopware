@@ -155,6 +155,26 @@ class Helper
         $config = self::getConfig();
         return $config['Cart Threshold'];
     }
+    /**
+     * Helper to grab Activate on Status value
+     *
+     * @return string
+     */
+    public static function getActivateStatus()
+    {
+        $config = self::getConfig();
+        return $config['Activate'];
+    }
+    /**
+     * Helper to grab list of okayed plans
+     *
+     * @return int
+     */
+    public static function getPlans()
+    {
+        $config = self::getConfig();
+        return $config['Plans'];
+    }
 
     /**
      * Helper Function to transform shopware address array to plugin format

@@ -1,7 +1,6 @@
 <?php
 
 use FinancePlugin\Components\Finance\Helper;
-use Divido\MerchantSDK\Environment;
 
 class Shopware_Controllers_Backend_FinancePlugin extends Shopware_Controllers_Backend_ExtJs {
 
@@ -25,19 +24,40 @@ class Shopware_Controllers_Backend_FinancePlugin extends Shopware_Controllers_Ba
          */
 
         $orderId = $_POST['orderId'];
+        $orderStatus = $_POST['orderStatus'];
+
+        $activateStatus = Helper::getActivateStatus();
+
+        if($orderStatus != $activateStatus){
+            Helper::log('Order Status is not Activate Status', 'info');
+            $this->View()->assign([
+                'success' => true
+            ]);
+            return;
+        }
 
         $activateService = $this->container->get('finance_plugin.activate_service');
         $orderService = $this->container->get('finance_plugin.order_service');
 
         $orderBuilder = $this->get('dbal_connection')->createQueryBuilder();
         $order = $orderBuilder
-            ->select(['orders.invoice_amount', 'orders.invoice_shipping', 'sessions.transactionID'])
+            ->select(['orders.invoice_amount', 'orders.invoice_shipping', 'sessions.transactionID', 'sessions.activated_on', 'sessions.orderNumber'])
             ->from('s_order', 'orders')
             ->leftJoin('orders', 's_sessions', 'sessions', 'orders.ordernumber = sessions.orderNumber')
             ->where('orders.id = :id')
             ->setParameter(':id', $orderId)
             ->execute()
             ->fetchAll();
+
+        if($order[0]['activated_on'] > 0) {
+            $this->View()->assign([
+                'success' => true,
+                'message' => "Order already activated"
+            ]);
+            return;
+        }
+
+        Helper::log('Activating Status', 'info');
 
         $itemBuilder = $this->get('dbal_connection')->createQueryBuilder();
         $itemList = $itemBuilder
@@ -76,14 +96,22 @@ class Shopware_Controllers_Backend_FinancePlugin extends Shopware_Controllers_Ba
                 "response" => $activateResponse
             ]);
             return;
-        } else {
-            $this->View()->assign([
-                'success' => true,
-                'message' => "Order activated",
-                "response" => $activateResponse
-            ]);
-            return;
         }
+
+        $update_session_query = $this->get('dbal_connection')->createQueryBuilder();
+        $update_session_query->update('s_sessions')
+            ->where("`orderNumber` = :orderNumber")
+            ->set("`activated_on`", ":now")
+            ->setParameter(":orderNumber", $order[0]['orderNumber'])
+            ->setParameter(":now", time())
+            ->execute();
+
+        $this->View()->assign([
+            'success' => true,
+            'message' => "Order activated",
+            "response" => $activateResponse
+        ]);
+        return;
     }
 
     /**
@@ -285,5 +313,28 @@ class Shopware_Controllers_Backend_FinancePlugin extends Shopware_Controllers_Ba
             'orderId' => $orderId
         ]);
         return;
+    }
+
+    public function getPlansAction()
+    {
+        $planBuilder = $this->get('dbal_connection')->createQueryBuilder();
+        $plans = $planBuilder
+            ->select(['plans.id', 'plans.name'])
+            ->from('s_plans', 'plans')
+            ->execute()
+            ->fetchAll();
+
+        $data = [];
+        foreach($plans as $plan) {
+            $data[] = [
+                'id'   => $plan['id'],
+                'name' => $plan['name']
+            ];
+        }
+
+        $this->view->assign([
+            'data' => $data,
+            'total' => count($data),
+        ]);
     }
 }
