@@ -158,6 +158,7 @@ class TemplateRegistration implements SubscriberInterface
                     }
 
                     if (empty($plans_ids)) {
+                        $confPlans = Helper::getPlans();
                         $plans = PlansService::getStoredPlans();
                         if (empty($plans)) {
                             $sdkResponse = PlansService::getPlansFromSDK($config['API Key']);
@@ -166,9 +167,19 @@ class TemplateRegistration implements SubscriberInterface
                                 PlansService::storePlans($plans);
                                 $show_widget = true;
                             }
+                        } elseif(count($confPlans) > 0){
+
+                            foreach($plans as $key => $plan) {
+                                if(!in_array($plan->getName(), $confPlans)){
+                                    unset($plans[$key]);
+                                }
+                            }
+                            // Only show the widget if there are still plans left after
+                            // removing any not in the conf list
+                            $show_widget = (count($plans) > 0) ? true : false;
                         } else $show_widget = true;
 
-                        foreach ($plans as $plan) $plans_ids[] = $plan->getId();
+                        foreach ($plans as $plan) $plan_ids[] = $plan->getId();
                     } else $show_widget = true;
 
                     $view->assign('plans', implode(",", $plan_ids));

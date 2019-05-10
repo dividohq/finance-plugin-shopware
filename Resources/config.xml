@@ -95,11 +95,12 @@
 
         <element scope="shop" type="select">
             <name>Plans</name>
-            <label lang="en">Choose Plans</label>
+            <label lang="en">Limit Plans</label>
+            <description>Limit the list of plan options by selecting the required options here</description>
             <store><![CDATA[Ext.define('FinancePlugin.YourName.Form', {
             extend: 'Ext.data.Store',
             fields: [
-                { name:'id', type: 'int' },
+                { name:'id', type: 'string' },
                 { name:'name', type: 'string' }
             ],
             autoLoad: true,
