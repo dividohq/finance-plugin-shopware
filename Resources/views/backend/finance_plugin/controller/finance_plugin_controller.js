@@ -15,13 +15,36 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
             'order-detail-window order-overview-panel': {
                 activateOrder: me.onActivateOrder,
                 refundOrder: me.onRefundOrder,
-                cancelOrder: me.onCancelOrder
+                cancelOrder: me.onCancelOrder,
+                updateFinance: me.onUpdateFinance
             }
         });
         // me.callParent will execute the init function of the overridden controller
         me.callParent(arguments);
 
 
+    },
+
+    onUpdateFinance: function (record) {
+        console.log(record);
+        Ext.Ajax.request({
+            url: '{url controller=FinancePlugin action="updateFinance"}',
+            method: 'POST',
+            params: {
+                orderId: record.get('id'),
+                orderStatus: record.get('status')
+            },
+            success: function (response) {
+                var status = Ext.decode(response.responseText);
+                if (status.success) {
+                    if(status.message !== null) {
+                        Shopware.Notification.createGrowlMessage('{s name=activationSuccess}Order Updated{/s}', status.message);
+                    }
+                } else {
+                    Shopware.Notification.createGrowlMessage('{s name=activationError}Order Not Updated{/s}', status.message);
+                }
+            }
+        });
     },
 
     onActivateOrder: function (record) {

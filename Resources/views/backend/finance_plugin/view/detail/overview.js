@@ -8,7 +8,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
     override: 'Shopware.apps.Order.view.detail.Overview',
 
     registerEvents: function(){
-        this.addEvents('activateOrder', 'refundOrder', 'cancelOrder');
+        this.addEvents('activateOrder', 'refundOrder', 'cancelOrder', 'updateFinance');
     },
 
     getEditFormButtons: function () {
@@ -40,7 +40,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
                         me.fireEvent('updateForms', order, me.up('window'));
                     }
                 });
-                me.fireEvent('activateOrder', me.record);
+                me.fireEvent('updateFinance', me.record);
             }
         });
 

@@ -1,8 +1,160 @@
 <?php
-
+ini_set('display_errors', 1);
 use FinancePlugin\Components\Finance\Helper;
 
 class Shopware_Controllers_Backend_FinancePlugin extends Shopware_Controllers_Backend_ExtJs {
+
+    /**
+     * Endpoint for an activation request on the backend
+     *
+     * @return void
+     */
+    public function updateFinanceAction() {
+        /**
+         * Autoload the vendor files first
+         */
+        $plugin = $this->get('kernel')->getPlugins()['FinancePlugin'];
+        $this->get('template')->addTemplateDir(
+            $plugin->getPath() . '/Resources/views/'
+        );
+
+        require_once($plugin->getPath().'/vendor/autoload.php');
+        /**
+         * Autoload the vendor files first
+         */
+
+        $orderId = $_POST['orderId'];
+        $orderStatus = $_POST['orderStatus'];
+
+        $activateStatus = Helper::getActivateStatus();
+
+        $cancelStatuses = [];
+        $statusBuilder = $this->get('dbal_connection')->createQueryBuilder();
+        $statuses = $statusBuilder
+            ->select(['state.id', 'state.name'])
+            ->from('s_core_states', 'state')
+            ->where("LOWER(state.name) LIKE '%cancel%'")
+            ->execute()
+            ->fetchAll();
+
+        foreach($statuses as $status){
+            $cancelStatuses[$status['id']] = $status['name'];
+        }
+
+        if(!(array_key_exists($orderStatus, $cancelStatuses) || $orderStatus == $activateStatus)){
+            Helper::log('Order Status is not an updatable status', 'info');
+            $this->View()->assign([
+                'success' => true
+            ]);
+            return;
+        }
+
+        $orderService = $this->container->get('finance_plugin.order_service');
+
+        if($orderStatus == $activateStatus) {
+            $updatedMessage = 'Order already activated';
+            $successMessage = 'Order activated';
+            $failureMessage = 'Order could not be activated';
+            $logMessage = 'Activating order';
+            $sessionCol = "activated_on";
+        } elseif(array_key_exists($orderStatus, $cancelStatuses)) {
+            $updatedMessage = 'Order already cancelled';
+            $successMessage = 'Order cancelled';
+            $failureMessage = 'Order could not be cancelled';
+            $logMessage = 'Cancelling order';
+            $sessionCol = "cancelled_on";
+        }
+
+        // Get the required information about the order
+        $orderBuilder = $this->get('dbal_connection')->createQueryBuilder();
+        $order = $orderBuilder
+            ->select(['orders.invoice_amount', 'orders.invoice_shipping', 'sessions.transactionID', "sessions.{$sessionCol}", 'sessions.orderNumber'])
+            ->from('s_order', 'orders')
+            ->leftJoin('orders', 's_sessions', 'sessions', 'orders.ordernumber = sessions.orderNumber')
+            ->where('orders.id = :id')
+            ->setParameter(':id', $orderId)
+            ->execute()
+            ->fetchAll();
+
+        // If order has already been updated to this status, don't update again
+        // Might have to change in the future
+        if($order[0][$sessionCol] > 0) {
+            $this->View()->assign([
+                'success' => true,
+                'message' => $updatedMessage
+            ]);
+            return;
+        }
+        // Log that we're attempting to update the order
+        Helper::log($logMessage, 'info');
+
+        // Retrieve all items from the order
+        $itemBuilder = $this->get('dbal_connection')->createQueryBuilder();
+        $itemList = $itemBuilder
+            ->select(['item.name', 'item.price', 'item.quantity'])
+            ->from('s_order_details', 'item')
+            ->where('item.orderID = :id')
+            ->setParameter(':id', $orderId)
+            ->execute()
+            ->fetchAll();
+
+        $items = [];
+        foreach($itemList as $item) {
+            $items[] = [
+                'name' => $item['name'],
+                'quantity' => intval($item['quantity']),
+                'price' => $item['price']*100
+            ];
+        }
+        // add shipping if required
+        if($order[0]['invoice_shipping'] > 0) {
+            $items[] = [
+                'name' => 'Shipping',
+                'quantity' => 1,
+                'price' => $order[0]['invoice_shipping']*100
+            ];
+        }
+
+        $orderAmount = $order[0]['invoice_amount']*100;
+
+        // Activate the status if order status matches the config activate status
+        if($orderStatus == $activateStatus) {
+            $activateService = $this->container->get('finance_plugin.activate_service');
+            $updateResponse = $activateService::activateApplication($order[0]['transactionID'], $orderAmount, $items);
+        // Cancel the status if status mentions cancelling
+        } elseif(array_key_exists($orderStatus, $cancelStatuses)) {
+            $cancelService = $this->container->get('finance_plugin.cancel_service');
+            $updateResponse = $cancelService::cancelApplication($order[0]['transactionID'], $order_amount, $items, $order[0]['orderNumber']);
+        }
+        // If error, send error response
+        if($updateResponse->error == true) {
+            $this->View()->assign([
+                'success' => false,
+                'message' => $failureMessage.": ".$updateResponse->message,
+                "response" => $updateResponse
+            ]);
+            return;
+        }
+
+        // Update session table if webhook successful
+        $updateSessionQuery = $this->get('dbal_connection')->createQueryBuilder();
+        $updateSessionQuery->update('s_sessions')
+            ->where("`orderNumber` = :orderNumber")
+            ->set("`{$sessionCol}`", ":now")
+            ->setParameter(":orderNumber", $order[0]['orderNumber'])
+            ->setParameter(":now", time())
+            ->execute();
+
+        Helper::log('Update Webhook response received: '.json_encode($updateResponse), 'info');
+
+        // Send success response
+        $this->View()->assign([
+            'success' => true,
+            'message' => $updateMessage,
+            "response" => $updateResponse
+        ]);
+        return;
+    }
 
     /**
      * Endpoint for an activation request on the backend
