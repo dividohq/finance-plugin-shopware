@@ -294,6 +294,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
         // If we are receiving the required GET response token and sessionId
         if (!(isset($response->sessionId) && isset($response->token))) {
+            Helper::log(self::INCOMPLETE_RESPONSE_ERROR_MSG, 'error');
             $this->View()->assign('error', self::INCOMPLETE_RESPONSE_ERROR_MSG);
             $this->View()->assign(
                 'template',
@@ -311,12 +312,14 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
         // If we can't find the session in the database 404 out
         if (!$session->retrieveFromDb($sessionId, $connection)) {
+            Helper::log("Could not find session", 'error');
             $this->View()->assign('template', 'frontend/finance_plugin/404.tpl');
             return;
         }
 
         // If we havent yet received a PAID status webhook display error
         if ($session->getStatus() != WebhookService::PAYMENTSTATUSPAID) {
+            Helper::log(self::NON_PAID_ERROR_MSG, 'error');
             $this->View()->assign('error', self::NON_PAID_ERROR_MSG);
             $this->View()->assign(
                 'template',
@@ -340,6 +343,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $response->token
         )
         ) {
+            Helper::log(self::INVALID_TOKEN_ERROR_MSG, 'error');
             $this->View()->assign('error', self::INVALID_TOKEN_ERROR_MSG);
             $this->View()->assign(
                 'template',
@@ -354,6 +358,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $order = $session->createOrder($device);
 
             $orderNumber = $orderService->saveOrder($order);
+
             if ($orderNumber) {
                 $orderID = $orderService->getId(
                     $session->getTransactionID(),
