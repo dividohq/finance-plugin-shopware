@@ -245,6 +245,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $displayWarning[] =  self::API_ERROR_MSG;
         } else {
             $basket_plans = PlansService::getBasketPlans($apiKey, $products);
+
             if (empty($basket_plans)) {
                 $displayFinance = false;
                 $displayWarning[] = self::API_ERROR_MSG;

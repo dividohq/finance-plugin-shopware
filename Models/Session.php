@@ -94,21 +94,21 @@ class Session extends ModelEntity
     /**
      * @var integer $activated_on
      *
-     * @ORM\Column(type="integer", length=10, nullable=false)
+     * @ORM\Column(type="integer", length=10, nullable=true)
      */
     private $activated_on;
 
     /**
      * @var integer $cancelled_on
      *
-     * @ORM\Column(type="integer", length=10, nullable=false)
+     * @ORM\Column(type="integer", length=10, nullable=true)
      */
     private $cancelled_on;
 
     /**
      * @var integer $refunded_on
      *
-     * @ORM\Column(type="integer", length=10, nullable=false)
+     * @ORM\Column(type="integer", length=10, nullable=true)
      */
     private $refunded_on;
 
