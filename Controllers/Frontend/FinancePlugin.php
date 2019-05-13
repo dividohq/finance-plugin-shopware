@@ -354,22 +354,24 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
         // If we haven't already generated the order already:
         if (is_null($session->getOrderNumber())) {
+
             $device = $this->Request()->getDeviceType();
             $order = $session->createOrder($device);
 
             $orderNumber = $orderService->saveOrder($order);
 
             if ($orderNumber) {
+
                 $orderID = $orderService->getId(
                     $session->getTransactionID(),
                     $session->getKey(),
                     $connection
                 );
+
                 $order->setPaymentStatus(
                     $orderID,
                     WebhookService::PAYMENTSTATUSPAID
                 );
-                $this->get('models')->flush($order);
 
                 $data['ordernumber'] = $orderNumber;
                 $data['cleared'] = WebhookService::PAYMENTSTATUSPAID;
@@ -394,15 +396,10 @@ class Shopware_Controllers_Frontend_FinancePlugin
                 $session->update($connection);
 
                 session_write_close();
+
             } else {
-                $this->View()->assign(
-                    'error',
-                    self::ORDER_CREATION_ERROR_MSG
-                );
-                $this->View()->assign(
-                    'template',
-                    'frontend/finance_plugin/error.tpl'
-                );
+                $this->View()->assign('error', self::ORDER_CREATION_ERROR_MSG);
+                $this->View()->assign('template','frontend/finance_plugin/error.tpl');
                 return;
             }
         } else {
