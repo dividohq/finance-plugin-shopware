@@ -126,6 +126,7 @@ class FinancePlugin extends Plugin
     public function deactivate(DeactivateContext $context)
     {
         $this->_setActiveFlag($context->getPlugin()->getPayments(), false);
+        $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
     }
 
     /**
@@ -138,6 +139,7 @@ class FinancePlugin extends Plugin
     public function activate(ActivateContext $context)
     {
         $this->_setActiveFlag($context->getPlugin()->getPayments(), true);
+        $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
     }
 
     /**
