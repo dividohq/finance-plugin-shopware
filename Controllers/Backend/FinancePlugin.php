@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', 1);
+
 use FinancePlugin\Components\Finance\Helper;
 
 class Shopware_Controllers_Backend_FinancePlugin extends Shopware_Controllers_Backend_ExtJs {
