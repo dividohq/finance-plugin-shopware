@@ -104,6 +104,10 @@ class UpdatePlans implements SubscriberInterface
 
         $request = $controller->Request();
 
+        if($request->getActionName() == 'getForm') {
+            var_dump($args->getReturn());
+        }
+
         if ($request->getActionName() == 'saveForm') {
             PlansService::clearPlans();
             $apiKey = Helper::getApiKey();
