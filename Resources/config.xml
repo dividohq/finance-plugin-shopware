@@ -97,24 +97,12 @@
             <name>Plans</name>
             <label lang="en">Limit Plans</label>
             <description>Limit the list of plan options by selecting the required options here</description>
-            <store><![CDATA[Ext.define('FinancePlugin.YourName.Form', {
-            extend: 'Ext.data.Store',
-            fields: [
-                { name:'id', type: 'string' },
-                { name:'name', type: 'string' }
-            ],
-            autoLoad: true,
-            pageSize: 25,
-            proxy: {
-                type: 'ajax',
-                url: window.location.href.substr(0, window.location.href.indexOf('backend')) + 'backend/FinancePlugin/getPlans',
-                reader: {
-                    type: 'json',
-                    root: 'data',
-                    totalProperty: 'total'
-                }
-            }
-            }).create();//new ]]>
+            <store>
+                <option>
+                    <value>0</value>
+                    <label lang="de">Please activate the plugin and reload the page to use this feature</label>
+                    <label lang="en">Please activate the plugin and reload the page to use this feature</label>
+                </option>
             </store>
             <options>
                 <multiSelect>true</multiSelect>
