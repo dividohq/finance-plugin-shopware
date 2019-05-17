@@ -204,7 +204,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
                 serialize($response),
                 'error'
             );
-            $this->forward('cancel');
+            $errors = [self::API_ERROR_MSG];
+            $this->forward('cancel', null, null, ['errors' => $errors]);
         } else {
             $payload = $response->data;
             $session->setTransactionID($payload->id);
