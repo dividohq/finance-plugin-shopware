@@ -99,6 +99,7 @@ class UpdatePlans implements SubscriberInterface
      */
     public function onConfigPostDispatch(\Enlight_Event_EventArgs $args)
     {
+        ini_set('display_errors', 1);
         Helper::log('Updating Config', 'info');
         $controller = $args->getSubject();
 
@@ -125,8 +126,8 @@ class UpdatePlans implements SubscriberInterface
             $elements = $data['elements'];
             $apiKey = $elements[0]['values'][0]['value'];
 
-            $sdkResponse = PlansService::getPlansFromSDK($apiKey);
-            if ($sdkResponse->error === false) {
+            $sdkResponse = (empty($apiKey)) ? false : PlansService::getPlansFromSDK($apiKey);
+            if ($sdkResponse != false && $sdkResponse->error === false) {
                 $plans = $sdkResponse->plans;
                 PlansService::storePlans($plans);
                 $plugin = $controller->get('kernel')->getPlugins()['FinancePlugin'];
