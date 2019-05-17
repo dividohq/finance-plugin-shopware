@@ -110,13 +110,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
          */
         $user = $this->getUser();
         if(is_null($user)) {
-            $this->View()->assign(
-                'template',
-                '/frontend/finance_plugin/error.tpl'
-            );
             $errors = [self::SESSION_EXPIRY_MSG];
             $this->forward('cancel', null, null, ['errors' => $errors]);
-            return;
         }
 
         $service = $this->container->get('finance_plugin.payment_service');
