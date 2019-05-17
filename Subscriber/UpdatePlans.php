@@ -99,7 +99,6 @@ class UpdatePlans implements SubscriberInterface
      */
     public function onConfigPostDispatch(\Enlight_Event_EventArgs $args)
     {
-        ini_set('display_errors', 1);
         Helper::log('Updating Config', 'info');
         $controller = $args->getSubject();
 
