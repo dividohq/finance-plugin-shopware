@@ -1,7 +1,7 @@
 <?php
 /**
  * File for RequestService class
- * 
+ *
  * PHP version 7.1
  */
 
@@ -13,7 +13,7 @@ use Divido\MerchantSDK\Models\Application;
 
 /**
  * Helper service class to make application requests
- * 
+ *
  * @category CategoryName
  * @package  FinancePlugin
  * @since    File available since Release 1.0.0
@@ -25,7 +25,7 @@ class RequestService
      * Use the shopware $user array to create an applicant
      *
      * @param array $user The shopware user array
-     * 
+     *
      * @return array
      */
     public static function setApplicantsFromUser(array $user):array
@@ -38,7 +38,7 @@ class RequestService
             'street' => $billing['street'],
             'town' => $billing['city']
         ];
-        
+
         $shipping = $user['shippingaddress'];
         $shippingAddress = [
             'postcode' => $shipping['zipcode'],
@@ -64,7 +64,7 @@ class RequestService
      * Search through basket for all products
      *
      * @param array $basket Array of products
-     * 
+     *
      * @return array
      */
     public static function setOrderItemsFromBasket(array $basket)
@@ -111,7 +111,7 @@ class RequestService
      * Make a request via the SDK by packaging our Request model
      *
      * @param \FinancePlugin\Models\Request $request Request Model
-     * 
+     *
      * @return void
      */
     public static function makeRequest(\FinancePlugin\Models\Request $request)
@@ -119,17 +119,17 @@ class RequestService
         $apiKey = Helper::getApiKey();
 
         $environment = Helper::getEnvironment($apiKey);
-        
+
         if ($environment) {
             $httpClient = new \GuzzleHttp\Client();
-    
+
             $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
 
             $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper($guzzleClient,
                 \Divido\MerchantSDK\Environment::CONFIGURATION[$environment]['base_uri'],
                 $apiKey
             );
-    
+
             $sdk = new Client(
                 $httpClientWrapper,
                 $environment
@@ -145,7 +145,8 @@ class RequestService
                 ->withDepositPercentage($request->getDepositPercentage())
                 ->withFinalisationRequired($request->getFinalisationRequired())
                 ->withMerchantReference($request->getMerchantReference())
-                ->withUrls($request->getUrls());
+                ->withUrls($request->getUrls())
+                ->withMetadata($request->getMetadata());
 
             $response = $sdk->applications()->createApplication(
                 $application,
@@ -154,7 +155,7 @@ class RequestService
         );
 
             $applicationResponseBody = $response->getBody()->getContents();
-            
+
             return json_decode($applicationResponseBody);
         } else return false;
     }

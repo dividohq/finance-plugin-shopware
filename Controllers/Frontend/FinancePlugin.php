@@ -13,6 +13,8 @@ use FinancePlugin\Components\Finance\WebhookService;
 use FinancePlugin\Components\Finance\Helper;
 use FinancePlugin\Models\Request;
 use Shopware\Components\CSRFWhitelistAware;
+use Shopware\Models\Order\Order;
+use Shopware\Models\Order\Status;
 
 /**
  * Controller class which handles the payment flow
@@ -112,11 +114,11 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $basket = $this->getBasket();
         $amount = $this->getAmount();
         $deposit_percentage = filter_var(
-            $_POST['divido_deposit'], //TODO: Ubrand: Can't Change
+            $_POST['divido_deposit'],
             FILTER_SANITIZE_NUMBER_INT
         );
         $planId = filter_var(
-            $_POST['divido_plan'], //TODO: Ubrand: Can't Change
+            $_POST['divido_plan'],
             FILTER_SANITIZE_EMAIL
         );
 
@@ -148,10 +150,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $sessionId = $session->store($connection);
 
         $metadata = [
-            'token' => $service->createPaymentToken(
-                $amount,
-                $user['additional']['user']['customernumber']
-            ),
+            'token' => $token,
             'amount' => $amount
         ];
 
@@ -186,6 +185,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             'merchant_response_url' => $response_url
             ]
         );
+        $request->setMetadata($metadata);
         $response = RequestService::makeRequest($request);
 
         // Create session if request is okay and forward to the payment platform
@@ -332,6 +332,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
                                     $orderID,
                                     WebhookService::PAYMENTSTATUSPAID
                                 );
+                                $this->get('models')->flush($order);
 
                                 $data['ordernumber'] = $orderNumber;
                                 $data['cleared'] = WebhookService::PAYMENTSTATUSPAID;
@@ -422,11 +423,10 @@ class Shopware_Controllers_Frontend_FinancePlugin
     public function webhookAction()
     {
         Helper::debug('Webhook', 'info');
-
         /*
          * @var PaymentService $service
          */
-        $service = $this->container->get('finance_plugin.payment_service');
+        $service = $this->container->get('finance_plugin.webhook_service');
 
         $response = $service->createWebhookResponse($this->Request());
 
@@ -448,7 +448,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
                 $transactionID = $response->proposal;
                 $paymentUniqueID = $response->token;
 
-                Helper::debug('Webhook data:'.serialize($response), 'error');
+                Helper::debug('Webhook data:'.serialize($response), 'info');
                 Helper::debug('Webhook TransactionID:'.$transactionId, 'info');
                 Helper::debug('Webhook Unique Payment ID:'.$paymentUniqueId, 'info');
 
@@ -464,11 +464,21 @@ class Shopware_Controllers_Frontend_FinancePlugin
                         $connection
                     );
 
-                    if ($orderID) {
-                        OrderService::setPaymentStatus(
-                            $orderID,
-                            $statusInfo['order_status']
+                    if (!empty($orderID)) {
+                        // get order
+                        $modelManager = $this->get('models');
+                        $order = $modelManager->find(Order::class, $orderID);
+                        $currentStatus = $order->getPaymentStatus();
+                        $order->setPaymentStatus(
+                            $modelManager->find(Status::class, $statusInfo['order_status'])
                         );
+                        $modelManager->flush($order);
+                        Helper::debug(
+                            'Updated Order Status of :'.$orderID.' from '.$currentStatus.' to '.$statusInfo['order_status'],
+                            'info'
+                        );
+                    } else {
+                        Helper::debug('Could not find order #'.$orderID.' with token '.$paymentUniqueID, 'error');
                     }
                 }
 
