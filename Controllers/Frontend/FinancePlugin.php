@@ -43,7 +43,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
           ORDER_CREATION_ERROR_MSG = 'Could not create order.',
           INVALID_TOKEN_ERROR_MSG = 'Invalid token.',
           NO_RESPONSE_ERROR_MSG = 'Received response did not include status.',
-          INCOMPLETE_RESPONSE_ERROR_MSG = 'Incomplete response. Expected a token and sessionId';
+          INCOMPLETE_RESPONSE_ERROR_MSG = 'Incomplete response. Expected a token and sessionId',
+          SESSION_EXPIRY_MSG = 'Your basket has expired. Please try again';
 
 
     /**
@@ -104,11 +105,24 @@ class Shopware_Controllers_Frontend_FinancePlugin
     {
         Helper::debug('Direct Action', 'info');
 
+        /**
+         * If the user has timed out, cancel checkout
+         */
+        $user = $this->getUser();
+        if(is_null($user)) {
+            $this->View()->assign(
+                'template',
+                '/frontend/finance_plugin/error.tpl'
+            );
+            $errors = [self::SESSION_EXPIRY_MSG];
+            $this->forward('cancel', null, null, ['errors' => $errors]);
+            return;
+        }
+
         $service = $this->container->get('finance_plugin.payment_service');
         $router = $this->Front()->Router();
         $apiKey = Helper::getApiKey();
 
-        $user = $this->getUser();
         $customer = Helper::getFormattedCustomerDetails($user);
 
         $basket = $this->getBasket();
@@ -121,7 +135,6 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $_POST['divido_plan'],
             FILTER_SANITIZE_EMAIL
         );
-
 
         $deposit = (empty($deposit_percentage))
             ? 0
@@ -193,7 +206,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $property = $response->context->property;
             $more = $response->context->more;
             Helper::debug(
-                $response->message."(".$property.": ".$more.")",
+                serialize($response),
                 'error'
             );
             $this->forward('cancel');
@@ -424,6 +437,10 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function cancelAction()
     {
+        $params = $this->Request()->getParams();
+        if(isset($params['errors'])) {
+            $this->View()->assign('errors', $params['errors']);
+        }
     }
 
     /**
