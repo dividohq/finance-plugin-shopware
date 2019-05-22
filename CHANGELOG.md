@@ -24,3 +24,7 @@ All notable changes to this project will be documented in this file.
 - Activation webhooks now fire when an order's status corresponds to 
 the set _Activate On Status_ config option
 - _Limit Plans_ multi-select feature added to the config
+
+## [1.0.4.1] - 2019-05-22
+- The finance payment option is deactivated if the API key is incorrect
+- Stricter initial validation of the API Key
