@@ -33,6 +33,10 @@ class EnvironmentService
     {
         $environment = Helper::getEnvironment($apiKey);
 
+        if(!$environment){
+            return new EnvironmentResponse("", true, "Unexpected API Key");
+        }
+
         $httpClient = new \GuzzleHttp\Client();
         $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
 
@@ -56,13 +60,13 @@ class EnvironmentService
             if(isset($responseJson->data->environment)) {
                 $responseObj = new EnvironmentResponse($responseJson->data->environment);
             } elseif (isset($responseJson->error)) {
-                $responseObj = new EnvironmentResponse("", true, $responseJson->code, $responseJson->message);
+                $responseObj = new EnvironmentResponse("", true, $responseJson->message, $responseJson->code);
             }
             Helper::log("Response: ".$responseObj->_toString(), 'info');
             return $responseObj;
         } catch(MerchantApiBadResponseException $e) {
             $errorMessage = SDKErrorHandler::getMessage($e);
-            $responseObj = new EnvironmentResponse("", true, $e->getCode(), $errorMessage);
+            $responseObj = new EnvironmentResponse("", true, $errorMessage, $e->getCode());
             return $responseObj;
         }
     }

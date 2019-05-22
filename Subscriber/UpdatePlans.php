@@ -99,6 +99,7 @@ class UpdatePlans implements SubscriberInterface
      */
     public function onConfigPostDispatch(\Enlight_Event_EventArgs $args)
     {
+        ini_set('display_errors',1);
         Helper::log('Updating Config', 'info');
         $controller = $args->getSubject();
 
@@ -174,6 +175,7 @@ class UpdatePlans implements SubscriberInterface
         if ($sdkResponse->error === false) {
             $plans = $sdkResponse->plans;
             if (empty($plans)) {
+                Shopware()->Db()->query("UPDATE `s_core_paymentmeans` SET `active`=0 WHERE `action`='FinancePlugin' LIMIT 1");
                 $view->assign(
                     ['success' => true,
                     "message" => "There are no finance plans associated
@@ -204,6 +206,7 @@ class UpdatePlans implements SubscriberInterface
 
         } else {
             Helper::log('Could not get environment', 'error');
+            Shopware()->Db()->query("UPDATE `s_core_paymentmeans` SET `active`=0 WHERE `action`='FinancePlugin' LIMIT 1");
             $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
             $view->assign([
                 'success' => false,

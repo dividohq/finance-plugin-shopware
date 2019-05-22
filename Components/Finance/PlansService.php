@@ -71,6 +71,9 @@ class PlansService
     {
         $environment = Helper::getEnvironment($apiKey);
 
+        if(!$environment){
+            return new PlansResponse([], true, "Unexpected API Key format");
+        }
         $httpClient = new \GuzzleHttp\Client();
         $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
 
@@ -98,14 +101,16 @@ class PlansService
                 $planObj->setDescription($plan->description);
                 $planObjArray[] = $planObj;
             }
-
             $response = new PlansResponse($planObjArray);
-            return $response;
         }catch(MerchantApiBadResponseException $e){
             $errorMessage = SDKErrorHandler::getMessage($e);
-            $response = new PlansResponse([], true, $e->getCode(), $errorMessage);
-            return $response;
+            $response = new PlansResponse([], true, $errorMessage, $e->getCode());
+        }catch(GuzzleHttp\Ring\Exception\RingException $e) {
+            $response = new PlansResponse([], true, $e->getMessage(), $e->getCode());
+        } catch(GuzzleHttp\Exception\RequestException $e) {
+            $response = new PlansResponse([], true, $e->getMessage(), $e->getCode());
         }
+        return $response;
     }
 
     /**
