@@ -4,11 +4,11 @@
     <div id="payment content confirm-content">
       <h2>{$title}</h2>
       <p>{$description}</p>
-      <script> 
+      <script>
         var {$env}Key = "{$apiKey}";
       </script>
       <script src="https://cdn.divido.com/calculator/v2.1/production/js/template.{$env}.js"></script>
-    
+
       {if $displayForm}
       <form id="financePluginForm" action="{url controller='FinancePlugin' action='direct'}" method="post" >
         <div
@@ -26,7 +26,7 @@
           title="finance"
           class="finance-action btn is--primary"
           data-product-compare-add="true">
-          {s namespace='frontend/checkout/shipping_payment' name='NextButton'}Continue to Finance Application{/s}
+          {s namespace='frontend/checkout/shipping_payment' name='NextButton'}Continue{/s}
         </button>
       </form>
       {/if}
@@ -58,7 +58,7 @@
       document.body.classList.add("is--act-confirm");
       document.body.classList.add("is--minimal-header");
       document.addEventListener("DOMContentLoaded", function(
-        
+
       ){
         var button = document.querySelectorAll("#finance-plugin-submit-button")[0];
         button.addEventListener("click", function(){
