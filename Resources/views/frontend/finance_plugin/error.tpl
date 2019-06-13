@@ -4,7 +4,9 @@
     {s namespace="frontend/error/index" name="ErrorIndexTitle"}Sorry!{/s}
 </h2>{/block}
 {block name="frontend_checkout_finish_teaser_content"}
-    <p class="teaser--text is--align-center">{$error}</p>
+    <p class="teaser--text is--align-center">
+        {$error|snippet:$snippetKey:'frontend/finance_plugin/error'}
+    </p>
     <script>
         document.body.classList.add("is--ctl-checkout");
         document.body.classList.add("is--act-finish");
