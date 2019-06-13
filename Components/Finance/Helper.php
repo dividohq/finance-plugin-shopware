@@ -155,6 +155,26 @@ class Helper
         $config = self::getConfig();
         return $config['Cart Threshold'];
     }
+    /**
+     * Helper to grab Activate on Status value
+     *
+     * @return string
+     */
+    public static function getActivateStatus()
+    {
+        $config = self::getConfig();
+        return $config['Activate'];
+    }
+    /**
+     * Helper to grab list of okayed plans
+     *
+     * @return int
+     */
+    public static function getPlans()
+    {
+        $config = self::getConfig();
+        return $config['Plans'];
+    }
 
     /**
      * Helper Function to transform shopware address array to plugin format
@@ -336,17 +356,22 @@ class Helper
         } else {
             list($environment, $key) = explode("_", $apiKey);
             $environment = strtoupper($environment);
-            if (!is_null(
+            if (is_null(
                 constant("\Divido\MerchantSDK\Environment::$environment")
-            )
-            ) {
-                $environment
-                    = constant("\Divido\MerchantSDK\Environment::$environment");
-                return $environment;
-            } else {
+            )) {
                 self::debug('Environment "'.$environment.'" does not exist in the SDK', 'error');
                 return false;
             }
+
+            if (strlen($key) < 10) {
+                self::debug('API Key "'.$key.'" looks too short', 'error');
+                return false;
+            }
+
+            $environment
+                = constant("\Divido\MerchantSDK\Environment::$environment");
+            return $environment;
+
         }
     }
 

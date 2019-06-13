@@ -81,7 +81,7 @@ class OrderService
         $order->sCreateTemporaryOrder();
         $orderNumber = $order->sSaveOrder();
         if (!$orderNumber) {
-            Helper::Debug('Could not create order', 'warning');
+            Helper::log('An order with the transaction ID has already been created', 'error');
         }
         return $orderNumber;
     }

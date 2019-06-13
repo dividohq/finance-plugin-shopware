@@ -42,8 +42,9 @@ class Shopware_Controllers_Frontend_FinancePlugin
           this page. Please contact the merchant if the problem persists.',
           ORDER_CREATION_ERROR_MSG = 'Could not create order.',
           INVALID_TOKEN_ERROR_MSG = 'Invalid token.',
-          NO_RESPONSE_ERROR_MSG = 'Received response did not include status.';
-
+          NO_RESPONSE_ERROR_MSG = 'Received response did not include status.',
+          INCOMPLETE_RESPONSE_ERROR_MSG = 'Incomplete response. Expected a token and sessionId',
+          SESSION_EXPIRY_MSG = 'Your basket has expired. Please try again';
 
 
     /**
@@ -104,11 +105,19 @@ class Shopware_Controllers_Frontend_FinancePlugin
     {
         Helper::debug('Direct Action', 'info');
 
+        /**
+         * If the user has timed out, cancel checkout
+         */
+        $user = $this->getUser();
+        if(is_null($user)) {
+            $errors = [self::SESSION_EXPIRY_MSG];
+            $this->forward('cancel', null, null, ['errors' => $errors]);
+        }
+
         $service = $this->container->get('finance_plugin.payment_service');
         $router = $this->Front()->Router();
         $apiKey = Helper::getApiKey();
 
-        $user = $this->getUser();
         $customer = Helper::getFormattedCustomerDetails($user);
 
         $basket = $this->getBasket();
@@ -121,7 +130,6 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $_POST['divido_plan'],
             FILTER_SANITIZE_EMAIL
         );
-
 
         $deposit = (empty($deposit_percentage))
             ? 0
@@ -193,10 +201,11 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $property = $response->context->property;
             $more = $response->context->more;
             Helper::debug(
-                $response->message."(".$property.": ".$more.")",
+                serialize($response),
                 'error'
             );
-            $this->forward('cancel');
+            $errors = [self::API_ERROR_MSG];
+            $this->forward('cancel', null, null, ['errors' => $errors]);
         } else {
             $payload = $response->data;
             $session->setTransactionID($payload->id);
@@ -245,6 +254,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $displayWarning[] =  self::API_ERROR_MSG;
         } else {
             $basket_plans = PlansService::getBasketPlans($apiKey, $products);
+
             if (empty($basket_plans)) {
                 $displayFinance = false;
                 $displayWarning[] = self::API_ERROR_MSG;
@@ -291,115 +301,129 @@ class Shopware_Controllers_Frontend_FinancePlugin
          */
         $response = $paymentService->createPaymentResponse($this->Request());
 
-        if (isset($response->sessionId) && isset($response->token)) {
-            $sessionId = filter_var(
-                $response->sessionId,
-                FILTER_SANITIZE_NUMBER_INT
+        // If we are receiving the required GET response token and sessionId
+        if (!(isset($response->sessionId) && isset($response->token))) {
+            Helper::log(self::INCOMPLETE_RESPONSE_ERROR_MSG, 'error');
+            $this->View()->assign('error', self::INCOMPLETE_RESPONSE_ERROR_MSG);
+            $this->View()->assign(
+                'template',
+                'frontend/finance_plugin/error.tpl'
             );
-            $connection = $this->container->get('dbal_connection');
-            $session = new \FinancePlugin\Models\Session;
-
-            if ($session->retrieveFromDb($sessionId, $connection)) {
-                if ($session->getStatus() == WebhookService::PAYMENTSTATUSPAID) {
-                    $data = $session->getData();
-
-                    $customer_number
-                        = $data['sUserData']['additional']['user']['customernumber'];
-                    $amount = $data['sBasket']['sAmount'];
-                    /*
-                    /   If response token matches the information in the session
-                    /   $service = /Components/Finance/PaymentService.php
-                    */
-                    if ($paymentService->isValidToken(
-                        $amount,
-                        $customer_number,
-                        $response->token
-                    )
-                    ) {
-                        // If we haven't already generated the order already:
-                        if (is_null($session->getOrderNumber())) {
-                            $device = $this->Request()->getDeviceType();
-                            $order = $session->createOrder($device);
-
-                            $orderNumber = $orderService->saveOrder($order);
-                            if ($orderNumber) {
-                                $orderID = $orderService->getId(
-                                    $session->getTransactionID(),
-                                    $session->getKey(),
-                                    $connection
-                                );
-                                $order->setPaymentStatus(
-                                    $orderID,
-                                    WebhookService::PAYMENTSTATUSPAID
-                                );
-                                $this->get('models')->flush($order);
-
-                                $data['ordernumber'] = $orderNumber;
-                                $data['cleared'] = WebhookService::PAYMENTSTATUSPAID;
-
-                                // Persist information to display on order in backend
-                                $attributePersister = $this->container->get(
-                                    'shopware_attribute.data_persister'
-                                );
-
-                                $attributeData = array(
-                                    'finance_id' => $session->getPlan(),
-                                    'deposit_value' => $session->getDeposit()
-                                );
-
-                                $attributePersister->persist(
-                                    $attributeData,
-                                    's_order_attributes',
-                                    $orderID
-                                );
-
-                                $session->setOrderNumber($orderNumber);
-                                $session->update($connection);
-
-                                session_write_close();
-                            } else {
-                                $this->View()->assign(
-                                    'error',
-                                    self::ORDER_CREATION_ERROR_MSG
-                                );
-                                $this->View()->assign(
-                                    'template',
-                                    'frontend/finance_plugin/error.tpl'
-                                );
-                                return;
-                            }
-                        } else {
-                            $data['ordernumber'] = $session->getOrderNumber();
-                        }
-
-                        /*
-                        /   Assign the relevant stored session information
-                        /   to the appropriate Smarty variables
-                        */
-                        $this->sendDataToSmarty($data);
-                        $this->View()->assign(
-                            'template',
-                            'frontend/finance_plugin/success.tpl'
-                        );
-                    } else {
-                        $this->View()->assign('error', self::INVALID_TOKEN_ERROR_MSG);
-                        $this->View()->assign(
-                            'template',
-                            'frontend/finance_plugin/error.tpl'
-                        );
-                    }
-                } else {
-                    $this->View()->assign('error', self::NON_PAID_ERROR_MSG);
-                    $this->View()->assign(
-                        'template',
-                        'frontend/finance_plugin/error.tpl'
-                    );
-                }
-            } else {
-                $this->View()->assign('template', 'frontend/finance_plugin/404.tpl');
-            }
+            return;
         }
-        Helper::debug('Return action', 'info');
+
+        $sessionId = filter_var(
+            $response->sessionId,
+            FILTER_SANITIZE_NUMBER_INT
+        );
+        $connection = $this->container->get('dbal_connection');
+        $session = new \FinancePlugin\Models\Session;
+
+        // If we can't find the session in the database 404 out
+        if (!$session->retrieveFromDb($sessionId, $connection)) {
+            Helper::log("Could not find session", 'error');
+            $this->View()->assign('template', 'frontend/finance_plugin/404.tpl');
+            return;
+        }
+
+        // If we havent yet received a PAID status webhook display error
+        if ($session->getStatus() != WebhookService::PAYMENTSTATUSPAID) {
+            Helper::log(self::NON_PAID_ERROR_MSG, 'error');
+            $this->View()->assign('error', self::NON_PAID_ERROR_MSG);
+            $this->View()->assign(
+                'template',
+                'frontend/finance_plugin/error.tpl'
+            );
+            return;
+        }
+
+        $data = $session->getData();
+
+        $customer_number
+            = $data['sUserData']['additional']['user']['customernumber'];
+        $amount = $data['sBasket']['sAmount'];
+        /*
+        /   If response token matches the information in the session
+        /   $service = /Components/Finance/PaymentService.php
+        */
+        if (!$paymentService->isValidToken(
+            $amount,
+            $customer_number,
+            $response->token
+        )
+        ) {
+            Helper::log(self::INVALID_TOKEN_ERROR_MSG, 'error');
+            $this->View()->assign('error', self::INVALID_TOKEN_ERROR_MSG);
+            $this->View()->assign(
+                'template',
+                'frontend/finance_plugin/error.tpl'
+            );
+            return;
+        }
+
+        // If we haven't already generated the order already:
+        if (is_null($session->getOrderNumber())) {
+
+            $device = $this->Request()->getDeviceType();
+            $order = $session->createOrder($device);
+
+            $orderNumber = $orderService->saveOrder($order);
+
+            if ($orderNumber) {
+
+                $orderID = $orderService->getId(
+                    $session->getTransactionID(),
+                    $session->getKey(),
+                    $connection
+                );
+
+                $order->setPaymentStatus(
+                    $orderID,
+                    WebhookService::PAYMENTSTATUSPAID
+                );
+
+                $data['ordernumber'] = $orderNumber;
+                $data['cleared'] = WebhookService::PAYMENTSTATUSPAID;
+
+                // Persist information to display on order in backend
+                $attributePersister = $this->container->get(
+                    'shopware_attribute.data_persister'
+                );
+
+                $attributeData = array(
+                    'finance_id' => $session->getPlan(),
+                    'deposit_value' => $session->getDeposit()
+                );
+
+                $attributePersister->persist(
+                    $attributeData,
+                    's_order_attributes',
+                    $orderID
+                );
+
+                $session->setOrderNumber($orderNumber);
+                $session->update($connection);
+
+                session_write_close();
+
+            } else {
+                $this->View()->assign('error', self::ORDER_CREATION_ERROR_MSG);
+                $this->View()->assign('template','frontend/finance_plugin/error.tpl');
+                return;
+            }
+        } else {
+            $data['ordernumber'] = $session->getOrderNumber();
+        }
+
+        /*
+        /   Assign the relevant stored session information
+        /   to the appropriate Smarty variables
+        */
+        $this->sendDataToSmarty($data);
+        $this->View()->assign(
+            'template',
+            'frontend/finance_plugin/success.tpl'
+        );
     }
 
     /**
@@ -409,6 +433,10 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function cancelAction()
     {
+        $params = $this->Request()->getParams();
+        if(isset($params['errors'])) {
+            $this->View()->assign('errors', $params['errors']);
+        }
     }
 
     /**

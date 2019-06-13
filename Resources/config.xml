@@ -70,7 +70,7 @@
             <description lang="de">Widget Prefix</description>
             <description lang="en">Widget Prefix</description>
         </element>
-        
+
         <element required="false" type="text" scope="locale">
             <name>Widget Suffix</name>
             <label lang="de">Widget Suffix</label>
@@ -85,6 +85,28 @@
             <label lang="en">Debug</label>
             <description lang="de">Debugging Enabled - Turn this off in production</description>
             <description lang="en">Debugging Enabled - Turn this off in production</description>
+        </element>
+
+        <element type="combo" >
+            <name>Activate</name>
+            <label lang="en">Activate On Status:</label>
+            <store>Shopware.apps.Base.store.OrderStatus</store>
+        </element>
+
+        <element scope="shop" type="select">
+            <name>Plans</name>
+            <label lang="en">Limit Plans</label>
+            <description>Limit the list of plan options by selecting the required options here</description>
+            <store>
+                <option>
+                    <value>0</value>
+                    <label lang="de">Please activate the plugin and reload the page to use this feature</label>
+                    <label lang="en">Please activate the plugin and reload the page to use this feature</label>
+                </option>
+            </store>
+            <options>
+                <multiSelect>true</multiSelect>
+            </options>
         </element>
 
     </elements>

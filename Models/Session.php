@@ -92,6 +92,27 @@ class Session extends ModelEntity
     private $created_on;
 
     /**
+     * @var integer $activated_on
+     *
+     * @ORM\Column(type="integer", length=10, nullable=true)
+     */
+    private $activated_on;
+
+    /**
+     * @var integer $cancelled_on
+     *
+     * @ORM\Column(type="integer", length=10, nullable=true)
+     */
+    private $cancelled_on;
+
+    /**
+     * @var integer $refunded_on
+     *
+     * @ORM\Column(type="integer", length=10, nullable=true)
+     */
+    private $refunded_on;
+
+    /**
      * Array of the keys of fields we want to retain in the session table in
      * case the session times out before the customer completes the signing process
      */
@@ -234,6 +255,54 @@ class Session extends ModelEntity
     /**
      * @return int
      */
+    public function getActivatedOn()
+    {
+        return $this->activated_on;
+    }
+
+    /**
+     * @param int $activated_on
+     */
+    public function setActivatedOn($activated_on)
+    {
+        $this->activated_on = $activated_on;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCancelledOn()
+    {
+        return $this->cancelled_on;
+    }
+
+    /**
+     * @param int $cancelled_on
+     */
+    public function setCancelledOn($cancelled_on)
+    {
+        $this->cancelled_on = $cancelled_on;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRefundedOn()
+    {
+        return $this->refunded_on;
+    }
+
+    /**
+     * @param int $refunded_on
+     */
+    public function setRefundedOn($refunded_on)
+    {
+        $this->refunded_on = $refunded_on;
+    }
+
+    /**
+     * @return int
+     */
     public function getStatus()
     {
         return $this->status;
@@ -309,6 +378,9 @@ class Session extends ModelEntity
             $this->deposit = $session[0]['deposit'];
             $this->ip_address = $session[0]['ip_address'];
             $this->created_on = $session[0]['created_on'];
+            $this->activated_on = $session[0]['activated_on'];
+            $this->cancelled_on = $session[0]['cancelled_on'];
+            $this->refunded_on = $session[0]['refunded_on'];
             $this->status = $session[0]['status'];
             return true;
         } else return false;
@@ -341,6 +413,9 @@ class Session extends ModelEntity
             ->setValue('`deposit`', '?')
             ->setValue('`ip_address`', '?')
             ->setValue('`created_on`', '?')
+            ->setValue('`activated_on`', '?')
+            ->setValue('`cancelled_on`', '?')
+            ->setValue('`refunded_on`', '?')
             ->setParameter(0, $this->orderNumber)
             ->setParameter(1, $this->transactionID)
             ->setParameter(2, $this->getKey())
@@ -349,7 +424,10 @@ class Session extends ModelEntity
             ->setParameter(5, $this->plan)
             ->setParameter(6, $this->deposit)
             ->setParameter(7, $ip_address)
-            ->setParameter(8, $created_on);
+            ->setParameter(8, $created_on)
+            ->setParameter(9, $activated_on)
+            ->setParameter(10, $cancelled_on)
+            ->setParameter(11, $refunded_on);
 
         $add_session_query->execute();
 
@@ -427,6 +505,24 @@ class Session extends ModelEntity
             $update_session_query
                 ->set('`created_on`', ':created_on')
                 ->setParameter(':created_on', $this->created_on);
+        }
+
+        if (!is_null($this->activated_on) ) {
+            $update_session_query
+                ->set('`activated_on`', ':activated_on')
+                ->setParameter(':activated_on', $this->activated_on);
+        }
+
+        if (!is_null($this->cancelled_on) ) {
+            $update_session_query
+                ->set('`cancelled_on`', ':cancelled_on')
+                ->setParameter(':cancelled_on', $this->cancelled_on);
+        }
+
+        if (!is_null($this->refunded_on) ) {
+            $update_session_query
+                ->set('`refunded_on`', ':refunded_on')
+                ->setParameter(':refunded_on', $this->refunded_on);
         }
 
         $update_session_query

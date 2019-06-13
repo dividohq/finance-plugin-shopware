@@ -91,7 +91,7 @@ class UpdatePlans implements SubscriberInterface
     }
 
     /**
-     * Remove plans if config updated
+     * Function to refresh plans if config updated or
      *
      * @param \Enlight_Event_EventArgs $args Arguments
      *
@@ -99,11 +99,18 @@ class UpdatePlans implements SubscriberInterface
      */
     public function onConfigPostDispatch(\Enlight_Event_EventArgs $args)
     {
+        ini_set('display_errors',1);
         Helper::log('Updating Config', 'info');
         $controller = $args->getSubject();
 
+        $view = $controller->View();
+
         $request = $controller->Request();
 
+        /**
+         * Refresh the list of plans if there's a chance the user has
+         * changed the API Key
+         */
         if ($request->getActionName() == 'saveForm') {
             PlansService::clearPlans();
             $apiKey = Helper::getApiKey();
@@ -111,6 +118,44 @@ class UpdatePlans implements SubscriberInterface
             $this->_refreshPlans($apiKey, $controller->View());
 
             $this->_setEnvironment($apiKey, $controller->View());
+        }
+
+        if($request->getActionName() == 'getForm') {
+
+            $data = $view->getAssign('data');
+            $elements = $data['elements'];
+            $apiKey = $elements[0]['values'][0]['value'];
+
+            $sdkResponse = (empty($apiKey)) ? false : PlansService::getPlansFromSDK($apiKey);
+            if ($sdkResponse != false && $sdkResponse->error === false) {
+                $plans = $sdkResponse->plans;
+                PlansService::storePlans($plans);
+                $plugin = $controller->get('kernel')->getPlugins()['FinancePlugin'];
+
+                foreach($elements as $key=>$element) {
+                    /**
+                    * Use extJs code to grab a list of the plans
+                    * This is a workaround for a shopware issue where we get an error message
+                    * on the config screen whilst the plugin is deactivated because
+                    * the route for the Ajax call in the javascript does not exist.
+                    * This just ensures we don't run the script whilst the plugin is inactive
+                    **/
+                    if($element['name'] == 'Plans') {
+                        $elements[$key]['options']['store'] = file_get_contents(__DIR__.'/../Resources/snippets/plans.extjs');
+                    }
+                }
+            }else{
+                // Remove all other elements apart from the API Key if our API Key has no
+                // plans associated to it
+                foreach($elements as $key=>$element) {
+                    if($element['name'] !== 'API Key') {
+                        unset($elements[$key]);
+                    }
+                }
+            }
+            $data['elements'] = $elements;
+            $view->assign('data', $data);
+
         }
     }
 
@@ -130,6 +175,7 @@ class UpdatePlans implements SubscriberInterface
         if ($sdkResponse->error === false) {
             $plans = $sdkResponse->plans;
             if (empty($plans)) {
+                Shopware()->Db()->query("UPDATE `s_core_paymentmeans` SET `active`=0 WHERE `action`='FinancePlugin' LIMIT 1");
                 $view->assign(
                     ['success' => true,
                     "message" => "There are no finance plans associated
@@ -146,7 +192,7 @@ class UpdatePlans implements SubscriberInterface
 
     private function _setEnvironment($apiKey, $view) {
         $environmentResponse = EnvironmentService::getEnvironmentResponse($apiKey);
-        if($environmentResponse->Error == false) {
+        if(false == $environmentResponse->error) {
             $environment = EnvironmentService::constructEnvironmentFromResponse($environmentResponse);
             EnvironmentService::storeEnvironment($environment);
 
@@ -160,13 +206,14 @@ class UpdatePlans implements SubscriberInterface
 
         } else {
             Helper::log('Could not get environment', 'error');
+            Shopware()->Db()->query("UPDATE `s_core_paymentmeans` SET `active`=0 WHERE `action`='FinancePlugin' LIMIT 1");
             $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
-            $view->extendsTemplate('backend/fp_extend_config/view/');
             $view->assign([
                 'success' => false,
-                'message'  =>   'Could not fetch your merchant environment.
-                                Please consult your payment provider'
+                'message' => 'Could not fetch your merchant environment.
+                              Please consult your payment provider'
             ]);
+
         }
     }
 }

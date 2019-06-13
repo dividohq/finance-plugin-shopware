@@ -1,0 +1,19 @@
+Ext.define('FinancePlugin.YourName.Form', {
+            extend: 'Ext.data.Store',
+            fields: [
+                { name:'id', type: 'string' },
+                { name:'name', type: 'string' }
+            ],
+            autoLoad: true,
+            pageSize: 25,
+            proxy: {
+                type: 'ajax',
+                url: window.location.href.substr(0, window.location.href.indexOf('backend')) + 'backend/FinancePlugin/getPlans',
+                reader: {
+                    type: 'json',
+                    root: 'data',
+                    totalProperty: 'total'
+                }
+            }
+            }).create();//new 
+            

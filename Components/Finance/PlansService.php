@@ -1,7 +1,7 @@
 <?php
 /**
  * File containing the PlansService class
- * 
+ *
  * PHP version 7.1
  */
 
@@ -15,7 +15,7 @@ use Divido\MerchantSDK\Exceptions\MerchantApiBadResponseException;
 
 /**
  * Helper service to maintain finance plans
- * 
+ *
  * @category CategoryName
  * @package  FinancePlugin
  * @since    File available since Release 1.0.0
@@ -24,7 +24,7 @@ class PlansService
 {
     /**
      * Duration (in milliseconds) before next plan request
-     * 
+     *
      * @var integer
      */
     const REFRESH_RATE = 7200;
@@ -34,14 +34,14 @@ class PlansService
      *
      * @param integer $since The amount of time (in seconds) to lookup since
      *                       the plans were last requested
-     * 
+     *
      * @return array
      */
     public static function getStoredPlans(int $since = self::REFRESH_RATE):array
     {
         $now = time();
         $recent_plans = Shopware()->Db()->query(
-            'SELECT * FROM `s_plans` WHERE `updated_on` > ?', 
+            'SELECT * FROM `s_plans` WHERE `updated_on` > ?',
             [$now - $since]
         );
 
@@ -64,13 +64,16 @@ class PlansService
      * Retrieve relevant plans from SDK by API Key
      *
      * @param string $apiKey The API key
-     * 
+     *
      * @return array
      */
     public static function getPlansFromSDK(string $apiKey):PlansResponse
     {
         $environment = Helper::getEnvironment($apiKey);
 
+        if(!$environment){
+            return new PlansResponse([], true, "Unexpected API Key format");
+        }
         $httpClient = new \GuzzleHttp\Client();
         $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
 
@@ -83,7 +86,7 @@ class PlansService
             $httpClientWrapper,
             $environment
         );
-        
+
         $requestOptions = (new ApiRequestOptions());
         // Retrieve all finance plans for the merchant.
         try{
@@ -98,14 +101,16 @@ class PlansService
                 $planObj->setDescription($plan->description);
                 $planObjArray[] = $planObj;
             }
-            
             $response = new PlansResponse($planObjArray);
-            return $response;
         }catch(MerchantApiBadResponseException $e){
             $errorMessage = SDKErrorHandler::getMessage($e);
-            $response = new PlansResponse([], true, $e->getCode(), $errorMessage);
-            return $response;
+            $response = new PlansResponse([], true, $errorMessage, $e->getCode());
+        }catch(GuzzleHttp\Ring\Exception\RingException $e) {
+            $response = new PlansResponse([], true, $e->getMessage(), $e->getCode());
+        } catch(GuzzleHttp\Exception\RequestException $e) {
+            $response = new PlansResponse([], true, $e->getMessage(), $e->getCode());
         }
+        return $response;
     }
 
     /**
@@ -113,20 +118,23 @@ class PlansService
      * finance plan instructions
      * Check if the plans currently exist on the Merchant portal
      * Use all live plans if no individual plans set
-     * 
+     *
      * @param array $products Helper function array of products
-     * 
+     *
      * @return array
      */
     public function getBasketPlans(string $apiKey, array $products)
     {
         $plans_response = self::getPlansFromSDK($apiKey);
+        $confPlans = Helper::getPlans();
         $current_plans = [];
         if (true === $plans_response->error) {
             return [];
         }else{
             foreach ($plans_response->plans as $plan) {
-                $current_plans[] = $plan->getId();
+                if(in_array($plan->getName(), $confPlans)) {
+                    $current_plans[] = $plan->getId();
+                }
             }
         }
 
@@ -151,20 +159,21 @@ class PlansService
                 }
             }
         }
+
         if (true === $individual_plans) {
             return $basket_plans;
         } else {
             return $current_plans;
         }
 
-        
+
     }
 
     /**
      * Store array of plans in the s_plans table
      *
      * @param array $plans The plans to store
-     * 
+     *
      * @return void
      */
     public static function storePlans(array $plans)
@@ -180,8 +189,8 @@ class PlansService
         }
         if (isset($inserts)) {
             self::clearPlans();
-            $sql = 'INSERT INTO `s_plans` 
-                        (`id`, `name`, `description`, `updated_on`) 
+            $sql = 'INSERT INTO `s_plans`
+                        (`id`, `name`, `description`, `updated_on`)
                     VALUES
                         '. implode(",", $inserts);
 
@@ -197,7 +206,7 @@ class PlansService
     public static function clearPlans()
     {
         // TODO: This needs to run only if the API Key changes
-        if (Shopware()->Db()->query("TRUNCATE TABLE `s_plans`")) { 
+        if (Shopware()->Db()->query("TRUNCATE TABLE `s_plans`")) {
             Shopware()->Db()->query("UPDATE `s_articles_attributes` SET `finance_plans` = NULL");
             return true;
         } else return false;

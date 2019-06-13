@@ -1,7 +1,18 @@
 {extends file='frontend/index/index.tpl'}
 
 {* Main content *}
+
+{block name='frontend_index_content_left'}{/block}
+
 {block name='frontend_index_content'}
+    {if $errors}
+    <h1>Ooops</h1>
+    <ul style='list-style:none'>
+    {foreach item=error from=$errors}
+        <li>{$error}</li>
+    {/foreach}
+    </ul>
+    {/if}
     <div class="example-content content custom-page--content">
         <div class="example-content--actions">
             <a class="btn"
