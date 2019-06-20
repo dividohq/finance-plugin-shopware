@@ -5,9 +5,59 @@
     <label lang="en">Finance Plugin</label>
     <label lang="de">Finance Plugin</label>
 
-    <version>1.0.0</version>
+    <version>1.0.4.1</version>
     <copyright>(c) Divido Financial Services</copyright>
     <author>Divido Financial Services</author>
 
     <compatibility minVersion="5.2.13"/>
+    <description>
+        <![CDATA[
+        <b>Finance Plugin</b>
+        <p>Allows the merchant to sell their products by offering the option to break down their payments into multiple portions</p>
+        ]]>
+    </description>
+    <changelog version="1.0.4.1">
+        <changes>
+                <![CDATA[
+                <p>[1.0.0.0] - 2019-04-01
+                <ul><li>Initial Release</li></ul></p>
+
+                <p>[1.0.1.0] - 2019-04-24
+                <ul>
+                    <li>Added activation functionality</li>
+                    <li>Replaced deprecated logger code</li>
+                </ul>
+                </p>
+
+                <p>[1.0.2.0] - 2019-04-25
+                <ul><li>Added refund functionality</li></ul>
+                </p>
+
+                <p>[1.0.3.0] - 2019-04-25
+                <ul><li>Added cancel functionality</li></ul>
+                </p>
+
+                <p>[1.0.3.1] - 2019-04-25
+                <ul><li>Fixed an issue with the status not getting updated by webhooks</li></ul>
+                </p>
+
+                <p>[1.0.4.0] - 2019-05-14
+                <ul><li>Cancellations webhooks now fire when an order's status is set to
+                "cancelled/rejected"</li>
+                    <li>Activate On Status option added to the plugin config</li>
+                    <li>Activation webhooks now fire when an order's status corresponds to
+                the set <i>Activate On Status</i> config option</li>
+                    <li><i>Limit Plans</i> multi-select feature added to the config</li>
+                </ul>
+                </p>
+
+                <p>[1.0.4.1] - 2019-05-22
+                    <ul>
+                        <li>The finance payment option is deactivated if the API key is incorrect</li>
+                        <li>Stricter initial validation of the API Key</li>
+                    </ul>
+                </p>
+                ]]>
+        </changes>
+    </changelog>
 </plugin>
