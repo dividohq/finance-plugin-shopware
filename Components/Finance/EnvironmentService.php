@@ -33,7 +33,7 @@ class EnvironmentService
     {
         $environment = Helper::getEnvironment($apiKey);
 
-        if(!$environment){
+        if (!$environment) {
             return new EnvironmentResponse("", true, "Unexpected API Key");
         }
 
@@ -57,21 +57,41 @@ class EnvironmentService
             $response = $sdk->platformEnvironments()->getPlatformEnvironment();
             $responseStr = $response->getBody()->getContents();
             $responseJson = json_decode($responseStr);
-            if(isset($responseJson->data->environment)) {
-                $responseObj = new EnvironmentResponse($responseJson->data->environment);
+            if (isset($responseJson->data->environment)) {
+                $responseObj = new EnvironmentResponse(
+                    $responseJson->data->environment
+                );
             } elseif (isset($responseJson->error)) {
-                $responseObj = new EnvironmentResponse("", true, $responseJson->message, $responseJson->code);
+                $responseObj = new EnvironmentResponse(
+                    "",
+                    true,
+                    $responseJson->message,
+                    $responseJson->code
+                );
             }
             Helper::log("Response: ".$responseObj->_toString(), 'info');
             return $responseObj;
         } catch(MerchantApiBadResponseException $e) {
             $errorMessage = SDKErrorHandler::getMessage($e);
-            $responseObj = new EnvironmentResponse("", true, $errorMessage, $e->getCode());
+            $responseObj = new EnvironmentResponse(
+                "",
+                true,
+                $errorMessage,
+                $e->getCode()
+            );
             return $responseObj;
         }
     }
 
-    public static function storeEnvironment(Environment $environment) {
+    /**
+     * Undocumented function
+     *
+     * @param Environment $environment The merchant environment
+     *
+     * @return void
+     */
+    public static function storeEnvironment(Environment $environment)
+    {
         $now = time();
         $environment->setUpdatedOn($now);
 
@@ -92,11 +112,19 @@ class EnvironmentService
         $environment->setId($id);
     }
 
-    public static function retrieveEnvironmentFromDb(int $id) {
+    /**
+     * Retrieve the merchant environment cached in the DB by ID
+     *
+     * @param integer $id Environment ID
+     *
+     * @return FinancePlugin\Components\Finance\Environment | false
+     */
+    public static function retrieveEnvironmentFromDb(int $id)
+    {
         $session_sql
             = "SELECT * FROM `s_environments` WHERE `id`= :id LIMIT 1";
         $sessions = Shopware()->Db()->query($session_sql, [':id' => $id]);
-        foreach($sessions as $session) {
+        foreach ($sessions as $session) {
             $environment = new Environment;
             $environment->setId($id);
             $environment->setPluginId($session['plugin_id']);
@@ -107,11 +135,27 @@ class EnvironmentService
         return false;
     }
 
-    public static function retrieveEnvironmentFromDbByPluginId(int $pluginId) {
-        $session_sql
-            = "SELECT * FROM `s_environments` WHERE `plugin_id`= :plugin_id ORDER BY `updated_on` DESC LIMIT 1";
-        $sessions = Shopware()->Db()->query($session_sql, [':plugin_id' => $pluginId]);
-        foreach($sessions as $session) {
+    /**
+     * Retrieve the environment from the DB by Plugin ID
+     *
+     * @param integer $pluginId Plugin ID
+     *
+     * @return FinancePlugin\Components\Finance\Environment | false
+     */
+    public static function retrieveEnvironmentFromDbByPluginId(int $pluginId)
+    {
+        $session_sql = "
+            SELECT *
+            FROM `s_environments`
+            WHERE `plugin_id`= :plugin_id
+            ORDER BY `updated_on` DESC
+            LIMIT 1
+        ";
+        $sessions = Shopware()->Db()->query(
+            $session_sql,
+            [':plugin_id' => $pluginId]
+        );
+        foreach ($sessions as $session) {
             $environment = new Environment;
             $environment->setId($id);
             $environment->setPluginId($session['plugin_id']);
@@ -122,19 +166,40 @@ class EnvironmentService
         return false;
     }
 
-    public static function constructEnvironmentFromResponse(EnvironmentResponse $response) {
+    /**
+     * Construct environment based on response
+     *
+     * @param EnvironmentResponse $response An environment response object
+     *
+     * @return FinancePlugin\Components\Finance\Environment | false
+     */
+    public static function constructEnvironmentFromResponse(
+        EnvironmentResponse $response
+    ) {
         if (false === $response->error) {
             $environment = new Environment;
             $environment->setPluginId(self::PLUGIN_ID);
             $environment->setEnvironment($response->environment);
             $environment->setUpdatedOn(time());
             return $environment;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
-    public static function clearEnvironmentsByPluginId($pluginId) {
+    /**
+     * Clear environments with the supplied plugin ID
+     *
+     * @param int $pluginId a plugin ID
+     *
+     * @return boolean
+     */
+    public static function clearEnvironmentsByPluginId($pluginId)
+    {
         if (Shopware()->Db()->query("TRUNCATE TABLE `s_environments`")) {
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 }

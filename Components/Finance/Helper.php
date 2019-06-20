@@ -57,7 +57,10 @@ class Helper
             break;
 
         default:
-            Shopware()->Container()->get('pluginlogger')->info("Default info: " . $msg);
+            Shopware()
+                ->Container()
+                ->get('pluginlogger')
+                ->info("Default info: ".$msg);
             break;
         }
         return;
@@ -222,7 +225,9 @@ class Helper
             $productsArray[$i]['name']     = $product['articlename'];
             $productsArray[$i]['quantity'] = $product['quantity'];
             $productsArray[$i]['price']    = $product['price'];
-            if ($product['modus'] == '0' && isset($product['additional_details']['attributes']['core'])) {
+            if ($product['modus'] == '0'
+                && isset($product['additional_details']['attributes']['core'])
+            ) {
                 $productsArray[$i]['plans']
                     = $product['additional_details']['attributes']['core']
                     ->get('finance_plans');
@@ -246,7 +251,9 @@ class Helper
      */
     public function getDepositAmount($total, $deposit)
     {
-        if (empty($deposit)) return 0;
+        if (empty($deposit)) {
+            return 0;
+        }
 
         $depositPercentage = $deposit / 100;
         return round($depositPercentage * $total, 2);
@@ -356,10 +363,12 @@ class Helper
         } else {
             list($environment, $key) = explode("_", $apiKey);
             $environment = strtoupper($environment);
-            if (is_null(
-                constant("\Divido\MerchantSDK\Environment::$environment")
-            )) {
-                self::debug('Environment "'.$environment.'" does not exist in the SDK', 'error');
+            if (is_null(constant("\Divido\MerchantSDK\Environment::$environment"))
+            ) {
+                self::debug(
+                    'Environment "'.$environment.'" does not exist in the SDK',
+                    'error'
+                );
                 return false;
             }
 

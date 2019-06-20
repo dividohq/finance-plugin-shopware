@@ -10,9 +10,8 @@ namespace FinancePlugin\Components\Finance;
 /**
  * Payment Service class
  *
- * @category CategoryName
- * @package  FinancePlugin
- * @since    File available since Release 1.0.0
+ * @package FinancePlugin
+ * @since   File available since Release 1.0.0
  */
 class PaymentService
 {

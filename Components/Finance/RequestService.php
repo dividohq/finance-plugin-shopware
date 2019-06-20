@@ -10,6 +10,9 @@ namespace FinancePlugin\Components\Finance;
 use Divido\MerchantSDK\Client;
 use Divido\MerchantSDK\Environment;
 use Divido\MerchantSDK\Models\Application;
+use Divido\MerchantSDKGuzzle5\GuzzleAdapter;
+use Divido\MerchantSDK\HttpClient\HttpClientWrapper;
+
 
 /**
  * Helper service class to make application requests
@@ -123,10 +126,11 @@ class RequestService
         if ($environment) {
             $httpClient = new \GuzzleHttp\Client();
 
-            $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
+            $guzzleClient = new GuzzleAdapter($httpClient);
 
-            $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper($guzzleClient,
-                \Divido\MerchantSDK\Environment::CONFIGURATION[$environment]['base_uri'],
+            $httpClientWrapper =  new HttpClientWrapper(
+                $guzzleClient,
+                Environment::CONFIGURATION[$environment]['base_uri'],
                 $apiKey
             );
 
@@ -150,13 +154,15 @@ class RequestService
 
             $response = $sdk->applications()->createApplication(
                 $application,
-            [],
-            ['Content-Type' => 'application/json']
-        );
+                [],
+                ['Content-Type' => 'application/json']
+            );
 
             $applicationResponseBody = $response->getBody()->getContents();
 
             return json_decode($applicationResponseBody);
-        } else return false;
+        } else {
+            return false;
+        }
     }
 }

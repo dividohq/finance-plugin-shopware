@@ -28,24 +28,32 @@ class CancelService
      * @param int    $total          Amount (in pence) being refunded
      * @param array  $items          Array of items in the order
      * @param string $order_id       Merchant's Order Reference ID
-     * @return void
+     *
+     * @return FinancePlugin\Components\Finance\MerchantResponse
      */
-    public static function cancelApplication($application_id, $total, $items, $order_id=null)
-    {
+    public static function cancelApplication(
+        $application_id,
+        $total,
+        $items,
+        $order_id=null
+    ) {
         $order_id = $order_id ?? $application_id;
 
         $apiKey = Helper::getApiKey();
 
         $environment = Helper::getEnvironment($apiKey);
 
-        if(!$environment) return false;
+        if (!$environment) {
+            return false;
+        }
 
         Helper::debug("Refunding order '{$application_id}'", 'info');
         $httpClient = new \GuzzleHttp\Client();
 
         $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
 
-        $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper($guzzleClient,
+        $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper(
+            $guzzleClient,
             \Divido\MerchantSDK\Environment::CONFIGURATION[$environment]['base_uri'],
             $apiKey
         );
@@ -58,7 +66,9 @@ class CancelService
         $application = (new Application())
             ->withId($application_id);
 
-        $applicationCancellation = (new \Divido\MerchantSDK\Models\ApplicationCancellation())
+        $applicationCancellation = (
+            new \Divido\MerchantSDK\Models\ApplicationCancellation()
+        )
             ->withAmount($total)
             ->withReference("Order Ref.".$order_id)
             ->withComment('As per merchant request.')

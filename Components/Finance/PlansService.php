@@ -45,8 +45,9 @@ class PlansService
             [$now - $since]
         );
 
-        if (!($recent_plans)) return [];
-        else {
+        if (!($recent_plans)) {
+            return [];
+        } else {
             $return = [];
             foreach ($recent_plans as $plan) {
                 $planObj = new Plan;
@@ -71,13 +72,14 @@ class PlansService
     {
         $environment = Helper::getEnvironment($apiKey);
 
-        if(!$environment){
+        if (!$environment) {
             return new PlansResponse([], true, "Unexpected API Key format");
         }
         $httpClient = new \GuzzleHttp\Client();
         $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
 
-        $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper($guzzleClient,
+        $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper(
+            $guzzleClient,
             \Divido\MerchantSDK\Environment::CONFIGURATION[$environment]['base_uri'],
             $apiKey
         );
@@ -119,7 +121,8 @@ class PlansService
      * Check if the plans currently exist on the Merchant portal
      * Use all live plans if no individual plans set
      *
-     * @param array $products Helper function array of products
+     * @param srting $apiKey   The merchants API Key
+     * @param array  $products Helper function array of products
      *
      * @return array
      */
@@ -130,9 +133,9 @@ class PlansService
         $current_plans = [];
         if (true === $plans_response->error) {
             return [];
-        }else{
+        } else {
             foreach ($plans_response->plans as $plan) {
-                if(in_array($plan->getName(), $confPlans)) {
+                if (in_array($plan->getName(), $confPlans)) {
                     $current_plans[] = $plan->getId();
                 }
             }
@@ -146,14 +149,16 @@ class PlansService
                 $product_plans = explode("|", $product['plans']);
                 if (empty($basket_plans)) {
                     foreach ($product_plans as $plan) {
-                        if (!empty($plan) && in_array($plan, $current_plans))
+                        if (!empty($plan) && in_array($plan, $current_plans)) {
                             $basket_plans[] = $plan;
+                        }
                     }
                 } else {
                     if (!empty($product_plans)) {
                         foreach ($basket_plans as $k => $listed) {
-                            if (!in_array($listed, $product_plans))
+                            if (!in_array($listed, $product_plans)) {
                                 unset($basket_plans[$k]);
+                            }
                         }
                     }
                 }
@@ -207,8 +212,13 @@ class PlansService
     {
         // TODO: This needs to run only if the API Key changes
         if (Shopware()->Db()->query("TRUNCATE TABLE `s_plans`")) {
-            Shopware()->Db()->query("UPDATE `s_articles_attributes` SET `finance_plans` = NULL");
+            Shopware()->Db()->query(
+                "UPDATE `s_articles_attributes`
+                SET `finance_plans` = NULL"
+            );
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 }

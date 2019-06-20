@@ -43,7 +43,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
           ORDER_CREATION_ERROR_MSG = 'Could not create order.',
           INVALID_TOKEN_ERROR_MSG = 'Invalid token.',
           NO_RESPONSE_ERROR_MSG = 'Received response did not include status.',
-          INCOMPLETE_RESPONSE_ERROR_MSG = 'Incomplete response. Expected a token and sessionId',
+          INCOMPLETE_RESPONSE_ERROR_MSG
+              = 'Incomplete response. Expected a token and sessionId',
           SESSION_EXPIRY_MSG = 'Your basket has expired. Please try again';
 
 
@@ -78,7 +79,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $plugin->getPath() . '/Resources/views/'
         );
 
-        require_once($plugin->getPath().'/vendor/autoload.php');
+        include_once $plugin->getPath().'/vendor/autoload.php';
     }
 
     /**
@@ -109,7 +110,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
          * If the user has timed out, cancel checkout
          */
         $user = $this->getUser();
-        if(is_null($user)) {
+        if (is_null($user)) {
             $errors = [self::SESSION_EXPIRY_MSG];
             $this->forward('cancel', null, null, ['errors' => $errors]);
         }
@@ -429,7 +430,10 @@ class Shopware_Controllers_Frontend_FinancePlugin
             } else {
                 $this->View()->assign('error', self::ORDER_CREATION_ERROR_MSG);
                 $this->View()->assign('snippetKey', 'ErrorCreateMsg');
-                $this->View()->assign('template','frontend/finance_plugin/error.tpl');
+                $this->View()->assign(
+                    'template',
+                    'frontend/finance_plugin/error.tpl'
+                );
                 return;
             }
         } else {
@@ -455,7 +459,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
     public function cancelAction()
     {
         $params = $this->Request()->getParams();
-        if(isset($params['errors'])) {
+        if (isset($params['errors'])) {
             $this->View()->assign('errors', $params['errors']);
         }
     }
@@ -519,15 +523,27 @@ class Shopware_Controllers_Frontend_FinancePlugin
                         $order = $modelManager->find(Order::class, $orderID);
                         $currentStatus = $order->getPaymentStatus();
                         $order->setPaymentStatus(
-                            $modelManager->find(Status::class, $statusInfo['order_status'])
+                            $modelManager->find(
+                                Status::class,
+                                $statusInfo['order_status']
+                            )
                         );
                         $modelManager->flush($order);
                         Helper::debug(
-                            'Updated Order Status of :'.$orderID.' from '.$currentStatus.' to '.$statusInfo['order_status'],
+                            'Updated Order Status of :'
+                            .$orderID
+                            .' from '
+                            .$currentStatus
+                            .' to '
+                            .$statusInfo['order_status'],
                             'info'
                         );
                     } else {
-                        Helper::debug('Could not find order #'.$orderID.' with token '.$paymentUniqueID, 'error');
+                        Helper::debug(
+                            'Could not find order #'.$orderID.' with token '
+                            .$paymentUniqueID,
+                            'error'
+                        );
                     }
                 }
 
