@@ -13,12 +13,12 @@ use Shopware\Components\Model\ModelEntity;
 use FinancePlugin\Components\Finance\Helper;
 
 /**
- * @ORM\Table(name="s_sessions")
+ * @ORM\Table(name="s_plugin_FinancePlugin_sessions")
  * @ORM\Entity
  */
 class Session extends ModelEntity
 {
-    private $table = 's_sessions';
+    private $table = 's_plugin_FinancePlugin_sessions';
     /**
      * @var integer $id
      *
@@ -123,8 +123,6 @@ class Session extends ModelEntity
         'sPayment',
         'sDispatch'
     );
-
-    const SESSION_TABLE = 's_sessions';
 
     /**
      * Compression method for session data. Currently either SERIAL or JSON
@@ -366,7 +364,7 @@ class Session extends ModelEntity
     {
         $get_session_query = $connection->createQueryBuilder();
         $session_sql
-            = "SELECT * FROM `".self::SESSION_TABLE."` WHERE `id`= :id LIMIT 1";
+            = "SELECT * FROM `".$this->table."` WHERE `id`= :id LIMIT 1";
         $session = $connection->fetchAll($session_sql, [':id' => $id]);
         if (isset($session[0])) {
             $this->id = $id;
@@ -403,7 +401,7 @@ class Session extends ModelEntity
         $add_session_query = $connection->createQueryBuilder();
         $created_on = (!empty($this->created_on)) ? $this->createdon : time();
         $add_session_query
-            ->insert(self::SESSION_TABLE)
+            ->insert($this->table)
             ->setValue('`orderNumber`', '?')
             ->setValue('`transactionID`', '?')
             ->setValue('`key`', '?')
@@ -451,7 +449,7 @@ class Session extends ModelEntity
         }
 
         $update_session_query = $connection->createQueryBuilder();
-        $update_session_query->update(self::SESSION_TABLE);
+        $update_session_query->update($this->table);
 
         if (!is_null($this->orderNumber)) {
             $update_session_query
@@ -575,7 +573,7 @@ class Session extends ModelEntity
     {
         $del_session_query = $connection->createQueryBuilder();
         $del_session_query
-            ->delete(self::SESSION_TABLE)
+            ->delete(self::table)
             ->where("`id`='{$where['id']}'");
 
         foreach ($where as $key => $value) {
@@ -598,7 +596,7 @@ class Session extends ModelEntity
     public static function findSessions($criteria, $connection)
     {
         $find_session_query = $connection->createQueryBuilder();
-        $find_session_query->select(self::SESSION_TABLE);
+        $find_session_query->select(self::table);
 
         foreach ($criteria as $key=>$value) {
             $find_session_query
@@ -628,7 +626,7 @@ class Session extends ModelEntity
             return false;
         }
         $update_session_query = $connection->createQueryBuilder();
-        $update_session_query->update(self::SESSION_TABLE);
+        $update_session_query->update(self::table);
 
         foreach ($session as $key=>$value) {
             if ($key == $reference_key) {

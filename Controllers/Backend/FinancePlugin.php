@@ -93,7 +93,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             ->from('s_order', 'orders')
             ->leftJoin(
                 'orders',
-                's_sessions',
+                's_plugin_FinancePlugin_sessions',
                 'sessions',
                 'orders.ordernumber = sessions.orderNumber'
             )
@@ -179,7 +179,7 @@ class Shopware_Controllers_Backend_FinancePlugin
 
         // Update session table if webhook successful
         $updateSessionQuery = $this->get('dbal_connection')->createQueryBuilder();
-        $updateSessionQuery->update('s_sessions')
+        $updateSessionQuery->update('s_plugin_FinancePlugin_sessions')
             ->where("`orderNumber` = :orderNumber")
             ->set("`{$sessionCol}`", ":now")
             ->setParameter(":orderNumber", $order[0]['orderNumber'])
@@ -252,7 +252,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             ->from('s_order', 'orders')
             ->leftJoin(
                 'orders',
-                's_sessions',
+                's_plugin_FinancePlugin_sessions',
                 'sessions',
                 'orders.ordernumber = sessions.orderNumber'
             )
@@ -320,7 +320,7 @@ class Shopware_Controllers_Backend_FinancePlugin
         }
 
         $update_session_query = $this->get('dbal_connection')->createQueryBuilder();
-        $update_session_query->update('s_sessions')
+        $update_session_query->update('s_plugin_FinancePlugin_sessions')
             ->where("`orderNumber` = :orderNumber")
             ->set("`activated_on`", ":now")
             ->setParameter(":orderNumber", $order[0]['orderNumber'])
@@ -375,7 +375,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             ->from('s_order', 'orders')
             ->leftJoin(
                 'orders',
-                's_sessions',
+                's_plugin_FinancePlugin_sessions',
                 'sessions',
                 'orders.ordernumber = sessions.orderNumber'
             )
@@ -479,7 +479,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             ->from('s_order', 'orders')
             ->leftJoin(
                 'orders',
-                's_sessions',
+                's_plugin_FinancePlugin_sessions',
                 'sessions',
                 'orders.ordernumber = sessions.orderNumber'
             )
@@ -561,7 +561,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             ->from('s_order', 'orders')
             ->leftJoin(
                 'orders',
-                's_sessions',
+                's_plugin_FinancePlugin_sessions',
                 'sessions',
                 'orders.ordernumber = sessions.orderNumber'
             )
@@ -608,7 +608,7 @@ class Shopware_Controllers_Backend_FinancePlugin
         $planBuilder = $this->get('dbal_connection')->createQueryBuilder();
         $plans = $planBuilder
             ->select(['plans.id', 'plans.name'])
-            ->from('s_plans', 'plans')
+            ->from('s_plugin_FinancePlugin_plans', 'plans')
             ->execute()
             ->fetchAll();
 

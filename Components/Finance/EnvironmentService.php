@@ -102,7 +102,7 @@ class EnvironmentService
         ];
 
         self::clearEnvironmentsByPluginId(self::PLUGIN_ID);
-        $sql = 'INSERT INTO `s_environments`
+        $sql = 'INSERT INTO `s_plugin_FinancePlugin_environments`
                     (`plugin_id`, `environment`, `updated_on`)
                 VALUES
                     (?, ?, ?)';
@@ -122,7 +122,7 @@ class EnvironmentService
     public static function retrieveEnvironmentFromDb(int $id)
     {
         $session_sql
-            = "SELECT * FROM `s_environments` WHERE `id`= :id LIMIT 1";
+            = "SELECT * FROM `s_plugin_FinancePlugin_environments` WHERE `id`= :id LIMIT 1";
         $sessions = Shopware()->Db()->query($session_sql, [':id' => $id]);
         foreach ($sessions as $session) {
             $environment = new Environment;
@@ -146,7 +146,7 @@ class EnvironmentService
     {
         $session_sql = "
             SELECT *
-            FROM `s_environments`
+            FROM `s_plugin_FinancePlugin_environments`
             WHERE `plugin_id`= :plugin_id
             ORDER BY `updated_on` DESC
             LIMIT 1
@@ -196,7 +196,7 @@ class EnvironmentService
      */
     public static function clearEnvironmentsByPluginId($pluginId)
     {
-        if (Shopware()->Db()->query("TRUNCATE TABLE `s_environments`")) {
+        if (Shopware()->Db()->query("TRUNCATE TABLE `s_plugin_FinancePlugin_environments`")) {
             return true;
         } else {
             return false;
