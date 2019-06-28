@@ -356,7 +356,6 @@ class Helper
     public function getEnvironment($apiKey=false)
     {
         $apiKey = (false === $apiKey) ? Helper::getApiKey() : $apiKey;
-        self::debug('Getting environment for API: '.$apiKey, 'info');
         if (empty($apiKey)) {
             self::debug('Empty API key', 'error');
             return false;
@@ -366,14 +365,14 @@ class Helper
             if (is_null(constant("\Divido\MerchantSDK\Environment::$environment"))
             ) {
                 self::debug(
-                    'Environment "'.$environment.'" does not exist in the SDK',
+                    "Environment '{$environment}' does not exist in the SDK",
                     'error'
                 );
                 return false;
             }
 
             if (strlen($key) < 10) {
-                self::debug('API Key "'.$key.'" looks too short', 'error');
+                self::debug("API Key '{$key}' looks too short", 'error');
                 return false;
             }
 

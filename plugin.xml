@@ -13,7 +13,7 @@
     <description>
         <![CDATA[
         <b>Finance Plugin</b>
-        <p>A global finance platform for merchants, allowing customers the option to break down their online purchases
+        <p>A global finance platform for merchants, giving customers the option to break down their online purchases
         into more manageable chunks by seamlessly connecting the checkout process to a wide range of finance
         providers via the "Powered By Divido" lender platform.</p>
         ]]>
@@ -78,7 +78,7 @@
             <![CDATA[
             <ul>
             <li>Added activation functionality</li>
-            <li>sReplaced deprecated logger code</li>
+            <li>Replaced deprecated logger code</li>
             </ul>
             ]]>
         </changes>

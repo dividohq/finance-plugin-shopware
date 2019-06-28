@@ -69,7 +69,7 @@ class EnvironmentService
                     $responseJson->code
                 );
             }
-            Helper::log("Response: ".$responseObj->_toString(), 'info');
+            Helper::log("Response: ".$responseObj->toString(), 'info');
             return $responseObj;
         } catch(MerchantApiBadResponseException $e) {
             $errorMessage = SDKErrorHandler::getMessage($e);

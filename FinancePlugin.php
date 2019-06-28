@@ -40,13 +40,13 @@ class FinancePlugin extends Plugin
         $installer = $this->container->get('shopware.plugin_payment_installer');
         $options = [
             'name' => 'finance_plugin',
-            'description' => 'Finance Plugin',
+            'description' => 'Pay By Finance',
             'action' => 'FinancePlugin',
             'active' => 1,
             'position' => 0,
             'additionalDescription' =>
                 '<div id="payment_desc">'
-                . '  Finance your cart'
+                . 'Finance your cart'
                 . '</div>'
         ];
 
