@@ -24,9 +24,11 @@ class ActivateService
     /**
      * Make an activate request via the SDK from the order
      *
-     * @param \FinancePlugin\Models\Request $request Request Model
+     * @param String $application_id The application ID
+     * @param String $total          The cart total
+     * @param Array  $items          The items in the cart
      *
-     * @return void
+     * @return FinancePlugin\Components\Finance\MerchantResponse
      */
     public static function activateApplication($application_id, $total, $items)
     {
@@ -34,14 +36,17 @@ class ActivateService
 
         $environment = Helper::getEnvironment($apiKey);
 
-        if(!$environment) return false;
+        if (!$environment) {
+            return false;
+        }
 
         Helper::debug("Activating order '$application_id'", 'info');
         $httpClient = new \GuzzleHttp\Client();
 
         $guzzleClient = new \Divido\MerchantSDKGuzzle5\GuzzleAdapter($httpClient);
 
-        $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper($guzzleClient,
+        $httpClientWrapper =  new \Divido\MerchantSDK\HttpClient\HttpClientWrapper(
+            $guzzleClient,
             \Divido\MerchantSDK\Environment::CONFIGURATION[$environment]['base_uri'],
             $apiKey
         );
@@ -54,7 +59,9 @@ class ActivateService
         $application = (new \Divido\MerchantSDK\Models\Application())
             ->withId($application_id);
 
-        $applicationActivation = (new \Divido\MerchantSDK\Models\ApplicationActivation())
+        $applicationActivation = (
+            new \Divido\MerchantSDK\Models\ApplicationActivation()
+        )
             ->withAmount($total)
             ->withReference("Order ".$application_id)
             ->withComment('Order was dispatched by merchant.')

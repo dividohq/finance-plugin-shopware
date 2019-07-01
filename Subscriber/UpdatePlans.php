@@ -99,7 +99,6 @@ class UpdatePlans implements SubscriberInterface
      */
     public function onConfigPostDispatch(\Enlight_Event_EventArgs $args)
     {
-        ini_set('display_errors',1);
         Helper::log('Updating Config', 'info');
         $controller = $args->getSubject();
 
@@ -203,7 +202,7 @@ class UpdatePlans implements SubscriberInterface
                 $destination = "./plugin.png";
                 file_put_contents($imgUrl, $destination);
             }
-
+            Helper::log('Could not get environment', 'error');
         } else {
             Helper::log('Could not get environment', 'error');
             Shopware()->Db()->query("UPDATE `s_core_paymentmeans` SET `active`=0 WHERE `action`='FinancePlugin' LIMIT 1");

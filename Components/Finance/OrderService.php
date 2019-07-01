@@ -36,8 +36,9 @@ class OrderService
 
         if (isset($order[0])) {
             return $order[0];
-        }else return false;
-
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -52,21 +53,32 @@ class OrderService
     {
         $builder = $connection->createQueryBuilder();
         $builder
-            ->select('orders.*', 'session.transactionID', 'session.status as finance_status', 'session.key', 'session.plan', 'session.deposit', 'session.ip_address')
+            ->select(
+                'orders.*',
+                'session.transactionID',
+                'session.status as finance_status',
+                'session.key',
+                'session.plan',
+                'session.deposit',
+                'session.ip_address'
+            )
             ->from(\Shopware\Models\Order\Order::class, 'orders')
-            ->leftJoin('orders', \FinancePlugin\Models\Session::class, 'session', 'session.orderNumber = orders.ordernumber')
+            ->leftJoin(
+                'orders',
+                \FinancePlugin\Models\Session::class,
+                'session',
+                'session.orderNumber = orders.ordernumber'
+            )
             ->where('orders.id = :id')
             ->setParameter(':id', $id)
             ->setMaxResult(1);
         $all = $builder->getQuery()->getArrayResult();
 
-        if (!isset($all[0])) return false;
+        if (!isset($all[0])) {
+            return false;
+        }
 
         return $all[0];
-    }
-
-    public static function retrieveItems($orderId, $connection) {
-
     }
 
     /**
@@ -81,7 +93,10 @@ class OrderService
         $order->sCreateTemporaryOrder();
         $orderNumber = $order->sSaveOrder();
         if (!$orderNumber) {
-            Helper::log('An order with the transaction ID has already been created', 'error');
+            Helper::log(
+                'An order with the transaction ID has already been created',
+                'error'
+            );
         }
         return $orderNumber;
     }
@@ -111,7 +126,9 @@ class OrderService
 
         if (isset($orders)) {
             return $orders[0]['id'];
-        }else return false;
+        } else {
+            return false;
+        }
 
     }
 
@@ -165,7 +182,9 @@ class OrderService
             if ($first) {
                 $find_order_query->where("`{$key}`= :{$key}");
                 $first = false;
-            } else $find_order_query->andWhere("`{$key}`= :{$key}");
+            } else {
+                $find_order_query->andWhere("`{$key}`= :{$key}");
+            }
 
             $find_order_query->setParameter(":{$key}", $value);
         }

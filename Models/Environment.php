@@ -11,12 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Shopware\Components\Model\ModelEntity;
 
 /**
- * @ORM\Table(name="s_environments")
+ * @ORM\Table(name="s_plugin_FinancePlugin_environments")
  * @ORM\Entity
  */
 class Environment extends ModelEntity
 {
-    private $table = 's_environments';
+    private $table = 's_plugin_FinancePlugin_environments';
     /**
      * @var integer $id
      *

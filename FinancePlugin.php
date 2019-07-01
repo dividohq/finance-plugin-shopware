@@ -14,6 +14,7 @@ use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Models\Payment\Payment;
+use FinancePlugin\Components\Finance\Helper;
 
 /**
  * Finance Plugin
@@ -39,13 +40,13 @@ class FinancePlugin extends Plugin
         $installer = $this->container->get('shopware.plugin_payment_installer');
         $options = [
             'name' => 'finance_plugin',
-            'description' => 'Finance Plugin',
+            'description' => 'Pay By Finance',
             'action' => 'FinancePlugin',
             'active' => 1,
             'position' => 0,
             'additionalDescription' =>
                 '<div id="payment_desc">'
-                . '  Finance your cart'
+                . 'Finance your cart'
                 . '</div>'
         ];
 
@@ -109,11 +110,28 @@ class FinancePlugin extends Plugin
      */
     public function uninstall(UninstallContext $context)
     {
-        $service = $this->container->get('shopware_attribute.crud_service');
-        $service->delete('s_order_basket_attributes', 'finance_id');
-        $service->delete('s_order_basket_attributes', 'deposit_value');
-        $service->delete('s_articles_attributes', 'finance_plans');
         $this->_setActiveFlag($context->getPlugin()->getPayments(), false);
+
+        if(!$context->keepUserData()){
+            $service = $this->container->get('shopware_attribute.crud_service');
+            $service->delete('s_order_basket_attributes', 'finance_id');
+            $service->delete('s_order_basket_attributes', 'deposit_value');
+            $service->delete('s_articles_attributes', 'finance_plans');
+
+            $em = $this->container->get('models');
+            $schemaTool = new SchemaTool($em);
+            $schemaTool->dropSchema(
+                [
+                    $em->getClassMetadata(\FinancePlugin\Models\Plan::class),
+                    $em->getClassMetadata(\FinancePlugin\Models\Session::class),
+                    $em->getClassMetadata(\FinancePlugin\Models\Environment::class),
+                ],
+                true
+            );
+
+        }
+
+        $context->scheduleClearCache(UninstallContext::CACHE_LIST_ALL);
     }
 
     /**

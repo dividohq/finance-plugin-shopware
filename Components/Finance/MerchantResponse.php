@@ -35,8 +35,14 @@ class MerchantResponse
 
     public $message;
 
-    public function __construct($responseObj){
-        if(isset($responseObj->data->id)) {
+    /**
+     * Merchant response constructor
+     *
+     * @param Object $responseObj The response object
+     */
+    public function __construct($responseObj)
+    {
+        if (isset($responseObj->data->id)) {
 
             $this->id = $responseObj->data->id;
             $this->amount = $responseObj->data->amount;

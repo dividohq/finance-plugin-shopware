@@ -4,86 +4,64 @@
     <elements>
         <element required="true" type="text" scope="locale">
             <name>API Key</name>
-            <label lang="de">API Key</label>
             <label lang="en">API Key</label>
-            <description lang="de">The API-key is provided by your finance provider</description>
             <description lang="en">The API-key is provided by your finance provider</description>
         </element>
 
         <element required="false" type="text" scope="locale">
             <name>Shared Secret</name>
-            <label lang="de">Shared Secret</label>
             <label lang="en">Shared Secret</label>
-            <description lang="de">
-                The optional shared secret is used to verify webhooks from your finance provider.
-            </description>
             <description lang="en">
                 The optional shared secret is used to verify webhooks from your finance provider.
             </description>
         </element>
         <element required="false" type="text" scope="locale">
             <name>Checkout Title</name>
-            <label lang="de">Checkout Title</label>
             <label lang="en">Checkout Title</label>
-            <description lang="de"></description>
             <description lang="en"></description>
         </element>
 
         <element required="false" type="textarea" scope="locale">
             <name>Checkout Description</name>
-            <label lang="de">Checkout Description</label>
             <label lang="en">Checkout Description</label>
-            <description lang="de"></description>
             <description lang="en"></description>
         </element>
 
         <element required="true" type="text" scope="locale">
             <name>Cart Threshold</name>
-            <label lang="de">Cart Threshold</label>
             <label lang="en">Cart Threshold</label>
             <value>250</value>
-            <description lang="de">Cart Threshold</description>
             <description lang="en">Cart Threshold</description>
         </element>
 
         <element required="true" type="boolean" scope="locale">
             <name>Show Widget</name>
-            <label lang="de">Show Product Widget</label>
             <label lang="en">Show Product Widget</label>
-            <description lang="de">Show finance options widget on product page</description>
             <description lang="en">Show finance options widget on product page</description>
         </element>
 
         <element required="true" type="text" scope="locale">
             <name>Widget Minimum</name>
-            <label lang="de">Widget Threshold</label>
             <label lang="en">Widget Threshold</label>
             <value>0</value>
-            <description lang="de">Only display the widget if the product price is over the specified amount</description>
             <description lang="en">Only display the widget if the product price is over the specified amount</description>
         </element>
 
         <element required="false" type="text" scope="locale">
             <name>Widget Prefix</name>
-            <label lang="de">Widget Prefix</label>
             <label lang="en">Widget Prefix</label>
-            <description lang="de">Widget Prefix</description>
             <description lang="en">Widget Prefix</description>
         </element>
 
         <element required="false" type="text" scope="locale">
             <name>Widget Suffix</name>
-            <label lang="de">Widget Suffix</label>
             <label lang="en">Widget Suffix</label>
-            <description lang="de">Widget Suffix</description>
             <description lang="en">Widget Suffix</description>
         </element>
 
         <element required="true" type="boolean" scope="locale">
             <name>Debug</name>
-            <label lang="de">Debug</label>
             <label lang="en">Debug</label>
-            <description lang="de">Debugging Enabled - Turn this off in production</description>
             <description lang="en">Debugging Enabled - Turn this off in production</description>
         </element>
 
@@ -100,8 +78,7 @@
             <store>
                 <option>
                     <value>0</value>
-                    <label lang="de">Please activate the plugin and reload the page to use this feature</label>
-                    <label lang="en">Please activate the plugin and reload the page to use this feature</label>
+                    <label lang="en">Please activate the plugin, clear the cache and reload the page to use this feature</label>
                 </option>
             </store>
             <options>
