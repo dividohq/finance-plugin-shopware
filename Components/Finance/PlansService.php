@@ -37,7 +37,7 @@ class PlansService
      *
      * @return array
      */
-    public static function getStoredPlans(int $since = self::REFRESH_RATE):array
+    public static function getStoredPlans(int $since = self::REFRESH_RATE)
     {
         $now = time();
         $recent_plans = Shopware()->Db()->query(

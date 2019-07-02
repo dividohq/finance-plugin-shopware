@@ -232,7 +232,7 @@ class Helper
                     = $product['additional_details']['attributes']['core']
                     ->get('finance_plans');
             }
-            $i++;
+            $i=$i+1;
         }
         $productsArray[$i]['name'] = 'Shipping';
         $productsArray[$i]['quantity'] = '1';

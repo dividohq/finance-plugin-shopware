@@ -1,7 +1,7 @@
 <?php
 /**
  * File for SDK Handler class
- * 
+ *
  * PHP version 5.6
  */
 
@@ -10,7 +10,7 @@ namespace FinancePlugin\Components\Finance;
 use Divido\MerchantSDK\Exceptions\MerchantApiBadResponseException;
 
  /**
-  * SDKErrorHandler class to catch and better handle 
+  * SDKErrorHandler class to catch and better handle
   * errors from the SDK
   */
 class SDKErrorHandler
@@ -23,10 +23,10 @@ class SDKErrorHandler
      * class and returns a better response where possible
      *
      * @param MerchantApiBadResponseException $e Error thrown by SDK
-     * 
+     *
      * @return string
      */
-    public static function getMessage(MerchantApiBadResponseException $e):string
+    public static function getMessage(MerchantApiBadResponseException $e)
     {
         switch ($e->getCode()) {
         case self::UNAUTHORISED:

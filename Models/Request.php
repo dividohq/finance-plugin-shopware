@@ -1,7 +1,7 @@
 <?php
 /**
  * File for Request model
- * 
+ *
  * PHP version 7.2
  */
 namespace FinancePlugin\Models;
@@ -36,7 +36,7 @@ class Request
      *
      * @return string
      */
-    public function getCountryId():string
+    public function getCountryId()
     {
         return $this->_countryId;
     }
@@ -45,7 +45,7 @@ class Request
      * Set Country ID
      *
      * @param string $countryId New Country ID
-     * 
+     *
      * @return void
      */
     public function setCountryId($countryId)
@@ -58,7 +58,7 @@ class Request
      *
      * @return string
      */
-    public function getCurrencyId():string
+    public function getCurrencyId()
     {
         return $this->_currencyId;
     }
@@ -67,7 +67,7 @@ class Request
      * Set Currenct ID
      *
      * @param string $currencyId New currency ID
-     * 
+     *
      * @return void
      */
     public function setCurrencyId($currencyId)
@@ -89,7 +89,7 @@ class Request
      * Set the Language ID
      *
      * @param string $languageId New Language ID
-     * 
+     *
      * @return void
      */
     public function setLanguageId($languageId)
@@ -101,7 +101,7 @@ class Request
      * Set the Finance plan ID
      *
      * @param string $financePlanId New Finance Plan ID
-     * 
+     *
      * @return void
      */
     public function setFinancePlanId($financePlanId)
@@ -123,7 +123,7 @@ class Request
      * Set the Merchant Channel ID
      *
      * @param string $merchantChannelId New Merchant Channel ID
-     * 
+     *
      * @return void
      */
     public function setMerchantChannelId($merchantChannelId)
@@ -145,7 +145,7 @@ class Request
      * Set the Applicants
      *
      * @param Array $applicants Array of Applicants
-     * 
+     *
      * @return void
      */
     public function setApplicants(array $applicants)
@@ -157,7 +157,7 @@ class Request
      * Add an applicant
      *
      * @param Array $applicant Applicant Array
-     * 
+     *
      * @return void
      */
     public function addApplicant(array $applicant)
@@ -179,7 +179,7 @@ class Request
      * Set Order Items array
      *
      * @param array $orderItems New Order Items array
-     * 
+     *
      * @return void
      */
     public function setOrderItems(array $orderItems)
@@ -201,7 +201,7 @@ class Request
      * Set Deposit Amount (in pence)
      *
      * @param integer $depositAmount New deposit amount (in pence)
-     * 
+     *
      * @return void
      */
     public function setDepositAmount($depositAmount)
@@ -223,7 +223,7 @@ class Request
      * Set decimal value of deposit
      *
      * @param decimal $depositPercentage New deposit decimal
-     * 
+     *
      * @return void
      */
     public function setDepositPercentage($depositPercentage)
@@ -240,12 +240,12 @@ class Request
     {
         return $this->_depositPercentage;
     }
-    
+
     /**
      * Set whether finalisation is required
      *
      * @param boolean $finalisationRequired Finalisation Required?
-     * 
+     *
      * @return void
      */
     public function setFinalisationRequired($finalisationRequired)
@@ -262,12 +262,12 @@ class Request
     {
         return $this->_finalisationRequired;
     }
-    
+
     /**
      * Set the unique Merchant Reference
      *
      * @param string $merchantReference New Merchant Reference
-     * 
+     *
      * @return void
      */
     public function setMerchantReference($merchantReference)
@@ -289,7 +289,7 @@ class Request
      * Set URL's
      *
      * @param array $urls New URL's
-     * 
+     *
      * @return void
      */
     public function setUrls(array $urls)
@@ -311,7 +311,7 @@ class Request
      * Set MetaData
      *
      * @param array $metaData New MetaData array
-     * 
+     *
      * @return void
      */
     public function setMetadata(array $metaData)

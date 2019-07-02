@@ -31,7 +31,7 @@ class RequestService
      *
      * @return array
      */
-    public static function setApplicantsFromUser(array $user):array
+    public static function setApplicantsFromUser(array $user)
     {
         Helper::debug('setting request applicant');
 
