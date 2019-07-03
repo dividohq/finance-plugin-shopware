@@ -5,7 +5,7 @@
  *
  * PHP version 5.5
  **/
-namespace FinancePlugin;
+namespace dividoFinancePlugin;
 
 use Doctrine\ORM\Tools\SchemaTool;
 use Shopware\Components\Plugin;
@@ -14,16 +14,16 @@ use Shopware\Components\Plugin\Context\DeactivateContext;
 use Shopware\Components\Plugin\Context\InstallContext;
 use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Models\Payment\Payment;
-use FinancePlugin\Components\Finance\Helper;
+use dividoFinancePlugin\Components\Finance\Helper;
 
 /**
- * Finance Plugin
+ * Divido Finance Plugin
  *
  * @category Payment_Gateway
- * @package  FinancePlugin
- * @since    File available since Release 1.0.0
+ * @package  dividoFinancePlugin
+ * @since    File available since Release 1.4.2
  */
-class FinancePlugin extends Plugin
+class dividoFinancePlugin extends Plugin
 {
     /**
      * Install context
@@ -39,9 +39,9 @@ class FinancePlugin extends Plugin
          */
         $installer = $this->container->get('shopware.plugin_payment_installer');
         $options = [
-            'name' => 'finance_plugin',
+            'name' => 'divido_finance_plugin',
             'description' => 'Pay By Finance',
-            'action' => 'FinancePlugin',
+            'action' => 'dividoFinancePlugin',
             'active' => 1,
             'position' => 0,
             'additionalDescription' =>
@@ -78,9 +78,9 @@ class FinancePlugin extends Plugin
         $schemaTool = new SchemaTool($em);
         $schemaTool->updateSchema(
             [
-                $em->getClassMetadata(\FinancePlugin\Models\Plan::class),
-                $em->getClassMetadata(\FinancePlugin\Models\Session::class),
-                $em->getClassMetadata(\FinancePlugin\Models\Environment::class),
+                $em->getClassMetadata(\dividoFinancePlugin\Models\Plan::class),
+                $em->getClassMetadata(\dividoFinancePlugin\Models\Session::class),
+                $em->getClassMetadata(\dividoFinancePlugin\Models\Environment::class),
             ],
             true
         );
@@ -90,7 +90,7 @@ class FinancePlugin extends Plugin
             'finance_plans',
             'multi_selection',
             [
-                'entity' => \FinancePlugin\Models\Plan::class,
+                'entity' => \dividoFinancePlugin\Models\Plan::class,
                 'displayInBackend' => true,
                 'label' => 'Finance Plans',
                 'supportText' => 'The plans available to the merchant',
@@ -122,9 +122,9 @@ class FinancePlugin extends Plugin
             $schemaTool = new SchemaTool($em);
             $schemaTool->dropSchema(
                 [
-                    $em->getClassMetadata(\FinancePlugin\Models\Plan::class),
-                    $em->getClassMetadata(\FinancePlugin\Models\Session::class),
-                    $em->getClassMetadata(\FinancePlugin\Models\Environment::class),
+                    $em->getClassMetadata(\dividoFinancePlugin\Models\Plan::class),
+                    $em->getClassMetadata(\dividoFinancePlugin\Models\Session::class),
+                    $em->getClassMetadata(\dividoFinancePlugin\Models\Environment::class),
                 ],
                 true
             );

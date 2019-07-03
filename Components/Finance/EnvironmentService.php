@@ -5,9 +5,9 @@
  * PHP version 7.1
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
-use FinancePlugin\Models\Environment;
+use dividoFinancePlugin\Models\Environment;
 use Divido\MerchantSDK\Client;
 use Divido\MerchantSDK\Handlers\ApiRequestOptions;
 use Divido\MerchantSDK\Exceptions\MerchantApiBadResponseException;
@@ -16,7 +16,7 @@ use Divido\MerchantSDK\Exceptions\MerchantApiBadResponseException;
  * Helper service to maintain finance plans
  *
  * @category CategoryName
- * @package  FinancePlugin
+ * @package  dividoFinancePlugin
  * @since    File available since Release 1.0.0
  */
 class EnvironmentService
@@ -102,7 +102,7 @@ class EnvironmentService
         ];
 
         self::clearEnvironmentsByPluginId(self::PLUGIN_ID);
-        $sql = 'INSERT INTO `s_plugin_FinancePlugin_environments`
+        $sql = 'INSERT INTO `s_plugin_dividoFinancePlugin_environments`
                     (`plugin_id`, `environment`, `updated_on`)
                 VALUES
                     (?, ?, ?)';
@@ -117,12 +117,12 @@ class EnvironmentService
      *
      * @param integer $id Environment ID
      *
-     * @return FinancePlugin\Components\Finance\Environment | false
+     * @return dividoFinancePlugin\Components\Finance\Environment | false
      */
     public static function retrieveEnvironmentFromDb(int $id)
     {
         $session_sql
-            = "SELECT * FROM `s_plugin_FinancePlugin_environments` WHERE `id`= :id LIMIT 1";
+            = "SELECT * FROM `s_plugin_dividoFinancePlugin_environments` WHERE `id`= :id LIMIT 1";
         $sessions = Shopware()->Db()->query($session_sql, [':id' => $id]);
         foreach ($sessions as $session) {
             $environment = new Environment;
@@ -140,13 +140,13 @@ class EnvironmentService
      *
      * @param integer $pluginId Plugin ID
      *
-     * @return FinancePlugin\Components\Finance\Environment | false
+     * @return dividoFinancePlugin\Components\Finance\Environment | false
      */
     public static function retrieveEnvironmentFromDbByPluginId(int $pluginId)
     {
         $session_sql = "
             SELECT *
-            FROM `s_plugin_FinancePlugin_environments`
+            FROM `s_plugin_dividoFinancePlugin_environments`
             WHERE `plugin_id`= :plugin_id
             ORDER BY `updated_on` DESC
             LIMIT 1
@@ -171,7 +171,7 @@ class EnvironmentService
      *
      * @param EnvironmentResponse $response An environment response object
      *
-     * @return FinancePlugin\Components\Finance\Environment | false
+     * @return dividoFinancePlugin\Components\Finance\Environment | false
      */
     public static function constructEnvironmentFromResponse(
         EnvironmentResponse $response
@@ -196,7 +196,7 @@ class EnvironmentService
      */
     public static function clearEnvironmentsByPluginId($pluginId)
     {
-        if (Shopware()->Db()->query("TRUNCATE TABLE `s_plugin_FinancePlugin_environments`")) {
+        if (Shopware()->Db()->query("TRUNCATE TABLE `s_plugin_dividoFinancePlugin_environments`")) {
             return true;
         } else {
             return false;

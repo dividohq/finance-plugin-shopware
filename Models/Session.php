@@ -6,19 +6,19 @@
  *
  */
 
-namespace FinancePlugin\Models;
+namespace dividoFinancePlugin\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 use Shopware\Components\Model\ModelEntity;
-use FinancePlugin\Components\Finance\Helper;
+use dividoFinancePlugin\Components\Finance\Helper;
 
 /**
- * @ORM\Table(name="s_plugin_FinancePlugin_sessions")
+ * @ORM\Table(name="s_plugin_dividoFinancePlugin_sessions")
  * @ORM\Entity
  */
 class Session extends ModelEntity
 {
-    private static $table = 's_plugin_FinancePlugin_sessions';
+    private static $table = 's_plugin_dividoFinancePlugin_sessions';
     /**
      * @var integer $id
      *

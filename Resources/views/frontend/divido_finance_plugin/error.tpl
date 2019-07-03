@@ -1,13 +1,11 @@
 {extends file="parent:frontend/checkout/finish.tpl"}
 
-{block name="frontend_checkout_finish_teaser_title"}
-    <h2 class="panel--title teaser--title is--align-center">
-    {s namespace="frontend/finance_plugin/404" name="404Title"}Sorry!{/s}
-    </h2>
-{/block}
+{block name="frontend_checkout_finish_teaser_title"}<h2 class="panel--title teaser--title is--align-center">
+    {s namespace="frontend/error/index" name="ErrorIndexTitle"}Sorry!{/s}
+</h2>{/block}
 {block name="frontend_checkout_finish_teaser_content"}
     <p class="teaser--text is--align-center">
-        {s namespace="frontend/content/detail" name="ContentInfoNotFound"}Content could not be found{/s}
+        {$error|snippet:$snippetKey:'frontend/divido_finance_plugin/error'}
     </p>
     <script>
         document.body.classList.add("is--ctl-checkout");

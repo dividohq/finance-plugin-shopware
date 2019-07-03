@@ -5,7 +5,7 @@
  * PHP version 7.1
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
 use Divido\MerchantSDK\Client;
 use Divido\MerchantSDK\Environment;
@@ -18,7 +18,7 @@ use Divido\MerchantSDK\HttpClient\HttpClientWrapper;
  * Helper service class to make application requests
  *
  * @category CategoryName
- * @package  FinancePlugin
+ * @package  dividoFinancePlugin
  * @since    File available since Release 1.0.0
  */
 class RequestService
@@ -113,11 +113,11 @@ class RequestService
     /**
      * Make a request via the SDK by packaging our Request model
      *
-     * @param \FinancePlugin\Models\Request $request Request Model
+     * @param \dividoFinancePlugin\Models\Request $request Request Model
      *
      * @return void
      */
-    public static function makeRequest(\FinancePlugin\Models\Request $request)
+    public static function makeRequest(\dividoFinancePlugin\Models\Request $request)
     {
         $apiKey = Helper::getApiKey();
 

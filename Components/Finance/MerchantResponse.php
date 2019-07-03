@@ -5,7 +5,7 @@
  * PHP version 5.6
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
 /**
  * Class used to break the merchant SDK request responses up into a more

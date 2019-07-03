@@ -6,7 +6,7 @@
  * PHP version 5.6
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
 /**
  * Service that handles webhooks

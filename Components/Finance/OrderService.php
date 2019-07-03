@@ -6,9 +6,9 @@
  * PHP version 7.1
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
-use FinancePlugin\Components\Finance\Helper;
+use dividoFinancePlugin\Components\Finance\Helper;
 
 /**
  * Service helper class for shopware orders
@@ -65,7 +65,7 @@ class OrderService
             ->from(\Shopware\Models\Order\Order::class, 'orders')
             ->leftJoin(
                 'orders',
-                \FinancePlugin\Models\Session::class,
+                \dividoFinancePlugin\Models\Session::class,
                 'session',
                 'session.orderNumber = orders.ordernumber'
             )

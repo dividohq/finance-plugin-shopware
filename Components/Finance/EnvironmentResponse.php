@@ -5,13 +5,13 @@
  * PHP version 7.1
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
 /**
  * Object for the Environment Response
  *
  * @category CategoryName
- * @package  FinancePlugin
+ * @package  dividoFinancePlugin
  * @since    File available since Release 1.0.0
  */
 class EnvironmentResponse

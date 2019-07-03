@@ -6,10 +6,10 @@
 
 {block name='frontend_index_content'}
     {if $errors}
-    <h1>{s namespace="frontend/finance_plugin/cancel" name="CancelTitle"}Ooops{/s}</h1>
+    <h1>{s namespace="frontend/divido_finance_plugin/cancel" name="CancelTitle"}Ooops{/s}</h1>
     <ul style='list-style:none'>
     {foreach item=error key=$key from=$errors}
-        <li>{$error|snippet:$key:'frontend/finance_plugin/cancel'}</li>
+        <li>{$error|snippet:$key:'frontend/divido_finance_plugin/cancel'}</li>
     {/foreach}
     </ul>
     {/if}

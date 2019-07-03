@@ -5,11 +5,11 @@
  * PHP version 5.6
  */
 
-namespace FinancePlugin\Subscriber;
+namespace dividoFinancePlugin\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
-use FinancePlugin\Components\Finance\EnvironmentService;
-use FinancePlugin\Components\Finance\Helper;
+use dividoFinancePlugin\Components\Finance\EnvironmentService;
+use dividoFinancePlugin\Components\Finance\Helper;
 use \Shopware_Components_Config;
 
 /**
@@ -46,11 +46,11 @@ class ExtendOrder implements SubscriberInterface
         $view->addTemplateDir($this->pluginDirectory . '/Resources/views');
 
         if ($request->getActionName() == 'index') {
-           $view->extendsTemplate('backend/finance_plugin/app.js');
+           $view->extendsTemplate('backend/divido_finance_plugin/app.js');
         }
 
         if ($request->getActionName() == 'load') {
-            $view->extendsTemplate('backend/finance_plugin/view/detail/overview.js');
+            $view->extendsTemplate('backend/divido_finance_plugin/view/detail/overview.js');
         }
     }
 

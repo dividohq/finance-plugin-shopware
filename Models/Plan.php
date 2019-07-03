@@ -5,13 +5,13 @@
  * PHP version 5.6
  */
 
-namespace FinancePlugin\Models;
+namespace dividoFinancePlugin\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 use Shopware\Components\Model\ModelEntity;
 
 /**
- * @ORM\Table(name="s_plugin_FinancePlugin_plans")
+ * @ORM\Table(name="s_plugin_dividoFinancePlugin_plans")
  * @ORM\Entity
  */
 class Plan extends ModelEntity

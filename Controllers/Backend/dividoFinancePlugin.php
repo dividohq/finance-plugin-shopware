@@ -1,16 +1,16 @@
 <?php
 /**
- * File for FinancePlugin class
+ * File for dividoFinancePlugin class
  *
  * PHP version 7.1
  */
 
-use FinancePlugin\Components\Finance\Helper;
+use dividoFinancePlugin\Components\Finance\Helper;
 
 /**
  * Backend plugin controller
  */
-class Shopware_Controllers_Backend_FinancePlugin
+class Shopware_Controllers_Backend_dividoFinancePlugin
     extends Shopware_Controllers_Backend_ExtJs
 {
 
@@ -24,7 +24,7 @@ class Shopware_Controllers_Backend_FinancePlugin
         /**
          * Autoload the vendor files first
          */
-        $plugin = $this->get('kernel')->getPlugins()['FinancePlugin'];
+        $plugin = $this->get('kernel')->getPlugins()['dividoFinancePlugin'];
         $this->get('template')->addTemplateDir(
             $plugin->getPath() . '/Resources/views/'
         );
@@ -62,7 +62,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             return;
         }
 
-        $orderService = $this->container->get('finance_plugin.order_service');
+        $orderService = $this->container->get('divido_finance_plugin.order_service');
 
         if ($orderStatus == $activateStatus) {
             $updatedMessage = 'Order already activated';
@@ -93,7 +93,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             ->from('s_order', 'orders')
             ->leftJoin(
                 'orders',
-                's_plugin_FinancePlugin_sessions',
+                's_plugin_dividoFinancePlugin_sessions',
                 'sessions',
                 'orders.ordernumber = sessions.orderNumber'
             )
@@ -148,7 +148,7 @@ class Shopware_Controllers_Backend_FinancePlugin
         // Activate the status if order status matches the config activate status
         if ($orderStatus == $activateStatus) {
             $activateService = $this->container->get(
-                'finance_plugin.activate_service'
+                'divido_finance_plugin.activate_service'
             );
             $updateResponse = $activateService::activateApplication(
                 $order[0]['transactionID'],
@@ -157,7 +157,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             );
             // Cancel the status if status mentions cancelling
         } elseif (array_key_exists($orderStatus, $cancelStatuses)) {
-            $cancelService = $this->container->get('finance_plugin.cancel_service');
+            $cancelService = $this->container->get('divido_finance_plugin.cancel_service');
             $updateResponse = $cancelService::cancelApplication(
                 $order[0]['transactionID'],
                 $order_amount,
@@ -179,7 +179,7 @@ class Shopware_Controllers_Backend_FinancePlugin
 
         // Update session table if webhook successful
         $updateSessionQuery = $this->get('dbal_connection')->createQueryBuilder();
-        $updateSessionQuery->update('s_plugin_FinancePlugin_sessions')
+        $updateSessionQuery->update('s_plugin_dividoFinancePlugin_sessions')
             ->where("`orderNumber` = :orderNumber")
             ->set("`{$sessionCol}`", ":now")
             ->setParameter(":orderNumber", $order[0]['orderNumber'])
@@ -212,7 +212,7 @@ class Shopware_Controllers_Backend_FinancePlugin
         /**
          * Autoload the vendor files first
          */
-        $plugin = $this->get('kernel')->getPlugins()['FinancePlugin'];
+        $plugin = $this->get('kernel')->getPlugins()['dividoFinancePlugin'];
         $this->get('template')->addTemplateDir(
             $plugin->getPath() . '/Resources/views/'
         );
@@ -235,8 +235,8 @@ class Shopware_Controllers_Backend_FinancePlugin
             return;
         }
 
-        $activateService = $this->container->get('finance_plugin.activate_service');
-        $orderService = $this->container->get('finance_plugin.order_service');
+        $activateService = $this->container->get('divido_finance_plugin.activate_service');
+        $orderService = $this->container->get('divido_finance_plugin.order_service');
 
         $orderBuilder = $this->get('dbal_connection')->createQueryBuilder();
         $order = $orderBuilder
@@ -252,7 +252,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             ->from('s_order', 'orders')
             ->leftJoin(
                 'orders',
-                's_plugin_FinancePlugin_sessions',
+                's_plugin_dividoFinancePlugin_sessions',
                 'sessions',
                 'orders.ordernumber = sessions.orderNumber'
             )
@@ -320,7 +320,7 @@ class Shopware_Controllers_Backend_FinancePlugin
         }
 
         $update_session_query = $this->get('dbal_connection')->createQueryBuilder();
-        $update_session_query->update('s_plugin_FinancePlugin_sessions')
+        $update_session_query->update('s_plugin_dividoFinancePlugin_sessions')
             ->where("`orderNumber` = :orderNumber")
             ->set("`activated_on`", ":now")
             ->setParameter(":orderNumber", $order[0]['orderNumber'])
@@ -347,7 +347,7 @@ class Shopware_Controllers_Backend_FinancePlugin
         /**
          * Autoload the vendor files first
          */
-        $plugin = $this->get('kernel')->getPlugins()['FinancePlugin'];
+        $plugin = $this->get('kernel')->getPlugins()['dividoFinancePlugin'];
         $this->get('template')->addTemplateDir(
             $plugin->getPath() . '/Resources/views/'
         );
@@ -359,8 +359,8 @@ class Shopware_Controllers_Backend_FinancePlugin
 
         $orderId = $_POST['orderId'];
 
-        $refundService = $this->container->get('finance_plugin.refund_service');
-        $orderService = $this->container->get('finance_plugin.order_service');
+        $refundService = $this->container->get('divido_finance_plugin.refund_service');
+        $orderService = $this->container->get('divido_finance_plugin.order_service');
 
         $orderBuilder = $this->get('dbal_connection')->createQueryBuilder();
         $order = $orderBuilder
@@ -375,7 +375,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             ->from('s_order', 'orders')
             ->leftJoin(
                 'orders',
-                's_plugin_FinancePlugin_sessions',
+                's_plugin_dividoFinancePlugin_sessions',
                 'sessions',
                 'orders.ordernumber = sessions.orderNumber'
             )
@@ -451,7 +451,7 @@ class Shopware_Controllers_Backend_FinancePlugin
         /**
          * Autoload the vendor files first
          */
-        $plugin = $this->get('kernel')->getPlugins()['FinancePlugin'];
+        $plugin = $this->get('kernel')->getPlugins()['dividoFinancePlugin'];
         $this->get('template')->addTemplateDir(
             $plugin->getPath() . '/Resources/views/'
         );
@@ -463,8 +463,8 @@ class Shopware_Controllers_Backend_FinancePlugin
 
         $orderId = $_POST['orderId'];
 
-        $cancelService = $this->container->get('finance_plugin.cancel_service');
-        $orderService = $this->container->get('finance_plugin.order_service');
+        $cancelService = $this->container->get('divido_finance_plugin.cancel_service');
+        $orderService = $this->container->get('divido_finance_plugin.order_service');
 
         $orderBuilder = $this->get('dbal_connection')->createQueryBuilder();
         $order = $orderBuilder
@@ -479,7 +479,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             ->from('s_order', 'orders')
             ->leftJoin(
                 'orders',
-                's_plugin_FinancePlugin_sessions',
+                's_plugin_dividoFinancePlugin_sessions',
                 'sessions',
                 'orders.ordernumber = sessions.orderNumber'
             )
@@ -551,7 +551,7 @@ class Shopware_Controllers_Backend_FinancePlugin
      */
     public function checkStatusAction()
     {
-        $webhookService = $this->container->get('finance_plugin.webhook_service');
+        $webhookService = $this->container->get('divido_finance_plugin.webhook_service');
 
         $orderId = $_GET['orderId'];
 
@@ -561,7 +561,7 @@ class Shopware_Controllers_Backend_FinancePlugin
             ->from('s_order', 'orders')
             ->leftJoin(
                 'orders',
-                's_plugin_FinancePlugin_sessions',
+                's_plugin_dividoFinancePlugin_sessions',
                 'sessions',
                 'orders.ordernumber = sessions.orderNumber'
             )
@@ -608,7 +608,7 @@ class Shopware_Controllers_Backend_FinancePlugin
         $planBuilder = $this->get('dbal_connection')->createQueryBuilder();
         $plans = $planBuilder
             ->select(['plans.id', 'plans.name'])
-            ->from('s_plugin_FinancePlugin_plans', 'plans')
+            ->from('s_plugin_dividoFinancePlugin_plans', 'plans')
             ->execute()
             ->fetchAll();
 

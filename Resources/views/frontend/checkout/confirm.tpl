@@ -284,9 +284,9 @@
                                                     {block name='frontend_checkout_confirm_information_addresses_equal_panel_shipping'}
                                                         <div class="shipping--panel">
                                                             {block name='frontend_checkout_confirm_information_addresses_equal_panel_shipping_select_address'}
-                                                        {if $sUserData.additional.payment.name =="finance_plugin"}
+                                                        {if $sUserData.additional.payment.name =="divido_finance_plugin"}
 
-                                             
+
                                                                 {else}
                                                                   <a href="{url controller=address}"
                                                                    class="btn choose-different-address"
@@ -295,7 +295,7 @@
                                                                    data-id="{$activeShippingAddressId}"
                                                                    title="{s name="ConfirmAddressChooseDifferentShippingAddress"}{/s}">
                                                                     {s name="ConfirmAddressChooseDifferentShippingAddress"}{/s}
-                                                                </a> 
+                                                                </a>
                                                             {/if}
                                                             {/block}
                                                         </div>
@@ -315,7 +315,7 @@
                                                                        title="{s name="ConfirmAddressSelectButton"}Change address{/s}"
                                                                        class="btn">
                                                                         {s name="ConfirmAddressSelectButton"}Change address{/s}
-                                                                    </a> 
+                                                                    </a>
                                                                 {/block}
 
                                                                 {block name='frontend_checkout_confirm_information_addresses_equal_panel_shipping_add_address'}
@@ -331,8 +331,8 @@
                                                             </div>
                                                         {/block}
                                                         {block name="frontend_checkout_confirm_information_addresses_equal_panel_actions_select_address"}
-            
-                                                         
+
+
                                                          <a href="{url controller=address}"
                                                                title="{s name="ConfirmAddressSelectLink"}{/s}"
                                                                data-address-selection="true"

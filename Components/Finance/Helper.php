@@ -5,7 +5,7 @@
  * PHP version 7.1
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
 use Divido\MerchantSDK\Environment;
 
@@ -77,7 +77,7 @@ class Helper
         $config = Shopware()
             ->Container()
             ->get('shopware.plugin.cached_config_reader')
-            ->getByPluginName('FinancePlugin');
+            ->getByPluginName('dividoFinancePlugin');
 
         return $config;
     }

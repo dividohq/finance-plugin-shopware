@@ -5,12 +5,12 @@
  * PHP version 5.5
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
 /**
  * Payment Service class
  *
- * @package FinancePlugin
+ * @package dividoFinancePlugin
  * @since   File available since Release 1.0.0
  */
 class PaymentService

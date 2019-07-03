@@ -4,13 +4,13 @@
  *
  * PHP version 5.5
  */
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
 /**
  * Webhook Response class
- * 
+ *
  * @category CategoryName
- * @package  FinancePlugin
+ * @package  dividoFinancePlugin
  * @since    File available since Release 1.0.0
  */
 class WebhookResponse

@@ -5,18 +5,18 @@
  * PHP version 5.6
  */
 
-namespace FinancePlugin\Models;
+namespace dividoFinancePlugin\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 use Shopware\Components\Model\ModelEntity;
 
 /**
- * @ORM\Table(name="s_plugin_FinancePlugin_environments")
+ * @ORM\Table(name="s_plugin_dividoFinancePlugin_environments")
  * @ORM\Entity
  */
 class Environment extends ModelEntity
 {
-    private $table = 's_plugin_FinancePlugin_environments';
+    private $table = 's_plugin_dividoFinancePlugin_environments';
     /**
      * @var integer $id
      *

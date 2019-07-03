@@ -5,7 +5,7 @@
  * PHP version 5.6
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
 use Divido\MerchantSDK\Exceptions\MerchantApiBadResponseException;
 

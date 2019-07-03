@@ -2,7 +2,7 @@
 <plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/plugin.xsd">
 
-    <label lang="en">Finance Plugin</label>
+    <label lang="en">Powered by Divido</label>
 
     <version>1.4.2</version>
     <copyright>(c) Divido Financial Services</copyright>
@@ -12,10 +12,10 @@
     <compatibility minVersion="5.2.13"/>
     <description>
         <![CDATA[
-        <b>Finance Plugin</b>
+        <b>Powered by Divido</b>
         <p>A global finance platform for merchants, giving customers the option to break down their online purchases
         into more manageable chunks by seamlessly connecting the checkout process to a wide range of finance
-        providers via the "Powered By Divido" lender platform.</p>
+        providers via the "Powered by Divido" lender platform.</p>
         ]]>
     </description>
     <changelog version="1.4.2">

@@ -1,7 +1,7 @@
 // This is the controller
 
 
-Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
+Ext.define('Shopware.apps.dividoFinancePlugin.controller.dividoFinancePluginController', {
     /**
      * Override the order main controller
      * @string
@@ -28,7 +28,7 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
     onUpdateFinance: function (record) {
         console.log(record);
         Ext.Ajax.request({
-            url: '{url controller=FinancePlugin action="updateFinance"}',
+            url: '{url controller=dividoFinancePlugin action="updateFinance"}',
             method: 'POST',
             params: {
                 orderId: record.get('id'),
@@ -50,7 +50,7 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
     onActivateOrder: function (record) {
         console.log(record);
         Ext.Ajax.request({
-            url: '{url controller=FinancePlugin action="activateOrder"}',
+            url: '{url controller=dividoFinancePlugin action="activateOrder"}',
             method: 'POST',
             params: {
                 orderId: record.get('id'),
@@ -71,7 +71,7 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
 
     onRefundOrder: function (record, obj) {
         Ext.Ajax.request({
-            url: '{url controller=FinancePlugin action="refundOrder"}',
+            url: '{url controller=dividoFinancePlugin action="refundOrder"}',
             method: 'POST',
             params: {
                 orderId: record.get('id')
@@ -90,7 +90,7 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
 
     onCancelOrder: function (record, obj) {
         Ext.Ajax.request({
-            url: '{url controller=FinancePlugin action="cancelOrder"}',
+            url: '{url controller=dividoFinancePlugin action="cancelOrder"}',
             method: 'POST',
             params: {
                 orderId: record.get('id')

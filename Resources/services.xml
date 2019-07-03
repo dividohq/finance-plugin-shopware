@@ -3,39 +3,39 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="finance_plugin.subscriber.templates" class="FinancePlugin\Subscriber\UpdatePlans">
-            <argument>%finance_plugin.plugin_dir%</argument>
+        <service id="dividoFinancePlugin.subscriber.templates" class="dividoFinancePlugin\Subscriber\UpdatePlans">
+            <argument>%divido_finance_plugin.plugin_dir%</argument>
             <tag name="shopware.event_subscriber"/>
         </service>
-        <service id="financePlugin.subscriber.templates" class="FinancePlugin\Subscriber\ExtendOrder">
-            <argument>%finance_plugin.plugin_dir%</argument>
+        <service id="divido_finance_plugin.subscriber.templates" class="dividoFinancePlugin\Subscriber\ExtendOrder">
+            <argument>%divido_finance_plugin.plugin_dir%</argument>
             <tag name="shopware.event_subscriber"/>
         </service>
-        <service id="finance_plugin.payment_service"
-                 class="FinancePlugin\Components\Finance\PaymentService">
+        <service id="divido_finance_plugin.payment_service"
+                 class="dividoFinancePlugin\Components\Finance\PaymentService">
         </service>
-        <service id="finance_plugin.order_service"
-                 class="FinancePlugin\Components\Finance\OrderService">
+        <service id="divido_finance_plugin.order_service"
+                 class="dividoFinancePlugin\Components\Finance\OrderService">
         </service>
-        <service id="finance_plugin.plans_service"
-                 class="FinancePlugin\Components\Finance\PlansService">
-            <argument>%finance_plugin.plugin_dir%</argument>
+        <service id="divido_finance_plugin.plans_service"
+                 class="dividoFinancePlugin\Components\Finance\PlansService">
+            <argument>%divido_finance_plugin.plugin_dir%</argument>
         </service>
-        <service id="finance_plugin.activate_service"
-                 class="FinancePlugin\Components\Finance\ActivateService">
+        <service id="divido_finance_plugin.activate_service"
+                 class="dividoFinancePlugin\Components\Finance\ActivateService">
         </service>
-        <service id="finance_plugin.refund_service"
-                 class="FinancePlugin\Components\Finance\RefundService">
+        <service id="divido_finance_plugin.refund_service"
+                 class="dividoFinancePlugin\Components\Finance\RefundService">
         </service>
-        <service id="finance_plugin.cancel_service"
-                 class="FinancePlugin\Components\Finance\CancelService">
+        <service id="divido_finance_plugin.cancel_service"
+                 class="dividoFinancePlugin\Components\Finance\CancelService">
         </service>
-        <service id="finance_plugin.webhook_service"
-                 class="FinancePlugin\Components\Finance\WebhookService">
+        <service id="divido_finance_plugin.webhook_service"
+                 class="dividoFinancePlugin\Components\Finance\WebhookService">
         </service>
         <!-- Register TemplateRegistration subscriber -->
-        <service id="finance_plugin.subscriber.template_registration" class="FinancePlugin\Subscriber\TemplateRegistration">
-            <argument>%finance_plugin.plugin_dir%</argument>
+        <service id="divido_finance_plugin.subscriber.template_registration" class="dividoFinancePlugin\Subscriber\TemplateRegistration">
+            <argument>%divido_finance_plugin.plugin_dir%</argument>
             <argument type="service" id="template"/>
             <tag name="shopware.event_subscriber"/>
         </service>

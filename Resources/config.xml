@@ -78,7 +78,7 @@
             <store>
                 <option>
                     <value>0</value>
-                    <label lang="en">Please activate the plugin, clear the cache and reload the page to use this feature</label>
+                    <label lang="en"></label>
                 </option>
             </store>
             <options>

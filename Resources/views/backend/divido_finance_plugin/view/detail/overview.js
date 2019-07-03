@@ -1,6 +1,6 @@
 //{block name="backend/order/view/detail/window"}
 // {$smarty.block.parent}
-Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
+Ext.define('Shopware.apps.dividoFinancePlugin.view.detail.Overview', {
     /**
     * Override the customer detail window
     * @string
@@ -66,7 +66,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
                     fn: function () {
                         var btn = this;
                         Ext.Ajax.request({
-                            url: '{url controller=FinancePlugin action="checkStatus"}',
+                            url: '{url controller=dividoFinancePlugin action="checkStatus"}',
                             method: 'GET',
                             params: {
                                 orderId: me.record.get('id')
@@ -96,7 +96,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
                     fn: function () {
                         var btn = this;
                         Ext.Ajax.request({
-                            url: '{url controller=FinancePlugin action="checkStatus"}',
+                            url: '{url controller=dividoFinancePlugin action="checkStatus"}',
                             method: 'GET',
                             params: {
                                 orderId: me.record.get('id')
@@ -128,7 +128,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
                     fn: function () {
                         var btn = this;
                         Ext.Ajax.request({
-                            url: '{url controller=FinancePlugin action="checkStatus"}',
+                            url: '{url controller=dividoFinancePlugin action="checkStatus"}',
                             method: 'GET',
                             params: {
                                 orderId: me.record.get('id')

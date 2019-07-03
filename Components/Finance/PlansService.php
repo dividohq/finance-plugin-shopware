@@ -5,9 +5,9 @@
  * PHP version 7.1
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
-use FinancePlugin\Models\Plan;
+use dividoFinancePlugin\Models\Plan;
 use Divido\MerchantSDK\Client;
 use Divido\MerchantSDK\Environment;
 use Divido\MerchantSDK\Handlers\ApiRequestOptions;
@@ -17,7 +17,7 @@ use Divido\MerchantSDK\Exceptions\MerchantApiBadResponseException;
  * Helper service to maintain finance plans
  *
  * @category CategoryName
- * @package  FinancePlugin
+ * @package  dividoFinancePlugin
  * @since    File available since Release 1.0.0
  */
 class PlansService
@@ -30,7 +30,7 @@ class PlansService
     const REFRESH_RATE = 7200;
 
     /**
-     * Retrieve stored plans from the s_plugin_FinancePlugin_plans table
+     * Retrieve stored plans from the s_plugin_dividoFinancePlugin_plans table
      *
      * @param integer $since The amount of time (in seconds) to lookup since
      *                       the plans were last requested
@@ -41,7 +41,7 @@ class PlansService
     {
         $now = time();
         $recent_plans = Shopware()->Db()->query(
-            'SELECT * FROM `s_plugin_FinancePlugin_plans` WHERE `updated_on` > ?',
+            'SELECT * FROM `s_plugin_dividoFinancePlugin_plans` WHERE `updated_on` > ?',
             [$now - $since]
         );
 
@@ -175,7 +175,7 @@ class PlansService
     }
 
     /**
-     * Store array of plans in the s_plugin_FinancePlugin_plans table
+     * Store array of plans in the s_plugin_dividoFinancePlugin_plans table
      *
      * @param array $plans The plans to store
      *
@@ -194,7 +194,7 @@ class PlansService
         }
         if (isset($inserts)) {
             self::clearPlans();
-            $sql = 'INSERT INTO `s_plugin_FinancePlugin_plans`
+            $sql = 'INSERT INTO `s_plugin_dividoFinancePlugin_plans`
                         (`id`, `name`, `description`, `updated_on`)
                     VALUES
                         '. implode(",", $inserts);
@@ -204,14 +204,14 @@ class PlansService
     }
 
     /**
-     * Clear all plans in the `s_plugin_FinancePlugin_plans` table
+     * Clear all plans in the `s_plugin_dividoFinancePlugin_plans` table
      *
      * @return boolean
      */
     public static function clearPlans()
     {
         // TODO: This needs to run only if the API Key changes
-        if (Shopware()->Db()->query("TRUNCATE TABLE `s_plugin_FinancePlugin_plans`")) {
+        if (Shopware()->Db()->query("TRUNCATE TABLE `s_plugin_dividoFinancePlugin_plans`")) {
             Shopware()->Db()->query(
                 "UPDATE `s_articles_attributes`
                 SET `finance_plans` = NULL"

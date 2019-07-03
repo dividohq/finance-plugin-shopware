@@ -4,9 +4,9 @@
  *
  * PHP version 7.2
  */
-namespace FinancePlugin\Models;
+namespace dividoFinancePlugin\Models;
 
-use FinancePlugin\Components\Finance\Helper;
+use dividoFinancePlugin\Components\Finance\Helper;
 
 /**
  * Application Request Model

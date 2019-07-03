@@ -5,9 +5,9 @@
  * PHP version 7.1
  */
 
-namespace FinancePlugin\Components\Finance;
+namespace dividoFinancePlugin\Components\Finance;
 
-use FinancePlugin\Components\Finance\Helper;
+use dividoFinancePlugin\Components\Finance\Helper;
 use Divido\MerchantSDK\Client;
 use Divido\MerchantSDK\Environment;
 use Divido\MerchantSDK\Models\Application;
@@ -16,7 +16,7 @@ use Divido\MerchantSDK\Models\Application;
  * Helper service class to make application requests
  *
  * @category CategoryName
- * @package  FinancePlugin
+ * @package  dividoFinancePlugin
  * @since    File available since Release 1.0.0
  */
 class ActivateService
@@ -28,7 +28,7 @@ class ActivateService
      * @param String $total          The cart total
      * @param Array  $items          The items in the cart
      *
-     * @return FinancePlugin\Components\Finance\MerchantResponse
+     * @return dividoFinancePlugin\Components\Finance\MerchantResponse
      */
     public static function activateApplication($application_id, $total, $items)
     {

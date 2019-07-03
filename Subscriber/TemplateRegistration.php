@@ -5,19 +5,19 @@
  * PHP version 7.1
  */
 
-namespace FinancePlugin\Subscriber;
+namespace dividoFinancePlugin\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
-use FinancePlugin\Components\Finance\PaymentService;
-use FinancePlugin\Components\Finance\PlansService;
-use FinancePlugin\Components\Finance\EnvironmentService;
-use FinancePlugin\Components\Finance\Helper;
+use dividoFinancePlugin\Components\Finance\PaymentService;
+use dividoFinancePlugin\Components\Finance\PlansService;
+use dividoFinancePlugin\Components\Finance\EnvironmentService;
+use dividoFinancePlugin\Components\Finance\Helper;
 
 /**
  * Payment Service  Class
  *
  * @category Payment_Gateway
- * @package  FinancePlugin
+ * @package  dividoFinancePlugin
  * @since    File available since Release 1.0.0
  */
 class TemplateRegistration implements SubscriberInterface

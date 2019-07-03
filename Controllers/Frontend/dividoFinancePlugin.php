@@ -1,17 +1,17 @@
 <?php
 /**
- * File for FinancePlugin class
+ * File for dividoFinancePlugin class
  *
  * PHP version 7.1
  */
 
-use FinancePlugin\Components\Finance\PaymentService;
-use FinancePlugin\Components\Finance\RequestService;
-use FinancePlugin\Components\Finance\PlansService;
-use FinancePlugin\Components\Finance\OrderService;
-use FinancePlugin\Components\Finance\WebhookService;
-use FinancePlugin\Components\Finance\Helper;
-use FinancePlugin\Models\Request;
+use dividoFinancePlugin\Components\Finance\PaymentService;
+use dividoFinancePlugin\Components\Finance\RequestService;
+use dividoFinancePlugin\Components\Finance\PlansService;
+use dividoFinancePlugin\Components\Finance\OrderService;
+use dividoFinancePlugin\Components\Finance\WebhookService;
+use dividoFinancePlugin\Components\Finance\Helper;
+use dividoFinancePlugin\Models\Request;
 use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Models\Order\Order;
 use Shopware\Models\Order\Status;
@@ -20,10 +20,10 @@ use Shopware\Models\Order\Status;
  * Controller class which handles the payment flow
  *
  * @category CategoryName
- * @package  FinancePlugin
+ * @package  dividoFinancePlugin
  * @since    File available since Release 1.0.0
  */
-class Shopware_Controllers_Frontend_FinancePlugin
+class Shopware_Controllers_Frontend_dividoFinancePlugin
     extends Shopware_Controllers_Frontend_Payment
     implements CSRFWhitelistAware
 {
@@ -74,7 +74,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         /*
         * @var \Shopware\Components\Plugin $plugin
         */
-        $plugin = $this->get('kernel')->getPlugins()['FinancePlugin'];
+        $plugin = $this->get('kernel')->getPlugins()['dividoFinancePlugin'];
         $this->get('template')->addTemplateDir(
             $plugin->getPath() . '/Resources/views/'
         );
@@ -115,7 +115,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $this->forward('cancel', null, null, ['errors' => $errors]);
         }
 
-        $service = $this->container->get('finance_plugin.payment_service');
+        $service = $this->container->get('divido_finance_plugin.payment_service');
         $router = $this->Front()->Router();
         $apiKey = Helper::getApiKey();
 
@@ -148,7 +148,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $checkout_url= $router->assemble(
             ['action' => 'cancel', 'forceSecure' => true]
         );
-        $session = new \FinancePlugin\Models\Session;
+        $session = new \dividoFinancePlugin\Models\Session;
         $session->setKey($token);
         $session->setStatus(WebhookService::PAYMENTSTATUSOPEN);
         $session->setDataFromShopwareSession();
@@ -292,13 +292,13 @@ class Shopware_Controllers_Frontend_FinancePlugin
      */
     public function returnAction()
     {
-        $paymentService = $this->container->get('finance_plugin.payment_service');
-        $orderService = $this->container->get('finance_plugin.order_service');
+        $paymentService = $this->container->get('divido_finance_plugin.payment_service');
+        $orderService = $this->container->get('divido_finance_plugin.order_service');
 
         /**
          * A simple response object
          *
-         * @var FinancePlugin\Components\Finance\PaymentResponse $response
+         * @var dividoFinancePlugin\Components\Finance\PaymentResponse $response
          */
         $response = $paymentService->createPaymentResponse($this->Request());
 
@@ -310,7 +310,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $this->View()->assign('snippetKey', 'ErrorIncompleteMsg');
             $this->View()->assign(
                 'template',
-                'frontend/finance_plugin/error.tpl'
+                'frontend/divido_finance_plugin/error.tpl'
             );
             return;
         }
@@ -320,12 +320,12 @@ class Shopware_Controllers_Frontend_FinancePlugin
             FILTER_SANITIZE_NUMBER_INT
         );
         $connection = $this->container->get('dbal_connection');
-        $session = new \FinancePlugin\Models\Session;
+        $session = new \dividoFinancePlugin\Models\Session;
 
         // If we can't find the session in the database 404 out
         if (!$session->retrieveFromDb($sessionId, $connection)) {
             Helper::log("Could not find session", 'error');
-            $this->View()->assign('template', 'frontend/finance_plugin/404.tpl');
+            $this->View()->assign('template', 'frontend/divido_finance_plugin/404.tpl');
             return;
         }
 
@@ -336,7 +336,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $this->View()->assign('snippetKey', 'ErrorUnpaidMsg');
             $this->View()->assign(
                 'template',
-                'frontend/finance_plugin/error.tpl'
+                'frontend/divido_finance_plugin/error.tpl'
             );
             return;
         }
@@ -361,7 +361,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $this->View()->assign('snippetKey', 'ErrorTokenMsg');
             $this->View()->assign(
                 'template',
-                'frontend/finance_plugin/error.tpl'
+                'frontend/divido_finance_plugin/error.tpl'
             );
             return;
         }
@@ -376,7 +376,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $this->View()->assign('snippetKey', 'ErrorSsaMsg');
             $this->View()->assign(
                 'template',
-                'frontend/finance_plugin/error.tpl'
+                'frontend/divido_finance_plugin/error.tpl'
             );
             return;
         }
@@ -432,7 +432,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
                 $this->View()->assign('snippetKey', 'ErrorCreateMsg');
                 $this->View()->assign(
                     'template',
-                    'frontend/finance_plugin/error.tpl'
+                    'frontend/divido_finance_plugin/error.tpl'
                 );
                 return;
             }
@@ -447,7 +447,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $this->sendDataToSmarty($data);
         $this->View()->assign(
             'template',
-            'frontend/finance_plugin/success.tpl'
+            'frontend/divido_finance_plugin/success.tpl'
         );
     }
 
@@ -479,7 +479,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         /*
          * @var PaymentService $service
          */
-        $service = $this->container->get('finance_plugin.webhook_service');
+        $service = $this->container->get('divido_finance_plugin.webhook_service');
 
         $response = $service->createWebhookResponse($this->Request());
 
@@ -549,7 +549,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
                 if (!is_null($statusInfo['session_status'])) {
 
-                    $session = new \FinancePlugin\Models\Session;
+                    $session = new \dividoFinancePlugin\Models\Session;
 
                     $update = array(
                         "status" => $statusInfo['session_status'],
@@ -579,7 +579,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
                     'plugin_version' => self::PLUGIN_VERSION
                 );
 
-                $session = new \FinancePlugin\Models\Session;
+                $session = new \dividoFinancePlugin\Models\Session;
                 $update = array(
                     "status" => WebhookService::PAYMENTREVIEWNEEDED,
                     "transactionID" => $transactionID,

@@ -10,7 +10,7 @@
       <script src="https://cdn.divido.com/calculator/v2.1/production/js/template.{$env}.js"></script>
 
       {if $displayForm}
-      <form id="financePluginForm" action="{url controller='FinancePlugin' action='direct'}" method="post" >
+      <form id="dividoFinancePluginForm" action="{url controller='dividoFinancePlugin' action='direct'}" method="post" >
         <div
           data-{$env}-widget
           data-{$env}-prefix="{$prefix}"
@@ -63,7 +63,7 @@
         var button = document.querySelectorAll("#finance-plugin-submit-button")[0];
         button.addEventListener("click", function(){
           this.setAttribute("disabled", true);
-          document.getElementById("financePluginForm").submit();
+          document.getElementById("dividoFinancePluginForm").submit();
         })
       })
     </script>

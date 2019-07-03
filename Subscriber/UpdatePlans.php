@@ -5,13 +5,13 @@
  * PHP version 5.6
  */
 
-namespace FinancePlugin\Subscriber;
+namespace dividoFinancePlugin\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
-use FinancePlugin\Models\Plan;
-use FinancePlugin\Components\Finance\PlansService;
-use FinancePlugin\Components\Finance\EnvironmentService;
-use FinancePlugin\Components\Finance\Helper;
+use dividoFinancePlugin\Models\Plan;
+use dividoFinancePlugin\Components\Finance\PlansService;
+use dividoFinancePlugin\Components\Finance\EnvironmentService;
+use dividoFinancePlugin\Components\Finance\Helper;
 use \Shopware_Components_Config;
 
 /**
@@ -120,16 +120,17 @@ class UpdatePlans implements SubscriberInterface
         }
 
         if($request->getActionName() == 'getForm') {
-
+            Helper::log('Getting Form', 'info');
             $data = $view->getAssign('data');
             $elements = $data['elements'];
             $apiKey = $elements[0]['values'][0]['value'];
 
             $sdkResponse = (empty($apiKey)) ? false : PlansService::getPlansFromSDK($apiKey);
+
             if ($sdkResponse != false && $sdkResponse->error === false) {
                 $plans = $sdkResponse->plans;
                 PlansService::storePlans($plans);
-                $plugin = $controller->get('kernel')->getPlugins()['FinancePlugin'];
+                $plugin = $controller->get('kernel')->getPlugins()['dividoFinancePlugin'];
 
                 foreach($elements as $key=>$element) {
                     /**
@@ -174,7 +175,7 @@ class UpdatePlans implements SubscriberInterface
         if ($sdkResponse->error === false) {
             $plans = $sdkResponse->plans;
             if (empty($plans)) {
-                Shopware()->Db()->query("UPDATE `s_core_paymentmeans` SET `active`=0 WHERE `action`='FinancePlugin' LIMIT 1");
+                Shopware()->Db()->query("UPDATE `s_core_paymentmeans` SET `active`=0 WHERE `action`='dividoFinancePlugin' LIMIT 1");
                 $view->assign(
                     ['success' => true,
                     "message" => "There are no finance plans associated
@@ -205,7 +206,7 @@ class UpdatePlans implements SubscriberInterface
             Helper::log('Could not get environment', 'error');
         } else {
             Helper::log('Could not get environment', 'error');
-            Shopware()->Db()->query("UPDATE `s_core_paymentmeans` SET `active`=0 WHERE `action`='FinancePlugin' LIMIT 1");
+            Shopware()->Db()->query("UPDATE `s_core_paymentmeans` SET `active`=0 WHERE `action`='dividoFinancePlugin' LIMIT 1");
             $view->addTemplateDir($this->_pluginDirectory.'/Resources/views');
             $view->assign([
                 'success' => false,

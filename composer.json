@@ -10,7 +10,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Shopware\\Plugins\\FinancePlugin\\" : "src/"
+            "Shopware\\Plugins\\dividoFinancePlugin\\" : "src/"
         }
     }
 }
