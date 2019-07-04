@@ -112,24 +112,41 @@ class dividoFinancePlugin extends Plugin
     {
         $this->_setActiveFlag($context->getPlugin()->getPayments(), false);
 
-        if(!$context->keepUserData()){
-            $service = $this->container->get('shopware_attribute.crud_service');
-            $service->delete('s_order_basket_attributes', 'finance_id');
-            $service->delete('s_order_basket_attributes', 'deposit_value');
-            $service->delete('s_articles_attributes', 'finance_plans');
+        $service = $this->container->get('shopware_attribute.crud_service');
+        $em = $this->container->get('models');
 
-            $em = $this->container->get('models');
-            $schemaTool = new SchemaTool($em);
-            $schemaTool->dropSchema(
-                [
-                    $em->getClassMetadata(\dividoFinancePlugin\Models\Plan::class),
-                    $em->getClassMetadata(\dividoFinancePlugin\Models\Session::class),
-                    $em->getClassMetadata(\dividoFinancePlugin\Models\Environment::class),
-                ],
-                true
+        if ($service->get('s_core_paymentmeans_attributes', 'divido_finance_plugin') !== null) {
+
+            $service->delete(
+                's_core_paymentmeans_attributes',
+                'divido_finance_plugin'
             );
-
         }
+        $em->generateAttributeModels(['s_core_paymentmeans_attributes']);
+
+        Shopware()->Db()->query("UPDATE `s_core_paymentmeans` SET `active`=0, `hide`=1 WHERE `action`='dividoFinancePlugin' LIMIT 1");
+
+        if($context->keepUserData()){
+            parent::uninstall($context);
+            $context->scheduleClearCache(UninstallContext::CACHE_LIST_ALL);
+            return;
+        }
+
+        $service->delete('s_order_basket_attributes', 'finance_id');
+        $service->delete('s_order_basket_attributes', 'deposit_value');
+        $service->delete('s_articles_attributes', 'finance_plans');
+
+        $schemaTool = new SchemaTool($em);
+        $schemaTool->dropSchema(
+            [
+                $em->getClassMetadata(\dividoFinancePlugin\Models\Plan::class),
+                $em->getClassMetadata(\dividoFinancePlugin\Models\Session::class),
+                $em->getClassMetadata(\dividoFinancePlugin\Models\Environment::class),
+            ],
+            true
+        );
+
+        parent::uninstall($context);
 
         $context->scheduleClearCache(UninstallContext::CACHE_LIST_ALL);
     }
@@ -173,8 +190,7 @@ class dividoFinancePlugin extends Plugin
         $em = $this->container->get('models');
 
         foreach ($payments as $payment) {
-            $payment->setActive($active);
+            $payment->setActive(0);
         }
-        $em->flush();
     }
 }
