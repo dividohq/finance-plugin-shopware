@@ -80,7 +80,7 @@ class Request
      *
      * @return string
      */
-    public function getLanguageId():string
+    public function getLanguageId()
     {
         return $this->_languageId;
     }
@@ -114,7 +114,7 @@ class Request
      *
      * @return string Finance Plan ID
      */
-    public function getFinancePlanId():string
+    public function getFinancePlanId()
     {
         return $this->_financePlanId;
     }
@@ -136,7 +136,7 @@ class Request
      *
      * @return string
      */
-    public function getMerchantChannelId():string
+    public function getMerchantChannelId()
     {
         return $this->_merchantChannelId;
     }
@@ -170,7 +170,7 @@ class Request
      *
      * @return array
      */
-    public function getApplicants():array
+    public function getApplicants()
     {
         return $this->_applicants;
     }
@@ -192,7 +192,7 @@ class Request
      *
      * @return array
      */
-    public function getOrderItems():array
+    public function getOrderItems()
     {
         return $this->_orderItems;
     }
@@ -214,7 +214,7 @@ class Request
      *
      * @return integer
      */
-    public function getDepositAmount():int
+    public function getDepositAmount()
     {
         return $this->_depositAmount;
     }
@@ -280,7 +280,7 @@ class Request
      *
      * @return string Merchant reference
      */
-    public function getMerchantReference():string
+    public function getMerchantReference()
     {
         return $this->_merchantReference;
     }
@@ -302,7 +302,7 @@ class Request
      *
      * @return array
      */
-    public function getUrls():array
+    public function getUrls()
     {
         return $this->_urls;
     }
@@ -324,7 +324,7 @@ class Request
      *
      * @return array
      */
-    public function getMetaData():array
+    public function getMetaData()
     {
         return $this->_metaData;
     }

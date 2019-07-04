@@ -37,7 +37,7 @@ class RefundService
         $items,
         $order_id=null
     ) {
-        $order_id = $order_id ?? $application_id;
+        $order_id = (is_null($order_id)) ? $application_id : $order_id;
 
         $apiKey = Helper::getApiKey();
 

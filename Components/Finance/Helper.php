@@ -266,7 +266,7 @@ class Helper
      *
      * @return Array
      */
-    public static function getFormattedCustomerDetails($user):array
+    public static function getFormattedCustomerDetails($user)
     {
         self::debug('Formatting Customer Details');
 

@@ -68,7 +68,7 @@ class PlansService
      *
      * @return array
      */
-    public static function getPlansFromSDK(string $apiKey):PlansResponse
+    public static function getPlansFromSDK(string $apiKey)
     {
         $environment = Helper::getEnvironment($apiKey);
 

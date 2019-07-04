@@ -29,7 +29,7 @@ class EnvironmentService
      *
      * @return array
      */
-    public static function getEnvironmentResponse(string $apiKey):EnvironmentResponse
+    public static function getEnvironmentResponse(string $apiKey)
     {
         $environment = Helper::getEnvironment($apiKey);
 
