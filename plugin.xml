@@ -18,6 +18,14 @@
         providers via the "Powered by Divido" lender platform.</p>
         ]]>
     </description>
+    <description lang="de">
+        <![CDATA[
+        <b>Präsentiert von Divido</b>
+        <p>Eine globale Finanzplattform für Händler, über die Kunden ihre Online-Einkäufe aufteilen können
+        Sie können den Checkout-Prozess nahtlos mit einer Vielzahl von Finanzierungen verknüpfen und so die Verwaltung vereinfachen
+        Anbieter über die Kreditgeberplattform "Präsentiert von Divido".</p>
+        ]]>
+    </description>
     <changelog version="1.4.2">
         <changes>
             <![CDATA[
@@ -39,6 +47,14 @@
             </ul>
             ]]>
         </changes>
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+            <li>Die Zahlungsoption Finanzen ist deaktiviert, wenn der API-Schlüssel falsch ist</li>
+            <li>Strengere Erstvalidierung des API-Schlüssels</li>
+            </ul>
+            ]]>
+        </changes>
     </changelog>
     <changelog version="1.4.0">
         <changes>
@@ -51,11 +67,26 @@
             </ul>
             ]]>
         </changes>
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+            <li>Webhooks für Stornierungen werden jetzt ausgelöst, wenn der Status einer Bestellung auf "Storniert / Abgelehnt" gesetzt ist.</li>
+            <li>Die Option "Bei Status aktivieren" wurde zur Plugin-Konfiguration hinzugefügt</li>
+            <li>Aktivierungswebhooks werden jetzt ausgelöst, wenn der Status einer Bestellung der festgelegten Konfigurationsoption "Bei Status aktivieren" entspricht</li>
+            <li><i>Die Mehrfachauswahlfunktion "Pläne begrenzen" wurde zur Konfiguration hinzugefügt</li>
+            </ul>
+            ]]>
+        </changes>
     </changelog>
     <changelog version="1.3.1">
         <changes>
             <![CDATA[
             Fixed an issue with the status not getting updated by webhooks
+            ]]>
+        </changes>
+        <changes lang="de">
+            <![CDATA[
+            Es wurde ein Problem behoben, bei dem der Status von Webhooks nicht aktualisiert wurde
             ]]>
         </changes>
     </changelog>
@@ -65,11 +96,21 @@
             Added cancel functionality
             ]]>
         </changes>
+        <changes lang="de">
+            <![CDATA[
+            Abbruchfunktion hinzugefügt
+            ]]>
+        </changes>
     </changelog>
     <changelog version="1.2.0">
         <changes>
             <![CDATA[
             Added refund functionality
+            ]]>
+        </changes>
+        <changes lang="de">
+            <![CDATA[
+            Abbruchfunktion hinzugefügt
             ]]>
         </changes>
     </changelog>
@@ -82,11 +123,24 @@
             </ul>
             ]]>
         </changes>
+        <changes lange="de">
+            <![CDATA[
+            <ul>
+            <li>Aktivierungsfunktion hinzugefügt</li>
+            <li>Ersetzter veralteter Logger-Code</li>
+            </ul>
+            ]]>
+        </changes>
     </changelog>
     <changelog version="1.0.0">
         <changes>
             <![CDATA[
             Initial Release
+            ]]>
+        </changes>
+        <changes lang="de">
+            <![CDATA[
+            Erstveröffentlichung
             ]]>
         </changes>
     </changelog>
