@@ -16,6 +16,7 @@ use Shopware\Components\Plugin\Context\UninstallContext;
 use Shopware\Models\Payment\Payment;
 use FinancePlugin\Components\Finance\Helper;
 use FinancePlugin\Components\Finance\TranslationService;
+use FinancePlugin\Components\Finance\ShopwareTranslationService;
 
 /**
  * Finance Plugin
@@ -99,31 +100,24 @@ class FinancePlugin extends Plugin
             ]
         );
 
-        $translationService = new TranslationService('cf61730cc2b9ba407fdf6387f0e08c2b', '267665');
-        $translationService->getTranslationResponse('en');
-        try{
-            $terms = $translationService->getResponseTerms();
+        ShopwareTranslationService::expungeTerms();
 
-            foreach($terms as $key=>$term){
-                $snippet = new Shopware\Models\Snippet;
-                $snippet->setValue($term['language']);
-                $snippet->setName($key);
+        $translationService = new ShopwareTranslationService('cf61730cc2b9ba407fdf6387f0e08c2b', '267665', 'de');
+        $response = $translationService->getTranslationResponse();
+        try {
+            $terms = $translationService->getResponseTerms($response);
+            $localeId = $translationService->getLocaleId();
+            $translationService->importTerms($terms, $localeId);
+        } catch (Exception $e) {
+            Helper::debug($e->getMessage(), 'error');
+        }
 
-                $shop = Shopware()->Shop();
-                $snippet->setShopId($shop->getId());
-
-                $shopLocale = $shop->getLocale();
-                $snippet->setLocaleId($shopLocale->getLocale());
-
-                $snippet->setNamespace("divido_finance_plugin/".$term['reference']);
-
-                $snippet->setDirty(false);
-
-                if (!$this->isSnippetValid($snippet)) {
-                    $result[$snippet->getId()] = $params;
-                }
-            }
-            // add terms to snippets database
+        $translationService->setLanguage('en');
+        $response = $translationService->getTranslationResponse();
+        try {
+            $terms = $translationService->getResponseTerms($response);
+            $localeId = $translationService->getLocaleId();
+            $translationService->importTerms($terms, $localeId);
         } catch (Exception $e) {
             Helper::debug($e->getMessage(), 'error');
         }

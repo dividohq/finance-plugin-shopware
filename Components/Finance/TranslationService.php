@@ -7,22 +7,32 @@
 
 namespace FinancePlugin\Components\Finance;
 
-class TranslationService {
+abstract class TranslationService {
 
     const
         POEDITOR_URL = 'https://api.poeditor.com',
         TERMS_PATH   = '/v2/terms/list';
 
-    private $api_token;
-    private $project_id;
+    protected $api_token;
+    protected $project_id;
+    protected $language;
 
 
-    public function __construct($api_token, $project_id) {
+    public function __construct($api_token, $project_id, $language) {
         $this->api_token  = $api_token;
         $this->project_id = $project_id;
+        $this->language = $language;
     }
 
-    private function generateCurlResource($method='POST', $url_path='', $body=[]) {
+    public function setLanguage($language) {
+        $this->language = $language;
+    }
+
+    public function getLanguage() {
+        return $this->language;
+    }
+
+    protected function generateCurlResource($method='POST', $url_path='', $body=[]) {
         // get cURL resource
         $ch = curl_init();
 
@@ -48,15 +58,15 @@ class TranslationService {
         return $ch;
     }
 
-    public function getTranslationResponse($language) {
+    public function getTranslationResponse() {
 
         // form body
         $body = array(
             'api_token' => $this->api_token,
             'id' => $this->project_id,
-            'language' => $language
+            'language' => $this->language
         );
-        $ch = $this->generateCurlResource(self::TERMS_PATH, $body);
+        $ch = $this->generateCurlResource('POST', self::TERMS_PATH, $body);
 
         // send the request and save response to $response
         $response = curl_exec($ch);
@@ -73,14 +83,14 @@ class TranslationService {
     }
 
     public function getResponseTerms(string $response){
+
         $responseArr = json_decode($response, true);
 
         if ('success' != $responseArr['response']['status']) {
             throw new Exception('Could not retrieve terms');
         }
-
         $terms = [];
-        foreach($responseArr['terms'] as $t) {
+        foreach ($responseArr['result']['terms'] as $t) {
             $terms[$t['term']] = array(
                 'translation' => $t['translation']['content'],
                 'reference'   => $t['reference']
@@ -89,6 +99,5 @@ class TranslationService {
 
         return $terms;
     }
-
 
 }
