@@ -5,80 +5,115 @@
         <element required="true" type="text" scope="locale">
             <name>API Key</name>
             <label lang="en">API Key</label>
+            <label lang="de">API-Schlüssel</label>
             <description lang="en">The API-key is provided by your finance provider</description>
+            <description lang="de">Der API-Schlüssel sollte von Ihrem Finanzdienstleister bereitgestellt werden</description>
         </element>
 
         <element required="false" type="text" scope="locale">
             <name>Shared Secret</name>
             <label lang="en">Shared Secret</label>
+            <label lang="de">Geteiltes Geheimnis</label>
             <description lang="en">
-                The optional shared secret is used to verify webhooks from your finance provider.
+                The optional shared secret is used to verify webhooks from your finance provider
+            </description>
+            <description lang="de">
+                Das optionale gemeinsame Geheimnis ist ein vereinbarter Code,
+                mit dem Informationen zwischen Ihnen und Ihrem Finanzdienstleister überprüft werden
             </description>
         </element>
         <element required="false" type="text" scope="locale">
             <name>Checkout Title</name>
             <label lang="en">Checkout Title</label>
+            <label lang="de">Checkout-Titel</label>
             <description lang="en"></description>
         </element>
 
         <element required="false" type="textarea" scope="locale">
             <name>Checkout Description</name>
             <label lang="en">Checkout Description</label>
+            <label lang="de">Checkout-Beschreibung</label>
             <description lang="en"></description>
         </element>
 
         <element required="true" type="text" scope="locale">
             <name>Cart Threshold</name>
             <label lang="en">Cart Threshold</label>
+            <label lang="de">Einkaufswagen-Schwelle</label>
             <value>250</value>
-            <description lang="en">Cart Threshold</description>
+            <description lang="en">
+                The total amount necessary for the cart to total in order for finance to be an
+                option at checkout
+            </description>
+            <description lang="de">
+                Der Gesamtbetrag, den der Einkaufswagen benötigt, um die Finanzierung an der Kasse zu ermöglichen
+            </description>
         </element>
 
         <element required="true" type="boolean" scope="locale">
             <name>Show Widget</name>
             <label lang="en">Show Product Widget</label>
+            <label lang="de">Widget anzeigen</label>
             <description lang="en">Show finance options widget on product page</description>
+            <description lang="de">
+                Zeigen Sie ein praktisches Widget mit den Finanzierungsoptionen auf Ihrer Produktseite an
+            </description>
         </element>
 
         <element required="true" type="text" scope="locale">
             <name>Widget Minimum</name>
             <label lang="en">Widget Threshold</label>
+            <label lang="de">Widget Minimum</label>
             <value>0</value>
-            <description lang="en">Only display the widget if the product price is over the specified amount</description>
+            <description lang="en">
+                Only display the widget if the product price is over the specified amount
+            </description>
+            <description lang="de">
+                Zeigen Sie das Widget nur an, wenn der Produktpreis über dem angegebenen Betrag liegt
+            </description>
         </element>
 
         <element required="false" type="text" scope="locale">
             <name>Widget Prefix</name>
             <label lang="en">Widget Prefix</label>
-            <description lang="en">Widget Prefix</description>
+            <label lang="de">Widget-Präfix</label>
+            <description lang="en">Text preceding the per month price of finance on the product page</description>
+            <description lang="de">Text vor dem Preis pro Finanzierungsmonat auf der Produktseite</description>
         </element>
 
         <element required="false" type="text" scope="locale">
             <name>Widget Suffix</name>
             <label lang="en">Widget Suffix</label>
-            <description lang="en">Widget Suffix</description>
+            <description lang="en">Text proceeding the per month price of finance on the product page</description>
+            <description lang="de">Text zum Preis pro Finanzierungsmonat auf der Produktseite</description>
+
         </element>
 
         <element required="true" type="boolean" scope="locale">
             <name>Debug</name>
             <label lang="en">Debug</label>
+            <label lang="de">Debuggen</label>
             <description lang="en">Debugging Enabled - Turn this off in production</description>
+            <description lang="de">Debugging aktiviert - Deaktivieren Sie dies in der Produktion</description>
         </element>
 
         <element type="combo" >
             <name>Activate</name>
             <label lang="en">Activate On Status:</label>
+            <label lang="en">Bei Status aktivieren:</label>
             <store>Shopware.apps.Base.store.OrderStatus</store>
         </element>
 
         <element scope="shop" type="select">
             <name>Plans</name>
             <label lang="en">Limit Plans</label>
-            <description>Limit the list of plan options by selecting the required options here</description>
+            <label lang="de">Pläne begrenzen</label>
+            <description lang="en">Limit the list of plan options by selecting the required options here</description>
+            <description lang="de"></description>
             <store>
                 <option>
                     <value>0</value>
-                    <label lang="en">Please activate the plugin, clear the cache and reload the page to use this feature</label>
+                    <label>Wählen Sie die Standardpläne aus, die Sie Ihren Kunden zur Verfügung stellen möchten</label>
                 </option>
             </store>
             <options>
