@@ -34,3 +34,8 @@ the set _Activate On Status_ config option
 - Take into account constent from merchant when removing data on uninstall
 - Add plugin description and change log
 - Format and lint PHP code
+
+## [1.4.3] - 2019-07-11
+- Config translated into German
+- plugin.xml translated into German
+- Translations import on installation

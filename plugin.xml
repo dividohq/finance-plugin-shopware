@@ -31,7 +31,8 @@
         <changes>
             <![CDATA[
             <ul>
-            <li>Config translated to German</li>
+            <li>Config translated into German</li>
+            <li>plugin.xml translated into German</li>
             <li>Translations import on installation</li>
             </ul>
             ]]>
@@ -40,6 +41,7 @@
             <![CDATA[
             <ul>
             <li>Config ins Deutsche übersetzt</li>
+            <li>plugin.xml ins Deutsche übersetzt</li>
             <li>Übersetzungen werden bei der Installation importiert</li>
             </ul>
             ]]>
