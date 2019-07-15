@@ -261,14 +261,14 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $apiKey = Helper::getApiKey();
         if (empty($apiKey)) {
             $displayFinance = false;
-            $displayWarning[] = 'default_api_error_message';
+            $displayWarning[] = 'default_api_error_msg';
             Helper::debug('Could not retrieve API key', 'error');
         } else {
             $basket_plans = PlansService::getBasketPlans($apiKey, $products);
 
             if (empty($basket_plans)) {
                 $displayFinance = false;
-                $displayWarning[] = 'default_api_error_message';
+                $displayWarning[] = 'empty_plans_error_msg';
                 Helper::debug('Could not retrieve any finance plans for order', 'error');
             }
 
@@ -387,7 +387,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
          * If the Shared Secret doesn't match
          *
          * This is currently disabled
-        */
+
         if (false === Helper::hmacSign()) {
             $this->View()->assign('error', self::SSA_DECLINE_MSG);
             $this->View()->assign('snippetKey', 'ssa_error_msg');
@@ -397,7 +397,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             );
             return;
         }
-
+        */
 
         // If we haven't already generated the order already:
         if (is_null($session->getOrderNumber())) {

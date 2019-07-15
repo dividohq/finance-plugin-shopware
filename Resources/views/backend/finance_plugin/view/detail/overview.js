@@ -7,6 +7,18 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
     */
     override: 'Shopware.apps.Order.view.detail.Overview',
 
+    snippets:{
+        activateOrder: '<?php $_smarty_tpl->smarty->_tag_stack[] = array('snippet', array('name'=>'activate_label','default'=>'Activate','namespace'=>'widgets / finance_plugin / backend / order / request')); $_block_repeat=true; echo Enlight_Components_Snippet_Resource::compileSnippetBlock(array('name'=>'activate_label','default'=>'Activate','namespace'=>'widgets / finance_plugin / backend / order / request'), null, $_smarty_tpl, $_block_repeat);while ($_block_repeat) { ob_start();?>
+    Activate <? php $_block_content = ob_get_clean(); $_block_repeat=false; echo Enlight_Components_Snippet_Resource:: compileSnippetBlock(array('name'=> 'activate_label', 'default'=> 'Activate', 'namespace'=> 'widgets/finance_plugin/backend/order/request'), $_block_content, $_smarty_tpl, $_block_repeat); } array_pop($_smarty_tpl -> smarty -> _tag_stack);?>
+        ',
+        cancelOrder: '<?php $_smarty_tpl->smarty->_tag_stack[] = array('snippet', array('name'=>'cancel_label','default '=>'Cancel','namespace'=>'widgets / finance_plugin / backend / order / request')); $_block_repeat=true; echo Enlight_Components_Snippet_Resource::compileSnippetBlock(array('name'=>'cancel_label','default '=>'Cancel','namespace'=>'widgets / finance_plugin / backend / order / request'), null, $_smarty_tpl, $_block_repeat);while ($_block_repeat) { ob_start();?>
+Cancel <? php $_block_content = ob_get_clean(); $_block_repeat = false; echo Enlight_Components_Snippet_Resource:: compileSnippetBlock(array('name'=> 'cancel_label', 'default'=> 'Cancel', 'namespace'=> 'widgets/finance_plugin/backend/order/request'), $_block_content, $_smarty_tpl, $_block_repeat); } array_pop($_smarty_tpl -> smarty -> _tag_stack);?>
+        ',
+        refundOrder: '<?php $_smarty_tpl->smarty->_tag_stack[] = array('snippet', array('name'=>'refund_label','default '=>'Refund','namespace'=>'widgets / finance_plugin / backend / order / request')); $_block_repeat=true; echo Enlight_Components_Snippet_Resource::compileSnippetBlock(array('name'=>'refund_label','default '=>'Refund','namespace'=>'widgets / finance_plugin / backend / order / request'), null, $_smarty_tpl, $_block_repeat);while ($_block_repeat) { ob_start();?>
+Refund <? php $_block_content = ob_get_clean(); $_block_repeat = false; echo Enlight_Components_Snippet_Resource:: compileSnippetBlock(array('name'=> 'refund_label', 'default'=> 'Refund', 'namespace'=> 'widgets/finance_plugin/backend/order/request'), $_block_content, $_smarty_tpl, $_block_repeat); } array_pop($_smarty_tpl -> smarty -> _tag_stack);?>
+        '
+    },
+
     registerEvents: function(){
         this.addEvents('activateOrder', 'refundOrder', 'cancelOrder', 'updateFinance');
     },
@@ -54,7 +66,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
         }
 
         var activateFinanceButton = Ext.create('Ext.button.Button', {
-            text: "activate order",
+            text: me.snippets.activateOrder,
             action: 'activate-order',
             cls: 'primary',
             hidden: true,
@@ -84,7 +96,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
         });
 
         var refundFinanceButton = Ext.create('Ext.button.Button', {
-            text: "refund order",
+            text: me.snippets.refundOrder,
             action: 'refund-order',
             cls: 'primary',
             hidden: true,
@@ -114,7 +126,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
         });
 
         var cancelFinanceButton = Ext.create('Ext.button.Button', {
-            text: "cancel order",
+            text: me.snippets.cancelOrder,
             action: 'cancel-order',
             cls: 'secondary',
             hidden: true,
