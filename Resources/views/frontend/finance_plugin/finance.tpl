@@ -31,10 +31,10 @@
       </form>
       {/if}
       {if $displayWarning}
-      <h3>Sorry.</h3>
+      <h3>{s namespace="widgets/finance_plugin/frontend/warnings/" name="WarningTitle" }Sorry.{/s}</h3>
       <ul style='margin-left: 20px'>
         {foreach item=warning from=$displayWarning}
-        <li style='list-style:none'>{$warning}</li>
+        <li style='list-style:none'>{$generic_error|snippet:$warning:'widgets/finance_plugin/frontend/checkout/error'} - {$warning}</li>
         {/foreach}
       </ul>
       {/if}

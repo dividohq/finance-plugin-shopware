@@ -5,7 +5,7 @@
 </h2>{/block}
 {block name="frontend_checkout_finish_teaser_content"}
     <p class="teaser--text is--align-center">
-        {$error|snippet:$snippetKey:'frontend/finance_plugin/error'}
+        {$error|snippet:$snippetKey:'widgets/finance_plugin/frontend/checkout/error'}
     </p>
     <script>
         document.body.classList.add("is--ctl-checkout");

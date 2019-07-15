@@ -28,6 +28,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
     implements CSRFWhitelistAware
 {
 
+    private $translations = [];
+
     const PLUGIN_VERSION = "1.0.0",
           API_ERROR_MSG
               = 'We are unable to process this order
@@ -45,8 +47,13 @@ class Shopware_Controllers_Frontend_FinancePlugin
           NO_RESPONSE_ERROR_MSG = 'Received response did not include status.',
           INCOMPLETE_RESPONSE_ERROR_MSG
               = 'Incomplete response. Expected a token and sessionId',
-          SESSION_EXPIRY_MSG = 'Your basket has expired. Please try again';
-
+          SESSION_EXPIRY_MSG = 'Your basket has expired. Please try again',
+          RETRIEVAL_ERROR_MSG ='An error has occurred in retrieving your order.
+          Please try again.',
+          SHIPPING_BILLING_ERROR_MSG = 'Shipping and billing address must match.',
+          MIN_PRICE_ERROR_MSG = 'Cart does not meet minimum Finance Requirement.',
+          EMPTY_CART_ERROR_MSG = 'Your cart appears to be empty';
+    const NAMESPACE = 'widgets/finance_plugin/';
 
     /**
      * Allows webhooks to reach server
@@ -238,27 +245,31 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $displayFinance = false;
         $amount = $this->getAmount();
         $minCartAmount = Helper::getCartThreshold();
-        if ($amount >= $minCartAmount) {
-            $displayFinance = true;
+        if($amount == 0) {
+            $displayWarning[] = 'empty_cart_error_msg';
+        }elseif ($amount < $minCartAmount) {
+            $displayWarning[] = 'minimum_price_error_msg';
         } else {
-            $displayWarning[] = 'Cart does not meet minimum Finance Requirement.';
+            $displayFinance = true;
         }
 
         if ($customer['address']!=$customer['shippingAddress']) {
             $displayFinance = false;
-            $displayWarning[] = "Shipping and billing address must match.";
+            $displayWarning[] = 'shipping_billing_error_msg';
         }
 
         $apiKey = Helper::getApiKey();
         if (empty($apiKey)) {
             $displayFinance = false;
-            $displayWarning[] =  self::API_ERROR_MSG;
+            $displayWarning[] = 'default_api_error_message';
+            Helper::debug('Could not retrieve API key', 'error');
         } else {
             $basket_plans = PlansService::getBasketPlans($apiKey, $products);
 
             if (empty($basket_plans)) {
                 $displayFinance = false;
-                $displayWarning[] = self::API_ERROR_MSG;
+                $displayWarning[] = 'default_api_error_message';
+                Helper::debug('Could not retrieve any finance plans for order', 'error');
             }
 
             list($key,$stuff) = preg_split("/\./", $apiKey);
@@ -270,6 +281,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $this->View()->assign('suffix', '');
             $this->View()->assign('displayForm', $displayFinance);
             $this->View()->assign('displayWarning', $displayWarning);
+            $this->View()->assign('generic_error', 'An error has occured');
             $this->View()->assign(
                 'basket_plans',
                 implode(",", $basket_plans)
@@ -307,7 +319,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             Helper::log(self::INCOMPLETE_RESPONSE_ERROR_MSG, 'error');
 
             $this->View()->assign('error', self::INCOMPLETE_RESPONSE_ERROR_MSG);
-            $this->View()->assign('snippetKey', 'ErrorIncompleteMsg');
+            $this->View()->assign('snippetKey', 'incomplete_response_error_msg');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
@@ -325,7 +337,12 @@ class Shopware_Controllers_Frontend_FinancePlugin
         // If we can't find the session in the database 404 out
         if (!$session->retrieveFromDb($sessionId, $connection)) {
             Helper::log("Could not find session", 'error');
-            $this->View()->assign('template', 'frontend/finance_plugin/404.tpl');
+            $this->View()->assign('error', self::MISSING_SESSION_ERROR_MSG);
+            $this->View()->assign('snippetKey', 'session_expiry_msg');
+            $this->View()->assign(
+                'template',
+                'frontend/finance_plugin/error.tpl'
+            );
             return;
         }
 
@@ -333,7 +350,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         if ($session->getStatus() != WebhookService::PAYMENTSTATUSPAID) {
             Helper::log(self::NON_PAID_ERROR_MSG, 'error');
             $this->View()->assign('error', self::NON_PAID_ERROR_MSG);
-            $this->View()->assign('snippetKey', 'ErrorUnpaidMsg');
+            $this->View()->assign('snippetKey', 'unpaid_error_msg');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
@@ -358,7 +375,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         ) {
             Helper::log(self::INVALID_TOKEN_ERROR_MSG, 'error');
             $this->View()->assign('error', self::INVALID_TOKEN_ERROR_MSG);
-            $this->View()->assign('snippetKey', 'ErrorTokenMsg');
+            $this->View()->assign('snippetKey', 'invalid_token_error_msg');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
@@ -370,17 +387,17 @@ class Shopware_Controllers_Frontend_FinancePlugin
          * If the Shared Secret doesn't match
          *
          * This is currently disabled
-
+        */
         if (false === Helper::hmacSign()) {
             $this->View()->assign('error', self::SSA_DECLINE_MSG);
-            $this->View()->assign('snippetKey', 'ErrorSsaMsg');
+            $this->View()->assign('snippetKey', 'ssa_error_msg');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
             );
             return;
         }
-        */
+
 
         // If we haven't already generated the order already:
         if (is_null($session->getOrderNumber())) {
@@ -429,7 +446,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
             } else {
                 $this->View()->assign('error', self::ORDER_CREATION_ERROR_MSG);
-                $this->View()->assign('snippetKey', 'ErrorCreateMsg');
+                $this->View()->assign('snippetKey', 'order_creation_error_msg');
                 $this->View()->assign(
                     'template',
                     'frontend/finance_plugin/error.tpl'
