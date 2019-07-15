@@ -38,10 +38,10 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
                 var status = Ext.decode(response.responseText);
                 if (status.success) {
                     if(status.message !== null) {
-                        Shopware.Notification.createGrowlMessage('{s name=activationSuccess}Order Updated{/s}', status.message);
+                        Shopware.Notification.createGrowlMessage('{s namespace="widgets/finance_plugin/backend/order/response" name="activation_success_msg" }Order Updated{/s}', status.message);
                     }
                 } else {
-                    Shopware.Notification.createGrowlMessage('{s name=activationError}Order Not Updated{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage('{s namespace="widgets/finance_plugin/backend/order/response" name="activation_error_msg" }Order Not Updated{/s}', status.message);
                 }
             }
         });
@@ -60,10 +60,10 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
                 var status = Ext.decode(response.responseText);
                 if (status.success) {
                     if(status.message !== null) {
-                        Shopware.Notification.createGrowlMessage('{s name=activationSuccess}Order Activated{/s}', status.message);
+                        Shopware.Notification.createGrowlMessage('{s namespace="widgets/finance_plugin/backend/order/response" name="activation_success_msg" }Order Activated{/s}', status.message);
                     }
                 } else {
-                    Shopware.Notification.createGrowlMessage('{s name=activationError}Order was not activated{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage('{s namespace="widgets/finance_plugin/backend/order/response" name="activation_error_msg"}Order was not activated{/s}', status.message);
                 }
             }
         });
@@ -80,9 +80,9 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
                 var status = Ext.decode(response.responseText);
                 if (status.success) {
                     obj.setDisabled(true);
-                    Shopware.Notification.createGrowlMessage('{s name=refundSuccess}Order Refunded{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage('{s namespace="widgets/finance_plugin/backend/order/response" name="refund_success_msg"}Order Refunded{/s}', status.message);
                 } else {
-                    Shopware.Notification.createGrowlMessage('{s name=refundError}Order was not refunded{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage('{s namespace="widgets/finance_plugin/backend/order/response" name="refund_error_msg"}Order was not refunded{/s}', status.message);
                 }
             }
         });
@@ -99,9 +99,9 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
                 var status = Ext.decode(response.responseText);
                 if (status.success) {
                     obj.setDisabled(true);
-                    Shopware.Notification.createGrowlMessage('{s name=cancellationSuccess}Order Cancelled{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage('{s namespace="widgets/finance_plugin/backend/order/response" name="cancellation_success_msg"}Order Cancelled{/s}', status.message);
                 } else {
-                    Shopware.Notification.createGrowlMessage('{s name=cancellationError}Order was not cancelled{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage('{s namespace="widgets/finance_plugin/backend/order/response" name="cancellation_error_msg"}Order was not cancelled{/s}', status.message);
                 }
             }
         });
