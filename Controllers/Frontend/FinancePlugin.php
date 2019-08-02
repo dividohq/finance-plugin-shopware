@@ -175,6 +175,11 @@ class Shopware_Controllers_Frontend_FinancePlugin
         );
         $redirect_url .= "?sid={$sessionId}&token={$token}";
 
+        $order_items = RequestService::setOrderItemsFromBasket($basket);
+        if (RequestService::getShippingFromBasket($basket)) {
+            $order_items[] = RequestService::getShippingFromBasket($basket);
+        }
+
         $request = new Request();
         $request->setFinancePlanId($planId);
         //$request->setMerchantChannelId($merchantChannelId);
@@ -182,7 +187,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $request->setCurrencyId($basket['sCurrencyName']);
         $request->setApplicants(RequestService::setApplicantsFromUser($user));
         $request->setLanguageId(RequestService::getLanguageId());
-        $request->setOrderItems(RequestService::setOrderItemsFromBasket($basket));
+        $request->setOrderItems($order_items);
         $request->setDepositAmount($deposit*100);
         $request->setDepositPercentage($deposit_percentage);
         $request->setUrls(

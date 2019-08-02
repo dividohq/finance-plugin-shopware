@@ -77,7 +77,7 @@ class RequestService
             $row = [
                 'name' => $product['articlename'],
                 'quantity' => intval($product['quantity']),
-                'price' => $product['price']*100,
+                'price' => $product['amountNumeric']*100,
             ];
             if ('0' == $product['modus']) {
                 $row['plans']
@@ -88,6 +88,18 @@ class RequestService
         }
 
         return $productsArray;
+    }
+
+    public static function getShippingFromBasket(array $basket) {
+        if(isset($basket['sShippingcostsWithTax']) && $basket['sShippingcostsWithTax'] > 0) {
+            $shipping = [
+              'name' => 'Shipping',
+              'quantity' => 1,
+              'price' => $basket['sShippingcostsWithTax']*100
+            ];
+            return $shipping;
+        }
+        return false;
     }
 
     /**
