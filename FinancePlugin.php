@@ -111,6 +111,12 @@ class FinancePlugin extends Plugin
     public function uninstall(UninstallContext $context)
     {
         $this->_setActiveFlag($context->getPlugin()->getPayments(), false);
+        $installer = $this->container->get('shopware.plugin_payment_installer');
+        $options = [
+            'name' => 'finance_plugin',
+            'active' => 0
+        ];
+        $installer->createOrUpdate($context->getPlugin(), $options);
 
         if(!$context->keepUserData()){
             $service = $this->container->get('shopware_attribute.crud_service');
