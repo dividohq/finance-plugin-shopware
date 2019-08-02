@@ -222,8 +222,8 @@ class Shopware_Controllers_Backend_FinancePlugin
          * Autoload the vendor files first
          */
 
-        $orderId = $_POST['orderId'];
-        $orderStatus = $_POST['orderStatus'];
+        $orderId = intval($_POST['orderId']);
+        $orderStatus = intval($_POST['orderStatus']);
 
         $activateStatus = Helper::getActivateStatus();
 
@@ -357,7 +357,7 @@ class Shopware_Controllers_Backend_FinancePlugin
          * Autoload the vendor files first
          */
 
-        $orderId = $_POST['orderId'];
+        $orderId = intval($_POST['orderId']);
 
         $refundService = $this->container->get('finance_plugin.refund_service');
         $orderService = $this->container->get('finance_plugin.order_service');
