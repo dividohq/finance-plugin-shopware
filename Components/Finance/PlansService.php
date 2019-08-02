@@ -135,7 +135,7 @@ class PlansService
             return [];
         } else {
             foreach ($plans_response->plans as $plan) {
-                if (in_array($plan->getName(), $confPlans)) {
+                if (in_array($plan->getName(), $confPlans) || empty($confPlans)) {
                     $current_plans[] = $plan->getId();
                 }
             }
