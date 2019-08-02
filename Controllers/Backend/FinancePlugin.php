@@ -461,7 +461,7 @@ class Shopware_Controllers_Backend_FinancePlugin
          * Autoload the vendor files first
          */
 
-        $orderId = $_POST['orderId'];
+        $orderId = intval($_POST['orderId']);
 
         $cancelService = $this->container->get('finance_plugin.cancel_service');
         $orderService = $this->container->get('finance_plugin.order_service');
@@ -553,7 +553,7 @@ class Shopware_Controllers_Backend_FinancePlugin
     {
         $webhookService = $this->container->get('finance_plugin.webhook_service');
 
-        $orderId = $_GET['orderId'];
+        $orderId = intval($_GET['orderId']);
 
         $orderBuilder = $this->get('dbal_connection')->createQueryBuilder();
         $order = $orderBuilder
