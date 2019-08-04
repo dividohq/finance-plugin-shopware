@@ -22,10 +22,10 @@
         <changes>
             <![CDATA[
             <ul>
-            <li>Stand suffixes applied to tables</li>
-            <li>Take into account constent from merchant when removing data on uninstall</li>
-            <li>Add plugin description and change log</li>
-            <li>Format and lint PHP code</li>
+            <li>Standard suffixes applied to tables</li>
+            <li>Takes into account consent from merchant when removing data on uninstall</li>
+            <li>Adds plugin description and change log</li>
+            <li>Formats and lints PHP code</li>
             </ul>
             ]]>
         </changes>

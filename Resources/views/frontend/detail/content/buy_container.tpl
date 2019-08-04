@@ -3,27 +3,22 @@
 {block name="frontend_detail_index_buybox"}
 {$smarty.block.parent}
 {if $show_widget }
-  <script>
-    var {$env}Key = "{$apiKey}";
-  </script>
-  <style>
-    #{$env}-widget{
-        padding-bottom:5px;
-    }
-  </style>
-
-  <script src="https://cdn.divido.com/calculator/v2.1/production/js/template.{$env}.js"></script>
   <div
-    id="{$env}-widget"
-    data-{$env}-widget
-    data-{$env}-mode="popup"
-    data-{$env}-plans="{$plans}"
-    data-{$env}-prefix="{$prefix}"
-    data-{$env}-suffix="{$suffix}"
-    data-{$env}-amount="{$sArticle.price|replace:',':'.'}"
-    data-{$env}-apply="true"
-    data-{$env}-apply-label="Apply Now"
+    data-calculator-widget
+    data-plans="{$plans}"
+    data-amount="{$sArticle.price|replace:',':''|replace:'.':''}"
+    {$widget_mode}
+    {$widget_footnote}
+    {$widget_btn_txt}
   >
   </div>
+
+  <script>
+    __widgetConfig = {
+      apiKey: '{$apiKey}'
+    }
+  </script>
+
+  <script src="https://cdn.divido.com/widget/dist/{$env}.calculator.js"></script>
 {/if}
 {/block}

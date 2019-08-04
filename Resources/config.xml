@@ -47,16 +47,32 @@
             <description lang="en">Only display the widget if the product price is over the specified amount</description>
         </element>
 
-        <element required="false" type="text" scope="locale">
-            <name>Widget Prefix</name>
-            <label lang="en">Widget Prefix</label>
-            <description lang="en">Widget Prefix</description>
+        <element scope="shop" type="select">
+            <name>Widget Mode</name>
+            <label lang="en">Widget Mode</label>
+            <description>Choose whether the widget appears immediately (calculator), or when a button is clicked (lightbox)'</description>
+            <store>
+                <option>
+                    <value>calculator</value>
+                    <label lang="en">Calculator</label>
+                </option>
+                <option>
+                    <value>lightbox</value>
+                    <label lang="en">Lightbox</label>
+                </option>
+            </store>
         </element>
 
         <element required="false" type="text" scope="locale">
-            <name>Widget Suffix</name>
-            <label lang="en">Widget Suffix</label>
-            <description lang="en">Widget Suffix</description>
+            <name>Button Text</name>
+            <label lang="en">Button Text</label>
+            <description lang="en">The text appearing on the button (if lightbox mode is selected above)</description>
+        </element>
+
+        <element required="false" type="text" scope="locale">
+            <name>Footnote</name>
+            <label lang="en">Footnote</label>
+            <description lang="en">Small text that appears at the bottom of the widget</description>
         </element>
 
         <element required="true" type="boolean" scope="locale">

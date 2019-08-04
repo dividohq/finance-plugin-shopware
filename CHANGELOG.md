@@ -30,7 +30,7 @@ the set _Activate On Status_ config option
 - Stricter initial validation of the API Key
 
 ## [1.4.2] - 2019-06-28
-- Stand suffixes applied to tables
-- Take into account constent from merchant when removing data on uninstall
-- Add plugin description and change log
-- Format and lint PHP code
+- Standard suffixes applied to tables
+- Takes into account consent from merchant when removing data on uninstall
+- Adds plugin description and change log
+- Formats and lints PHP code

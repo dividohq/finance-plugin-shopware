@@ -123,10 +123,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
         $basket = $this->getBasket();
         $amount = $this->getAmount();
-        $deposit_percentage = filter_var(
-            $_POST['divido_deposit'],
-            FILTER_SANITIZE_NUMBER_INT
-        );
+
+        $deposit_percentage = ($_POST['divido_deposit']/filter_var($amount,FILTER_SANITIZE_NUMBER_INT));
         $planId = filter_var(
             $_POST['divido_plan'],
             FILTER_SANITIZE_EMAIL
@@ -177,6 +175,11 @@ class Shopware_Controllers_Frontend_FinancePlugin
         );
         $redirect_url .= "?sid={$sessionId}&token={$token}";
 
+        $order_items = RequestService::setOrderItemsFromBasket($basket);
+        if (RequestService::getShippingFromBasket($basket)) {
+            $order_items[] = RequestService::getShippingFromBasket($basket);
+        }
+
         $request = new Request();
         $request->setFinancePlanId($planId);
         //$request->setMerchantChannelId($merchantChannelId);
@@ -184,9 +187,9 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $request->setCurrencyId($basket['sCurrencyName']);
         $request->setApplicants(RequestService::setApplicantsFromUser($user));
         $request->setLanguageId(RequestService::getLanguageId());
-        $request->setOrderItems(RequestService::setOrderItemsFromBasket($basket));
+        $request->setOrderItems($order_items);
         $request->setDepositAmount($deposit*100);
-        $request->setDepositPercentage($deposit_percentage/100);
+        $request->setDepositPercentage($deposit_percentage);
         $request->setUrls(
             [
             'merchant_redirect_url' => $redirect_url,
@@ -266,8 +269,6 @@ class Shopware_Controllers_Frontend_FinancePlugin
             $this->View()->assign('title', Helper::getTitle());
             $this->View()->assign('description', Helper::getDescription());
             $this->View()->assign('amount', $amount);
-            $this->View()->assign('prefix', '');
-            $this->View()->assign('suffix', '');
             $this->View()->assign('displayForm', $displayFinance);
             $this->View()->assign('displayWarning', $displayWarning);
             $this->View()->assign(

@@ -4,24 +4,22 @@
     <div id="payment content confirm-content">
       <h2>{$title}</h2>
       <p>{$description}</p>
-      <script>
-        var {$env}Key = "{$apiKey}";
-      </script>
-      <script src="https://cdn.divido.com/calculator/v2.1/production/js/template.{$env}.js"></script>
 
       {if $displayForm}
       <form id="financePluginForm" action="{url controller='FinancePlugin' action='direct'}" method="post" >
         <div
-          data-{$env}-widget
-          data-{$env}-prefix="{$prefix}"
-          data-{$env}-suffix="{$suffix}"
-          data-{$env}-title-logo
-          data-{$env}-amount="{$amount}"
-          data-{$env}-apply="true"
-          data-{$env}-apply-label="Apply Now"
-          data-{$env}-plans="{$basket_plans}"
-          >
+            data-calculator-widget
+            data-mode="calculator"
+            data-amount="{$amount*100}"
+            data-plans="{$basket_plans}"
+            >
         </div>
+        <script>
+            __widgetConfig = {
+                apiKey: '{$apiKey}'
+            }
+        </script>
+        <script src="https://cdn.divido.com/widget/dist/{$env}.calculator.js"></script>
         <button id="finance-plugin-submit-button" type="submit"
           title="finance"
           class="finance-action btn is--primary"

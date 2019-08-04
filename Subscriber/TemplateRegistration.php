@@ -140,17 +140,23 @@ class TemplateRegistration implements SubscriberInterface
 
                     $view->assign('plans', implode(",", $plans_ids));
 
-                    $suffix
-                        = ($config['Widget Suffix'])
-                        ? strip_tags($config['Widget Suffix'])
-                        : "";
-                    $view->assign('suffix', $suffix);
+                    $button_txt
+                        = ($config['Button Text'] == '')
+                        ? ''
+                        : "data-button-text='".strip_tags($config['Button Text'])."'";
+                    $view->assign('widget_btn_txt', $button_txt);
 
-                    $prefix
-                        = ($config['Widget Prefix'])
-                        ? strip_tags($config['Widget Prefix'])
+                    $footnote
+                        = ($config['Footnote'])
+                        ? "data-button-text='".strip_tags($config['Widget Footnote'])."'"
                         : "";
-                    $view->assign('prefix', $prefix);
+                    $view->assign('widget_footnote', $footnote);
+
+                    $mode
+                        = ($config['Widget Mode'])
+                        ? "data-mode='".$config['Widget Mode']."'"
+                        : "";
+                    $view->assign('widget_mode', $mode);
 
                     $plan_ids = explode("|", $product['finance_plans']);
                     foreach ($plans_ids as $key=>$id) {
