@@ -38,17 +38,6 @@ class FinancePlugin extends Plugin
          * @var \Shopware\Components\Plugin\PaymentInstaller $installer Installer
          */
         $installer = $this->container->get('shopware.plugin_payment_installer');
-        $options = [
-            'name' => 'finance_plugin',
-            'description' => 'Pay By Finance',
-            'action' => 'FinancePlugin',
-            'active' => 1,
-            'position' => 0,
-            'additionalDescription' =>
-                '<div id="payment_desc">'
-                . 'Finance your cart'
-                . '</div>'
-        ];
 
         $service = $this->container->get('shopware_attribute.crud_service');
         $service->update(
@@ -98,6 +87,17 @@ class FinancePlugin extends Plugin
             ]
         );
 
+        $options = [
+            'name' => 'finance_plugin',
+            'description' => 'Pay By Finance',
+            'action' => 'FinancePlugin',
+            'active' => 1,
+            'position' => 0,
+            'additionalDescription' =>
+                '<div id="payment_desc">'
+                . 'Finance your cart'
+                . '</div>'
+        ];
         $installer->createOrUpdate($context->getPlugin(), $options);
     }
 
@@ -111,6 +111,12 @@ class FinancePlugin extends Plugin
     public function uninstall(UninstallContext $context)
     {
         $this->_setActiveFlag($context->getPlugin()->getPayments(), false);
+        $installer = $this->container->get('shopware.plugin_payment_installer');
+        $options = [
+            'name' => 'finance_plugin',
+            'active' => 0
+        ];
+        $installer->createOrUpdate($context->getPlugin(), $options);
 
         if(!$context->keepUserData()){
             $service = $this->container->get('shopware_attribute.crud_service');
@@ -145,6 +151,12 @@ class FinancePlugin extends Plugin
     {
         $this->_setActiveFlag($context->getPlugin()->getPayments(), false);
         $context->scheduleClearCache(ActivateContext::CACHE_LIST_ALL);
+        $installer = $this->container->get('shopware.plugin_payment_installer');
+        $options = [
+            'name' => 'finance_plugin',
+            'active' => 0
+        ];
+        $installer->createOrUpdate($context->getPlugin(), $options);
     }
 
     /**
