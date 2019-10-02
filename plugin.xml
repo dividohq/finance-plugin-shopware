@@ -5,7 +5,7 @@
     <label lang="en">Finance Plugin</label>
     <label lang="de">Finanz-Plugin</label>
 
-    <version>1.4.2</version>
+    <version>1.4.4</version>
     <copyright>(c) Divido Financial Services</copyright>
     <author>Divido Financial Services</author>
     <link>http://www.divido.com</link>
@@ -27,6 +27,22 @@
         "Powered By Divido" nahtlos mit einer Vielzahl von Finanzdienstleistern verbunden wird.</p>
         ]]>
     </description>
+    <changelog version="1.4.4">
+        <changes>
+            <![CDATA[
+            <ul>
+            <li>Uses JSON translation files</li>
+            </ul>
+            ]]>
+        </changes>
+        <changes lang="de">
+            <![CDATA[
+            <ul>
+            <li>Verwendet JSON-Übersetzungsdateien</li>
+            </ul>
+            ]]>
+        </changes>
+    </changelog>
     <changelog version="1.4.3">
         <changes>
             <![CDATA[

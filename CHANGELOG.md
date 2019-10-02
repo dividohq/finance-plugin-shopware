@@ -39,3 +39,6 @@ the set _Activate On Status_ config option
 - Config translated into German
 - plugin.xml translated into German
 - Translations import on installation
+
+## [1.4.4] - 2019-10-01
+- Adds German and French translations

@@ -97,14 +97,14 @@
             <description lang="de">Debugging aktiviert - Deaktivieren Sie dies in der Produktion</description>
         </element>
 
-        <element type="combo" >
+        <element scope="locale" type="combo" >
             <name>Activate</name>
             <label lang="en">Activate On Status:</label>
-            <label lang="en">Bei Status aktivieren:</label>
+            <label lang="de">Bei Status aktivieren:</label>
             <store>Shopware.apps.Base.store.OrderStatus</store>
         </element>
 
-        <element scope="shop" type="select">
+        <element scope="locale" type="select">
             <name>Plans</name>
             <label lang="en">Limit Plans</label>
             <label lang="de">Pläne begrenzen</label>

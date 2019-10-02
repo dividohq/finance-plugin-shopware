@@ -36,13 +36,14 @@ class FinancePlugin extends Plugin
      */
     public function install(InstallContext $context)
     {
+        Shopware()->Container()->get('pluginlogger')->info("Installing Finance Plugin");
         /*
          * @var \Shopware\Components\Plugin\PaymentInstaller $installer Installer
          */
         $installer = $this->container->get('shopware.plugin_payment_installer');
         $options = [
             'name' => 'finance_plugin',
-            'description' => 'Pay By Finance',
+            'description' => 'Pay By Finance!',
             'action' => 'FinancePlugin',
             'active' => 1,
             'position' => 0,
@@ -100,27 +101,7 @@ class FinancePlugin extends Plugin
             ]
         );
 
-        ShopwareTranslationService::expungeTerms();
-
-        $translationService = new ShopwareTranslationService('cf61730cc2b9ba407fdf6387f0e08c2b', '267665', 'de');
-        $response = $translationService->getTranslationResponse();
-        try {
-            $terms = $translationService->getResponseTerms($response);
-            $localeId = $translationService->getLocaleId();
-            $translationService->importTerms($terms, $localeId);
-        } catch (Exception $e) {
-            Helper::debug($e->getMessage(), 'error');
-        }
-
-        $translationService->setLanguage('en');
-        $response = $translationService->getTranslationResponse();
-        try {
-            $terms = $translationService->getResponseTerms($response);
-            $localeId = $translationService->getLocaleId();
-            $translationService->importTerms($terms, $localeId);
-        } catch (Exception $e) {
-            Helper::debug($e->getMessage(), 'error');
-        }
+        $this->importTranslations();
 
         $installer->createOrUpdate($context->getPlugin(), $options);
     }
@@ -134,6 +115,7 @@ class FinancePlugin extends Plugin
      */
     public function uninstall(UninstallContext $context)
     {
+        Helper::debug('Uninstalling Finance Plugin', 'info');
         $this->_setActiveFlag($context->getPlugin()->getPayments(), false);
 
         if(!$context->keepUserData()){
@@ -200,5 +182,27 @@ class FinancePlugin extends Plugin
             $payment->setActive($active);
         }
         $em->flush();
+    }
+
+    private function importTranslations() {
+        Shopware()->Container()->get('pluginlogger')->info("Installing translations");
+        ShopwareTranslationService::expungeTerms();
+        if($handle = opendir(__DIR__.'/Translations')) {
+            while (false !== ($loc = readdir($handle))) {
+                if(is_file(__DIR__.'/Translations/'.$loc)) {
+                    list($code, $extension) = explode(".", $loc, 2);
+                    try{
+                        $terms = json_decode(file_get_contents(__DIR__.'/Translations/'.$loc), true);
+                        $localeId = ShopwareTranslationService::getLocaleId($code);
+                        ShopwareTranslationService::importTerms($terms, $localeId);
+                        Shopware()->Container()->get('pluginlogger')->info("Installed language {$code}");
+                    } catch (Exception $e) {
+                        Shopware()->Container()->get('pluginlogger')->warning("Warning: {$e}");
+                    }
+                } else {
+                    Shopware()->Container()->get('pluginlogger')->info("{$loc} is not a file");fwrite($pointer, "Nope\n");
+                }
+            }
+        }
     }
 }

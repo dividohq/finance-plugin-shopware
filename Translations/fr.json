@@ -1,0 +1,162 @@
+[
+	{
+		"term": "api_key_label",
+		"definition": "clé API",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "shared_secret_label",
+		"definition": "Secret partagé",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "checkout_title_label",
+		"definition": "Titre de la caisse",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "checkout_description_label",
+		"definition": "Description de la caisse",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "cart_threshold_label",
+		"definition": "Seuil du panier",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "show_widget_label",
+		"definition": "Afficher le widget",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "widget_minimum_label",
+		"definition": "Widget Minimum",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "widget_minimum_description",
+		"definition": "Afficher le widget uniquement si le prix du produit est supérieur au montant spécifié",
+		"context": "Software Configuration Reference Description",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "show_widget_description",
+		"definition": "Afficher un widget pratique avec les options de financement sur la page de vos produits",
+		"context": "Software Configuration Reference Description",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "api_key_description",
+		"definition": "La clé API doit être fournie par votre fournisseur de financement",
+		"context": "Software Configuration Reference Description",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "shared_secret_description",
+		"definition": "Le secret partagé facultatif est un code convenu utilisé pour vérifier les informations entre vous et votre fournisseur de financement.",
+		"context": "Software Configuration Reference Description",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "widget_prefix_label",
+		"definition": "Préfixe du widget",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "widget_suffix_label",
+		"definition": "Suffixe widget",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "debug_label",
+		"definition": "Déboguer",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "activate_on_status_label",
+		"definition": "Activer la commande sur le statut",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "activate_on_status_description",
+		"definition": "Informez votre prestataire de services financiers que la transaction est terminée",
+		"context": "Software Configuration Reference Description",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "limit_plans_label",
+		"definition": "Plans de limite",
+		"context": "Software Configuration Reference",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "limit_plans_description",
+		"definition": "Choisissez les plans que vous souhaitez mettre à la disposition de vos clients",
+		"context": "Software Configuration Reference Description",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "cart_threshold_description",
+		"definition": "Le montant minimum nécessaire pour que le panier soit total afin que le financement soit une option à la caisse",
+		"context": "Software Configuration Reference Description",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	},
+	{
+		"term": "widget_prefix_description",
+		"definition": "Texte précédant le prix par mois de financement sur la page du produit",
+		"context": "Software Configuration Reference Description",
+		"term_plural": "",
+		"reference": "backend/config",
+		"comment": ""
+	}
+]

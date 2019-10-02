@@ -103,7 +103,7 @@ class TemplateRegistration implements SubscriberInterface
             $env = $environment->getEnvironment();
         }
 
-        if(!isset($env)) {
+        if(!isset($env) && !empty($apiKey)) {
             $environmentResponse = EnvironmentService::getEnvironmentResponse($apiKey);
             if($environmentResponse->Error == false) {
                 $environment = EnvironmentService::constructEnvironmentFromResponse($environmentResponse);
