@@ -190,7 +190,25 @@ class Helper
         $config = self::getConfig();
         return $config['Plans'];
     }
-
+    /**
+     * Helper to grab text for widget button
+     *
+     * @return int
+     */
+    public static function getButtonText()
+    {
+        $config = self::getConfig();
+        return $config['Button Text'];
+    }/**
+     * Helper to grab text for footnote
+     *
+     * @return int
+     */
+    public static function getFootnote()
+    {
+        $config = self::getConfig();
+        return $config['Widget Footnote'];
+    }
     /**
      * Helper Function to transform shopware address array to plugin format
      *
