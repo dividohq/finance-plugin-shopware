@@ -77,7 +77,7 @@
         </element>
 
         <element required="false" type="text" scope="locale">
-            <name>Footnote</name>
+            <name>Widget Footnote</name>
             <label lang="en">Footnote</label>
             <description lang="en">Small text that appears at the bottom of the widget</description>
         </element>

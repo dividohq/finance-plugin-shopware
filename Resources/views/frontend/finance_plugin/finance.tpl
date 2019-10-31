@@ -12,6 +12,7 @@
             data-mode="calculator"
             data-amount="{$amount*100}"
             data-plans="{$basket_plans}"
+            data-footnote="{$footnote}"
             >
         </div>
         <script>
