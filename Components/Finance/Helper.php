@@ -159,6 +159,18 @@ class Helper
         return $config['Cart Threshold'];
     }
     /**
+     * Helper to grab cart maximum value
+     *
+     * @return int
+     */
+    public static function getCartMax()
+    {
+        $config = self::getConfig();
+        $max = $config['Cart Maximum'];
+        $max = (empty($max) || intval($max) > 25000) ? 25000 : intval($max);
+        return $config['Cart Maximum'];
+    }
+    /**
      * Helper to grab Activate on Status value
      *
      * @return string

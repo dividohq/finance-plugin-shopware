@@ -9,7 +9,6 @@
     data-amount="{$sArticle.price|replace:',':''|replace:'.':''}"
     {$widget_mode}
     {$widget_footnote}
-    {$widget_btn_txt}
   >
   </div>
 
