@@ -147,9 +147,9 @@ class TemplateRegistration implements SubscriberInterface
                     $view->assign('widget_btn_txt', $button_txt);
 
                     $footnote
-                        = (!($config['Widget Footnote']))
-                        ? "data-footnote='".strip_tags($config['Widget Footnote'])."'"
-                        : "";
+                        = (empty($config['Widget Footnote']))
+                        ? ""
+                        : "data-footnote='".strip_tags($config['Widget Footnote'])."'";
                     $view->assign('widget_footnote', $footnote);
 
                     $mode
