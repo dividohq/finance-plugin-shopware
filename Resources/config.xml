@@ -31,7 +31,14 @@
             <name>Cart Threshold</name>
             <label lang="en">Cart Threshold</label>
             <value>250</value>
-            <description lang="en">Cart Threshold</description>
+            <description lang="en">The minumum sum of a cart for finance to be a payment option</description>
+        </element>
+
+        <element required="true" type="text" scope="locale">
+            <name>Cart Maximum</name>
+            <label lang="en">Cart Maximum</label>
+            <value>25000</value>
+            <description lang="en">The maximum sum of a cart for finance to be a payment option (must not exceed 25000)</description>
         </element>
 
         <element required="true" type="boolean" scope="locale">
@@ -70,7 +77,7 @@
         </element>
 
         <element required="false" type="text" scope="locale">
-            <name>Footnote</name>
+            <name>Widget Footnote</name>
             <label lang="en">Footnote</label>
             <description lang="en">Small text that appears at the bottom of the widget</description>
         </element>

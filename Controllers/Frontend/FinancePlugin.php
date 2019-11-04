@@ -241,10 +241,13 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $displayFinance = false;
         $amount = $this->getAmount();
         $minCartAmount = Helper::getCartThreshold();
-        if ($amount >= $minCartAmount) {
-            $displayFinance = true;
-        } else {
+        $maxCartAmount = Helper::getCartMax();
+        if ($amount < $minCartAmount) {
             $displayWarning[] = 'Cart does not meet minimum Finance Requirement.';
+        } elseif($amount > $maxCartAmount) {
+            $displayWarning[] = 'Cart does not meet maximum Finance Requirement.';
+        } else {
+            $displayFinance = true;
         }
 
         if ($customer['address']!=$customer['shippingAddress']) {

@@ -141,15 +141,15 @@ class TemplateRegistration implements SubscriberInterface
                     $view->assign('plans', implode(",", $plans_ids));
 
                     $button_txt
-                        = ($config['Button Text'] == '')
+                        = (!($config['Button Text']))
                         ? ''
                         : "data-button-text='".strip_tags($config['Button Text'])."'";
                     $view->assign('widget_btn_txt', $button_txt);
 
                     $footnote
-                        = ($config['Footnote'])
-                        ? "data-button-text='".strip_tags($config['Widget Footnote'])."'"
-                        : "";
+                        = (empty($config['Widget Footnote']))
+                        ? ""
+                        : "data-footnote='".strip_tags($config['Widget Footnote'])."'";
                     $view->assign('widget_footnote', $footnote);
 
                     $mode
