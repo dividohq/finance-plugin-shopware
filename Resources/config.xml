@@ -1,106 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/config.xsd">
     <elements>
         <element required="true" type="text" scope="locale">
-            <name>API Key</name>
-            <label lang="en">API Key</label>
-            <description lang="en">The API-key is provided by your finance provider</description>
-        </element>
+            <name>api_key</name>
+        <label lang="en">API Key</label><description lang="en">The API-key should be supplied by your finance provider</description><label lang="en">API Key</label><description lang="en">The API-key should be supplied by your finance provider</description><label lang="fr">clé API</label><description lang="fr">La clé API doit être fournie par votre fournisseur de financement</description><label lang="es">Clave API</label><description lang="es">La clave API debe ser proporcionada por su proveedor de finanzas</description><label lang="de">API-Schlüssel</label><description lang="de">Der API-Schlüssel sollte von Ihrem Finanzdienstleister bereitgestellt werden</description></element>
 
         <element required="false" type="text" scope="locale">
-            <name>Shared Secret</name>
-            <label lang="en">Shared Secret</label>
-            <description lang="en">
-                The optional shared secret is used to verify webhooks from your finance provider.
-            </description>
-        </element>
+            <name>shared_secret</name>
+        <label lang="en">Shared Secret</label><description lang="en">The optional shared secret is an agreed code used to verify information between you and your finance provider</description><label lang="en">Shared Secret</label><description lang="en">The optional shared secret is an agreed code used to verify information between you and your finance provider</description><label lang="fr">Secret partagé</label><description lang="fr">Le secret partagé facultatif est un code convenu utilisé pour vérifier les informations entre vous et votre fournisseur de financement.</description><label lang="es">Clave secreta</label><description lang="es">El secreto compartido opcional es un código acordado que se utiliza para verificar la información entre usted y su proveedor de finanzas.</description><label lang="de">Geteiltes Geheimnis</label><description lang="de">Das optionale gemeinsame Geheimnis ist ein vereinbarter Code, mit dem Informationen zwischen Ihnen und Ihrem Finanzdienstleister überprüft werden</description></element>
+
         <element required="false" type="text" scope="locale">
-            <name>Checkout Title</name>
-            <label lang="en">Checkout Title</label>
-            <description lang="en"></description>
-        </element>
+            <name>checkout_title</name>
+        <label lang="en">Checkout Title</label><label lang="en">Checkout Title</label><label lang="fr">Titre de la caisse</label><label lang="es">Título de pago</label><label lang="de">Checkout-Titel</label></element>
 
         <element required="false" type="textarea" scope="locale">
-            <name>Checkout Description</name>
-            <label lang="en">Checkout Description</label>
-            <description lang="en"></description>
-        </element>
+            <name>checkout_description</name>
+        <label lang="en">Checkout Description</label><label lang="en">Checkout Description</label><label lang="fr">Description de la caisse</label><label lang="es">Descripción del pago</label><label lang="de">Checkout-Beschreibung</label></element>
 
         <element required="true" type="text" scope="locale">
-            <name>Cart Threshold</name>
-            <label lang="en">Cart Threshold</label>
+            <name>cart_threshold</name>
             <value>250</value>
-            <description lang="en">Cart Threshold</description>
-        </element>
+        <label lang="en">Cart Threshold</label><description lang="en">The minimum amount necessary for the cart to total in order for finance to be an option at checkout</description><label lang="en">Cart Threshold</label><description lang="en">The minimum amount necessary for the cart to total in order for finance to be an option at checkout</description><label lang="fr">Seuil du panier</label><description lang="fr">Le montant minimum nécessaire pour que le panier soit total afin que le financement soit une option à la caisse</description><label lang="es">Umbral del carro</label><description lang="es">El monto mínimo necesario para que el carrito totalice para que las finanzas sean una opción al momento de pagar</description><label lang="de">Einkaufswagen-Schwelle</label><description lang="de">Der Mindestbetrag, der für den Gesamtbetrag des Einkaufswagens erforderlich ist, damit die Finanzierung an der Kasse möglich ist</description></element>
+
+        <element required="true" type="text" scope="locale">
+            <name>cart_maximum</name>
+            <value>25000</value>
+        <label lang="en">Cart Maximum</label><description lang="en">The maximum amount that a cart can total in order for finance to be an option at checkout</description><label lang="en">Cart Maximum</label><description lang="en">The maximum amount that a cart can total in order for finance to be an option at checkout</description><label lang="fr">Panier maximum</label><description lang="fr">Le montant maximum qu'un panier peut totaliser pour que le financement soit une option à la caisse</description><label lang="es">Carrito Máximo</label><description lang="es">La cantidad máxima que un carrito puede totalizar para que las finanzas sean una opción al momento de pagar</description><label lang="de">Einkaufswagen Maximum</label><description lang="de">Der maximale Betrag, den ein Einkaufswagen insgesamt kann, damit die Finanzierung an der Kasse eine Option darstellt</description></element>
 
         <element required="true" type="boolean" scope="locale">
-            <name>Show Widget</name>
-            <label lang="en">Show Product Widget</label>
-            <description lang="en">Show finance options widget on product page</description>
-        </element>
+            <name>show_widget</name>
+        <label lang="en">Show Widget</label><description lang="en">Show a handy widget with the finance options on your products page</description><label lang="en">Show Widget</label><description lang="en">Show a handy widget with the finance options on your products page</description><label lang="fr">Afficher le widget</label><description lang="fr">Afficher un widget pratique avec les options de financement sur la page de vos produits</description><label lang="es">Mostrar widget</label><description lang="es">Muestre un útil widget con las opciones de financiación en su página de productos</description><label lang="de">Widget anzeigen</label><description lang="de">Zeigen Sie ein praktisches Widget mit den Finanzierungsoptionen auf Ihrer Produktseite an</description></element>
 
         <element required="true" type="text" scope="locale">
-            <name>Widget Minimum</name>
-            <label lang="en">Widget Threshold</label>
+            <name>widget_minimum</name>
             <value>0</value>
-            <description lang="en">Only display the widget if the product price is over the specified amount</description>
-        </element>
+        <label lang="en">Widget Minimum</label><description lang="en">Only display the widget if the product price is over the specified amount</description><label lang="en">Widget Minimum</label><description lang="en">Only display the widget if the product price is over the specified amount</description><label lang="fr">Widget Minimum</label><description lang="fr">Afficher le widget uniquement si le prix du produit est supérieur au montant spécifié</description><label lang="es">Mínimo de widget</label><description lang="es">Solo muestre el widget si el precio del producto supera la cantidad especificada</description><label lang="de">Widget Minimum</label><description lang="de">Zeigen Sie das Widget nur an, wenn der Produktpreis über dem angegebenen Betrag liegt</description></element>
 
         <element scope="shop" type="select">
-            <name>Widget Mode</name>
-            <label lang="en">Widget Mode</label>
-            <description>Choose whether the widget appears immediately (calculator), or when a button is clicked (lightbox)'</description>
+            <name>widget_mode</name>
             <store>
                 <option>
                     <value>calculator</value>
-                    <label lang="en">Calculator</label>
-                </option>
+                    <label>Calculator</label>
+                <label lang="en">Calculator</label><label lang="en">Calculator</label><label lang="fr">Calculatrice</label><label lang="es">Calculadora</label><label lang="de">Taschenrechner</label></option>
                 <option>
                     <value>lightbox</value>
-                    <label lang="en">Lightbox</label>
-                </option>
+                    <label>Lightbox</label>
+                <label lang="en">Lightbox</label><label lang="en">Lightbox</label><label lang="fr">Boite à lumière</label><label lang="es">Caja ligera</label><label lang="de">Leuchtkasten</label></option>
             </store>
-        </element>
+        <label lang="en">Mode</label><description lang="en">Whether the widget appears as immediately (calculator), or when a button is clicked (lightbox)</description><label lang="en">Mode</label><description lang="en">Whether the widget appears as immediately (calculator), or when a button is clicked (lightbox)</description><label lang="fr">Mode</label><description lang="fr">Si le widget apparaît immédiatement (calculatrice) ou lorsqu'un bouton est cliqué (lightbox)</description><label lang="es">Moda</label><description lang="es">Si el widget aparece como inmediatamente (calculadora) o cuando se hace clic en un botón (lightbox)</description><label lang="de">Modus</label><description lang="de">Gibt an, ob das Widget sofort angezeigt wird (Taschenrechner) oder wenn auf eine Schaltfläche geklickt wird (Leuchtkasten).</description></element>
 
         <element required="false" type="text" scope="locale">
-            <name>Button Text</name>
-            <label lang="en">Button Text</label>
-            <description lang="en">The text appearing on the button (if lightbox mode is selected above)</description>
-        </element>
+            <name>widget_button_text</name>
+        <label lang="en">Button text</label><description lang="en">Text that appears on the widget button</description><label lang="en">Button text</label><description lang="en">Text that appears on the widget button</description><label lang="fr">Texte du bouton</label><description lang="fr">Texte qui apparaît sur le bouton du widget</description><label lang="es">Botón de texto</label><description lang="es">Texto que aparece en el botón del widget</description><label lang="de">Schaltflächentext</label><description lang="de">Text, der auf der Widget-Schaltfläche angezeigt wird</description></element>
 
         <element required="false" type="text" scope="locale">
-            <name>Footnote</name>
-            <label lang="en">Footnote</label>
-            <description lang="en">Small text that appears at the bottom of the widget</description>
-        </element>
+            <name>widget_footnote</name>
+        <label lang="en">Footnote</label><description lang="en">Small print that appears at the end of the widget</description><label lang="en">Footnote</label><description lang="en">Small print that appears at the end of the widget</description><label lang="fr">note de bas de page</label><description lang="fr">Petits caractères qui apparaissent à la fin du widget</description><label lang="es">Nota</label><description lang="es">Letra pequeña que aparece al final del widget</description><label lang="de">Fußnote</label><description lang="de">Kleingedrucktes am Ende des Widgets</description></element>
 
         <element required="true" type="boolean" scope="locale">
-            <name>Debug</name>
-            <label lang="en">Debug</label>
-            <description lang="en">Debugging Enabled - Turn this off in production</description>
-        </element>
+            <name>debug</name>
+        <label lang="en">Debug</label><label lang="en">Debug</label><label lang="fr">Déboguer</label><label lang="es">Depurar</label><label lang="de">Debuggen</label></element>
 
-        <element type="combo" >
-            <name>Activate</name>
-            <label lang="en">Activate On Status:</label>
+        <element type="combo">
+            <name>activate_on_status</name>
             <store>Shopware.apps.Base.store.OrderStatus</store>
-        </element>
+        <label lang="en">Activate Order On Status</label><description lang="en">Notify your finance provider that the transaction has been completed</description><label lang="en">Activate Order On Status</label><description lang="en">Notify your finance provider that the transaction has been completed</description><label lang="fr">Activer la commande sur le statut</label><description lang="fr">Informez votre prestataire de services financiers que la transaction est terminée</description><label lang="es">Activar orden en estado</label><description lang="es">Notifique a su proveedor de finanzas que la transacción se ha completado</description><label lang="de">Aktivieren Sie Order On Status</label><description lang="de">Benachrichtigen Sie Ihren Finanzdienstleister, dass die Transaktion abgeschlossen wurde</description></element>
 
         <element scope="shop" type="select">
-            <name>Plans</name>
-            <label lang="en">Limit Plans</label>
-            <description>Limit the list of plan options by selecting the required options here</description>
+            <name>limit_plans</name>
             <store>
                 <option>
-                    <value>0</value>
-                    <label lang="en">Please activate the plugin, clear the cache and reload the page to use this feature</label>
+                    <value>warning</value>
+                    <label>Please activate the plugin, clear the cache and reload the page to use this feature</label>
                 </option>
             </store>
             <options>
                 <multiSelect>true</multiSelect>
             </options>
-        </element>
+        <label lang="en">Limit Plans</label><description lang="en">Choose the plans you want to make available to your customers</description><label lang="en">Limit Plans</label><description lang="en">Choose the plans you want to make available to your customers</description><label lang="fr">Plans de limite</label><description lang="fr">Choisissez les plans que vous souhaitez mettre à la disposition de vos clients</description><label lang="es">Planes de límite</label><description lang="es">Elija los planes que desea poner a disposición de sus clientes.</description><label lang="de">Pläne begrenzen</label><description lang="de">Wählen Sie die Pläne, die Sie Ihren Kunden zur Verfügung stellen möchten</description></element>
 
     </elements>
 </config>

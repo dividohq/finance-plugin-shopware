@@ -54,7 +54,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
         }
 
         var activateFinanceButton = Ext.create('Ext.button.Button', {
-            text: "activate order",
+            text: "{s namespace='backend/order/request' name='activate_order_label'}Activate Order{/s}",
             action: 'activate-order',
             cls: 'primary',
             hidden: true,
@@ -84,7 +84,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
         });
 
         var refundFinanceButton = Ext.create('Ext.button.Button', {
-            text: "refund order",
+            text: "{s namespace='backend/order/request' name='refund_order_label'}Refund Order{/s}",
             action: 'refund-order',
             cls: 'primary',
             hidden: true,
@@ -114,7 +114,7 @@ Ext.define('Shopware.apps.FinancePlugin.view.detail.Overview', {
         });
 
         var cancelFinanceButton = Ext.create('Ext.button.Button', {
-            text: "cancel order",
+            text: "{s namespace='backend/order/request' name='cancel_order_label'}Cancel Order{/s}",
             action: 'cancel-order',
             cls: 'secondary',
             hidden: true,

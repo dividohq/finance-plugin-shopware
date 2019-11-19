@@ -237,45 +237,61 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $user = $this->getUser();
         $customer = Helper::getFormattedCustomerDetails($user);
 
-        $displayWarning = [];
-        $displayFinance = false;
+        $display_form = true;
         $amount = $this->getAmount();
-        $minCartAmount = Helper::getCartThreshold();
-        if ($amount >= $minCartAmount) {
-            $displayFinance = true;
-        } else {
-            $displayWarning[] = 'Cart does not meet minimum Finance Requirement.';
-        }
+        $min_cart_amount = Helper::getCartThreshold();
+        $max_cart_amount = Helper::getCartMaximum();
+        if ($amount < $min_cart_amount) {
+            $display_form = false;
+            $min_cart_warning = true; // 'Cart does not meet minimum Finance Requirement.';
+        } else $min_cart_warning = false;
+        $this->View()->assign('minCartWarning', $min_cart_warning);
 
-        if ($customer['address']!=$customer['shippingAddress']) {
-            $displayFinance = false;
-            $displayWarning[] = "Shipping and billing address must match.";
-        }
+        if ($amount > $maxCartAmount) {
+            $display_form = false;
+            $max_cart_warning = true; // 'Cart does not meet minimum Finance Requirement.';
+        } else $max_cart_warning = false;
+        $this->View()->assign('maxCartWarning', $max_cart_warning);
+
+        if ($customer['address'] != $customer['shippingAddress']) {
+            $display_form = false;
+            $address_warning = true; // "Shipping and billing address must match.";
+        } else $address_warning = false;
+        $this->View()->assign('addressWarning', $address_warning);
+
 
         $apiKey = Helper::getApiKey();
         if (empty($apiKey)) {
-            $displayFinance = false;
-            $displayWarning[] =  self::API_ERROR_MSG;
+            $display_form = false;
+            $generic_warning = true; // self::API_ERROR_MSG;
         } else {
+            $generic_warning = false;
             $basket_plans = PlansService::getBasketPlans($apiKey, $products);
 
             if (empty($basket_plans)) {
                 $displayFinance = false;
-                $displayWarning[] = self::API_ERROR_MSG;
+                $empty_plans_warning = true; // self::API_ERROR_MSG;
+            } else {
+                $empty_plans_warning = false;
+                $this->View()->assign(
+                    'basket_plans',
+                    implode(",", $basket_plans)
+                );
             }
+        }
 
+        if($display_form) {
             list($key,$stuff) = preg_split("/\./", $apiKey);
             $this->View()->assign('apiKey', $key);
-            $this->View()->assign('title', Helper::getTitle());
-            $this->View()->assign('description', Helper::getDescription());
-            $this->View()->assign('amount', $amount);
-            $this->View()->assign('displayForm', $displayFinance);
-            $this->View()->assign('displayWarning', $displayWarning);
-            $this->View()->assign(
-                'basket_plans',
-                implode(",", $basket_plans)
-            );
         }
+
+        $this->View()->assign('title', Helper::getTitle());
+        $this->View()->assign('description', Helper::getDescription());
+        $this->View()->assign('amount', $amount);
+        $this->View()->assign('displayForm', $display_form);
+        $this->View()->assign('genericWarning', $generic_warning);
+        $this->View()->assign('emptyPlansWarning', $empty_plans_warning);
+
     }
 
     /**
@@ -308,7 +324,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
             Helper::log(self::INCOMPLETE_RESPONSE_ERROR_MSG, 'error');
 
             $this->View()->assign('error', self::INCOMPLETE_RESPONSE_ERROR_MSG);
-            $this->View()->assign('snippetKey', 'ErrorIncompleteMsg');
+            $this->View()->assign('snippet_key', 'incomplete_response_error_msg');
+            $this->View()->assign('snippet_namespace', 'frontend/checkout/error');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
@@ -334,7 +351,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
         if ($session->getStatus() != WebhookService::PAYMENTSTATUSPAID) {
             Helper::log(self::NON_PAID_ERROR_MSG, 'error');
             $this->View()->assign('error', self::NON_PAID_ERROR_MSG);
-            $this->View()->assign('snippetKey', 'ErrorUnpaidMsg');
+            $this->View()->assign('snippet_key', 'unpaid_error_msg');
+            $this->View()->assign('snippet_namespace', 'frontend/checkout/error');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
@@ -359,7 +377,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
         ) {
             Helper::log(self::INVALID_TOKEN_ERROR_MSG, 'error');
             $this->View()->assign('error', self::INVALID_TOKEN_ERROR_MSG);
-            $this->View()->assign('snippetKey', 'ErrorTokenMsg');
+            $this->View()->assign('snippet_key', 'invalid_token_error_msg');
+            $this->View()->assign('snippet_namespace', 'frontend/checkout/error');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
@@ -430,7 +449,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
             } else {
                 $this->View()->assign('error', self::ORDER_CREATION_ERROR_MSG);
-                $this->View()->assign('snippetKey', 'ErrorCreateMsg');
+                $this->View()->assign('snippet_namespace', 'frontend/checkout/error');
+                $this->View()->assign('snippet_key', 'order_creation_error_msg');
                 $this->View()->assign(
                     'template',
                     'frontend/finance_plugin/error.tpl'
@@ -445,7 +465,18 @@ class Shopware_Controllers_Frontend_FinancePlugin
         /   Assign the relevant stored session information
         /   to the appropriate Smarty variables
         */
-        $this->sendDataToSmarty($data);
+        foreach ($dta as $key=>$value) {
+            $this->View()->assign($key, $value);
+        }
+        $addresses['billing'] = $order['sUserData']['billingaddress'];
+        $addresses['shipping'] = $order['sUserData']['shippingaddress'];
+        $addresses['equal']
+            = ($addresses['billing'] == $addresses['shipping']);
+        $this->View()->assign('sAddresses', $addresses);
+        $this->View()->assign('sOrderNumber', $data['ordernumber']);
+        $this->View()->assign('sShippingcosts', $data['sBasket']['sShippingcosts']);
+        $this->View()->assign('sAmountNet', $data['sBasket']['AmountNetNumeric']);
+
         $this->View()->assign(
             'template',
             'frontend/finance_plugin/success.tpl'
@@ -608,27 +639,4 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $this->Response()->setHttpResponseCode($code);
     }
 
-    /**
-     * Take order information as received from s_finance_sessions table
-     * and assign the data to the relevant Smarty variables
-     *
-     * @param array $order The session information stored in
-     *                     `s_finance_sessions` table `data` column
-     *
-     * @return void
-     */
-    protected function sendDataToSmarty($order)
-    {
-        foreach ($order as $key=>$value) {
-            $this->View()->assign($key, $value);
-        }
-        $addresses['billing'] = $order['sUserData']['billingaddress'];
-        $addresses['shipping'] = $order['sUserData']['shippingaddress'];
-        $addresses['equal']
-            = ($addresses['billing'] == $addresses['shipping']);
-        $this->View()->assign('sAddresses', $addresses);
-        $this->View()->assign('sOrderNumber', $order['ordernumber']);
-        $this->View()->assign('sShippingcosts', $order['sBasket']['sShippingcosts']);
-        $this->View()->assign('sAmountNet', $order['sBasket']['AmountNetNumeric']);
-    }
 }

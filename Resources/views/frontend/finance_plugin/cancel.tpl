@@ -6,7 +6,7 @@
 
 {block name='frontend_index_content'}
     {if $errors}
-    <h1>{s namespace="frontend/finance_plugin/cancel" name="CancelTitle"}Ooops{/s}</h1>
+    <h1>{s namespace="frontend/checkout/error" name="error_title_short"}Error{/s}</h1>
     <ul style='list-style:none'>
     {foreach item=error key=$key from=$errors}
         <li>{$error|snippet:$key:'frontend/finance_plugin/cancel'}</li>
@@ -17,13 +17,13 @@
         <div class="example-content--actions">
             <a class="btn"
                 href="{url controller=checkout action=cart}"
-                title="{s namespace="frontend/checkout/cart" name="CartTitle"}change cart{/s}">
-                {s namespace="frontend/checkout/cart" name="CartTitle"}change cart{/s}
+                title='{s namespace="frontend/finance_plugin/finance" name="back_to_cart_label"}Back to cart{/s}'>
+                {s namespace="frontend/finance_plugin/finance" name="back_to_cart_label"}Back to cart{/s}
             </a>
             <a class="btn right"
                 href="{url controller=checkout action=shippingPayment sTarget=checkout}"
-                title="{s namespace="frontend/checkout/shipping_payment" name="ChangePaymentTitle"}{/s}">
-                {s namespace="frontend/checkout/shipping_payment" name="ChangePaymentTitle"}change payment method{/s}
+                title='{s namespace="frontend/finance_plugin/finance" name="alt_payment_methods_label"}change payment method{/s}'>
+                {s namespace="frontend/finance_plugin/finance" name="alt_payment_methods_label"}change payment method{/s}
             </a>
         </div>
     </div>

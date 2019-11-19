@@ -28,11 +28,10 @@ class Shopware_Controllers_Backend_FinancePlugin
         $this->get('template')->addTemplateDir(
             $plugin->getPath() . '/Resources/views/'
         );
-
         include_once $plugin->getPath().'/vendor/autoload.php';
         /**
          * Autoload the vendor files first
-         */
+         **/
 
         $orderId = $_POST['orderId'];
         $orderStatus = $_POST['orderStatus'];
