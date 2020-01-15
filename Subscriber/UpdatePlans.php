@@ -83,8 +83,8 @@ class UpdatePlans implements SubscriberInterface
                 $view->extendsTemplate('backend/fp_extend_config/view/');
                 $view->assign([
                     'success' => false,
-                    'message'  =>   'API key not entered. You will not be
-                                    able to use this plugin as a payment method'
+                    'message' => 'API key not entered. You will not be
+                                 able to use this plugin as a payment method'
                 ]);
             }
         }

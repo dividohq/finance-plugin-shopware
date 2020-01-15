@@ -121,14 +121,13 @@ class TemplateRegistration implements SubscriberInterface
         if ($controller->Request()->getActionName() == 'index') {
             $product = $view->sArticle;
 
-
-
             $show_widget = false;
-            if ($config['Show Widget']) {
+
+            if (Helper::getShowWidget() == true) {
 
                 $min_product_amount
-                    = (isset($config['Widget Minimum']))
-                    ? $config['Widget Minimum']*100
+                    = (Helper::getWidgetMinimum())
+                    ? Helper::getWidgetMinimum()*100
                     : 0;
 
                 $product_price = filter_var(
@@ -136,25 +135,27 @@ class TemplateRegistration implements SubscriberInterface
                     FILTER_SANITIZE_NUMBER_INT
                 );
 
-                if ($product_price > $min_product_amount) {
+                $cart_max = Helper::getCartMax()*100;
+
+                if (($cart_max > $product_price) && ($product_price > $min_product_amount)) {
 
                     $view->assign('plans', implode(",", $plans_ids));
 
                     $button_txt
-                        = (!($config['Button Text']))
+                        = (!(Helper::getButtonText()))
                         ? ''
-                        : "data-button-text='".strip_tags($config['Button Text'])."'";
+                        : "data-button-text='".strip_tags(Helper::getButtonText())."'";
                     $view->assign('widget_btn_txt', $button_txt);
 
                     $footnote
-                        = (empty($config['Widget Footnote']))
+                        = (empty(Helper::getFootnote()))
                         ? ""
-                        : "data-footnote='".strip_tags($config['Widget Footnote'])."'";
+                        : "data-footnote='".strip_tags(Helper::getFootnote())."'";
                     $view->assign('widget_footnote', $footnote);
 
                     $mode
-                        = ($config['Widget Mode'])
-                        ? "data-mode='".$config['Widget Mode']."'"
+                        = (Helper::getWidgetMode())
+                        ? "data-mode='".Helper::getWidgetMode()."'"
                         : "";
                     $view->assign('widget_mode', $mode);
 
@@ -166,8 +167,9 @@ class TemplateRegistration implements SubscriberInterface
                     if (empty($plans_ids)) {
                         $confPlans = Helper::getPlans();
                         $plans = PlansService::getStoredPlans();
+
                         if (empty($plans)) {
-                            $sdkResponse = PlansService::getPlansFromSDK($config['API Key']);
+                            $sdkResponse = PlansService::getPlansFromSDK(Helper::getApiKey());
                             if (false === $sdkResponse->error) {
                                 $plans = $sdkResponse->plans;
                                 PlansService::storePlans($plans);
@@ -187,7 +189,6 @@ class TemplateRegistration implements SubscriberInterface
 
                         foreach ($plans as $plan) $plan_ids[] = $plan->getId();
                     } else $show_widget = true;
-
                     $view->assign('plans', implode(",", $plan_ids));
                 }
             }

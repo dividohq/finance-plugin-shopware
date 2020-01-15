@@ -1,113 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/config.xsd">
     <elements>
         <element required="true" type="text" scope="locale">
-            <name>API Key</name>
-            <label lang="en">API Key</label>
-            <description lang="en">The API-key is provided by your finance provider</description>
-        </element>
+            <name>api_key</name>
+        <label lang="en">API Key</label><label lang="fr">clé API</label><label lang="es">Clave API</label><label lang="de">API-Schlüssel</label><description lang="en">API Key</description><description lang="fr">clé API</description><description lang="es">Clave API</description><description lang="de">API-Schlüssel</description></element>
 
         <element required="false" type="text" scope="locale">
-            <name>Shared Secret</name>
-            <label lang="en">Shared Secret</label>
-            <description lang="en">
-                The optional shared secret is used to verify webhooks from your finance provider.
-            </description>
-        </element>
+            <name>shared_secret</name>
+        <label lang="en">Shared Secret</label><label lang="fr">Secret partagé</label><label lang="es">Clave secreta</label><label lang="de">Geteiltes Geheimnis</label><description lang="en">Shared Secret</description><description lang="fr">Secret partagé</description><description lang="es">Clave secreta</description><description lang="de">Geteiltes Geheimnis</description></element>
+
         <element required="false" type="text" scope="locale">
-            <name>Checkout Title</name>
-            <label lang="en">Checkout Title</label>
-            <description lang="en"></description>
-        </element>
+            <name>checkout_title</name>
+        <label lang="en">Checkout Title</label><label lang="fr">Titre de la caisse</label><label lang="es">Título de pago</label><label lang="de">Checkout-Titel</label></element>
 
         <element required="false" type="textarea" scope="locale">
-            <name>Checkout Description</name>
-            <label lang="en">Checkout Description</label>
-            <description lang="en"></description>
-        </element>
+            <name>checkout_description</name>
+        <label lang="en">Checkout Description</label><label lang="fr">Description de la caisse</label><label lang="es">Descripción del pago</label><label lang="de">Checkout-Beschreibung</label></element>
 
         <element required="true" type="text" scope="locale">
-            <name>Cart Threshold</name>
-            <label lang="en">Cart Threshold</label>
-            <value>250</value>
-            <description lang="en">The minumum sum of a cart for finance to be a payment option</description>
-        </element>
+            <name>cart_threshold</name>
+            
+        <label lang="en">Cart Threshold</label><label lang="fr">Seuil du panier</label><label lang="es">Umbral del carro</label><label lang="de">Einkaufswagen-Schwelle</label><value>250</value><description lang="en">Cart Threshold</description><description lang="fr">Seuil du panier</description><description lang="es">Umbral del carro</description><description lang="de">Einkaufswagen-Schwelle</description></element>
 
         <element required="true" type="text" scope="locale">
-            <name>Cart Maximum</name>
-            <label lang="en">Cart Maximum</label>
-            <value>25000</value>
-            <description lang="en">The maximum sum of a cart for finance to be a payment option (must not exceed 25000)</description>
-        </element>
+            <name>cart_maximum</name>
+            
+        <label lang="en">Cart Maximum</label><label lang="fr">Panier maximum</label><label lang="es">Carrito Máximo</label><label lang="de">Einkaufswagen Maximum</label><value>25000</value><description lang="en">Cart Maximum</description><description lang="fr">Panier maximum</description><description lang="es">Carrito Máximo</description><description lang="de">Einkaufswagen Maximum</description></element>
 
         <element required="true" type="boolean" scope="locale">
-            <name>Show Widget</name>
-            <label lang="en">Show Product Widget</label>
-            <description lang="en">Show finance options widget on product page</description>
-        </element>
+            <name>show_widget</name>
+        <label lang="en">Show Widget</label><label lang="fr">Afficher le widget</label><label lang="es">Mostrar widget</label><label lang="de">Widget anzeigen</label><description lang="en">Show Widget</description><description lang="fr">Afficher le widget</description><description lang="es">Mostrar widget</description><description lang="de">Widget anzeigen</description></element>
 
         <element required="true" type="text" scope="locale">
-            <name>Widget Minimum</name>
-            <label lang="en">Widget Threshold</label>
-            <value>0</value>
-            <description lang="en">Only display the widget if the product price is over the specified amount</description>
-        </element>
+            <name>widget_minimum</name>
+            
+        <label lang="en">Widget Minimum</label><label lang="fr">Widget Minimum</label><label lang="es">Mínimo de widget</label><label lang="de">Widget Minimum</label><description lang="en">Widget Minimum</description><description lang="fr">Widget Minimum</description><description lang="es">Mínimo de widget</description><description lang="de">Widget Minimum</description></element>
 
-        <element scope="shop" type="select">
-            <name>Widget Mode</name>
-            <label lang="en">Widget Mode</label>
-            <description>Choose whether the widget appears immediately (calculator), or when a button is clicked (lightbox)'</description>
-            <store>
-                <option>
-                    <value>calculator</value>
-                    <label lang="en">Calculator</label>
-                </option>
-                <option>
-                    <value>lightbox</value>
-                    <label lang="en">Lightbox</label>
-                </option>
-            </store>
-        </element>
+        <element scope="locale" type="select">
+            <name>widget_mode</name>
+            
+        <label lang="en">Mode</label><label lang="fr">Mode</label><label lang="es">Moda</label><label lang="de">Modus</label><description lang="en">Mode</description><description lang="fr">Mode</description><description lang="es">Moda</description><description lang="de">Modus</description><store><option><value>calculator</value><label lang="en">Calculator</label><label lang="fr">Calculatrice</label><label lang="es">Calculadora</label><label lang="de">Taschenrechner</label></option><option><value>lightbox</value><label lang="en">Lightbox</label><label lang="fr">Boite à lumière</label><label lang="es">Caja ligera</label><label lang="de">Leuchtkasten</label></option></store></element>
 
         <element required="false" type="text" scope="locale">
-            <name>Button Text</name>
-            <label lang="en">Button Text</label>
-            <description lang="en">The text appearing on the button (if lightbox mode is selected above)</description>
-        </element>
+            <name>widget_button_text</name>
+        <label lang="en">Button text</label><label lang="fr">Texte du bouton</label><label lang="es">Botón de texto</label><label lang="de">Schaltflächentext</label><description lang="en">Button text</description><description lang="fr">Texte du bouton</description><description lang="es">Botón de texto</description><description lang="de">Schaltflächentext</description></element>
 
         <element required="false" type="text" scope="locale">
-            <name>Widget Footnote</name>
-            <label lang="en">Footnote</label>
-            <description lang="en">Small text that appears at the bottom of the widget</description>
-        </element>
+            <name>widget_footnote</name>
+        <label lang="en">Footnote</label><label lang="fr">note de bas de page</label><label lang="es">Nota</label><label lang="de">Fußnote</label><description lang="en">Footnote</description><description lang="fr">note de bas de page</description><description lang="es">Nota</description><description lang="de">Fußnote</description></element>
 
         <element required="true" type="boolean" scope="locale">
-            <name>Debug</name>
-            <label lang="en">Debug</label>
-            <description lang="en">Debugging Enabled - Turn this off in production</description>
-        </element>
+            <name>debug</name>
+        <label lang="en">Debug</label><label lang="fr">Déboguer</label><label lang="es">Depurar</label><label lang="de">Debuggen</label></element>
 
-        <element type="combo" >
-            <name>Activate</name>
-            <label lang="en">Activate On Status:</label>
-            <store>Shopware.apps.Base.store.OrderStatus</store>
-        </element>
+        <element type="combo">
+            <name>activate_on_status</name>
+            
+        <label lang="en">Activate Order On Status</label><label lang="fr">Activer la commande sur le statut</label><label lang="es">Activar orden en estado</label><label lang="de">Aktivieren Sie Order On Status</label><description lang="en">Activate Order On Status</description><description lang="fr">Activer la commande sur le statut</description><description lang="es">Activar orden en estado</description><description lang="de">Aktivieren Sie Order On Status</description><store>Shopware.apps.Base.store.OrderStatus</store></element>
 
-        <element scope="shop" type="select">
-            <name>Plans</name>
-            <label lang="en">Limit Plans</label>
-            <description>Limit the list of plan options by selecting the required options here</description>
-            <store>
-                <option>
-                    <value>0</value>
-                    <label lang="en">Please activate the plugin, clear the cache and reload the page to use this feature</label>
-                </option>
-            </store>
-            <options>
-                <multiSelect>true</multiSelect>
-            </options>
-        </element>
+        <element scope="locale" type="select">
+            <name>limit_plans</name>
+            
+            
+        <label lang="en">Limit Plans</label><label lang="fr">Plans de limite</label><label lang="es">Planes de límite</label><label lang="de">Pläne begrenzen</label><description lang="en">Limit Plans</description><description lang="fr">Plans de limite</description><description lang="es">Planes de límite</description><description lang="de">Pläne begrenzen</description><store><option><value>limit_plans_warning</value><label lang="en">Please activate the plugin, clear the cache and reload the page to use this feature</label><label lang="fr">Veuillez activer le plugin, vider le cache et recharger la page pour utiliser cette fonctionnalité</label><label lang="es">Active el complemento, borre el caché y vuelva a cargar la página para usar esta función</label><label lang="de">Bitte aktivieren Sie das Plugin, leeren Sie den Cache und laden Sie die Seite neu, um diese Funktion zu nutzen</label></option></store><options><multiSelect>true</multiSelect></options></element>
 
     </elements>
 </config>
