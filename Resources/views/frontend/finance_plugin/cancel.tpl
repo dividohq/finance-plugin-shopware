@@ -17,13 +17,13 @@
         <div class="example-content--actions">
             <a class="btn"
                 href="{url controller=checkout action=cart}"
-                title="{s namespace="frontend/checkout/cart" name="CartTitle"}change cart{/s}">
-                {s namespace="frontend/checkout/cart" name="CartTitle"}change cart{/s}
+                title="{'change cart'|snippet:'back_to_cart_label':'frontend/finance_plugin/finance'|lower}">
+                {"change cart"|snippet:'back_to_cart_label':'frontend/finance_plugin/finance'|lower}
             </a>
             <a class="btn right"
                 href="{url controller=checkout action=shippingPayment sTarget=checkout}"
-                title="{s namespace="frontend/checkout/shipping_payment" name="ChangePaymentTitle"}{/s}">
-                {s namespace="frontend/checkout/shipping_payment" name="ChangePaymentTitle"}change payment method{/s}
+                title="{'change payment method'|snippet:'alt_payment_methods_label':'frontend/finance_plugin/finance'}">
+                {"change payment method"|snippet:'alt_payment_methods_label':'frontend/finance_plugin/finance'}
             </a>
         </div>
     </div>

@@ -36,7 +36,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
           SSA_DECLINE_MSG
               = 'Shared secret authentication did not authenticate.',
           NON_PAID_ERROR_MSG
-              = 'This order is still waiting to receive payment confirmation.
+              = 'This order is just waiting to receive payment confirmation.
           It may just be the case that the confirmation hasn\'t quite
           arrived yet. Please give it a couple of seconds and refresh
           this page. Please contact the merchant if the problem persists.',

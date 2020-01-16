@@ -60,10 +60,10 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
                 var status = Ext.decode(response.responseText);
                 if (status.success) {
                     if(status.message !== null) {
-                        Shopware.Notification.createGrowlMessage('{s name=activationSuccess}Order Activated{/s}', status.message);
+                        Shopware.Notification.createGrowlMessage("{'Order Activated'|snippet:'activation_success_msg':'backend/order/response'}", status.message);
                     }
                 } else {
-                    Shopware.Notification.createGrowlMessage('{s name=activationError}Order was not activated{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage("{'Order not Activated'|snippet:'activation_error_msg':'backend/order/response'}", status.message);
                 }
             }
         });
@@ -80,9 +80,9 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
                 var status = Ext.decode(response.responseText);
                 if (status.success) {
                     obj.setDisabled(true);
-                    Shopware.Notification.createGrowlMessage('{s name=refundSuccess}Order Refunded{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage("{'Order Refunded'|snippet:'order_refund_success_msg':'backend/order/response'}", status.message);
                 } else {
-                    Shopware.Notification.createGrowlMessage('{s name=refundError}Order was not refunded{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage("{'Order not Refunded'|snippet:'refund_error_msg':'backend/order/response'}", status.message);
                 }
             }
         });
@@ -99,9 +99,9 @@ Ext.define('Shopware.apps.FinancePlugin.controller.FinancePluginController', {
                 var status = Ext.decode(response.responseText);
                 if (status.success) {
                     obj.setDisabled(true);
-                    Shopware.Notification.createGrowlMessage('{s name=cancellationSuccess}Order Cancelled{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage("{'Order Cancelled'|snippet:'cancellation_success_msg':'backend/order/response'}", status.message);
                 } else {
-                    Shopware.Notification.createGrowlMessage('{s name=cancellationError}Order was not cancelled{/s}', status.message);
+                    Shopware.Notification.createGrowlMessage("{'Order not Cancelled'|snippet:'cancellation_error_msg':'backend/order/response'}", status.message);
                 }
             }
         });
