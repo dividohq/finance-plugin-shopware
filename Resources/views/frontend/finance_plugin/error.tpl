@@ -1,11 +1,13 @@
 {extends file="parent:frontend/checkout/finish.tpl"}
 
-{block name="frontend_checkout_finish_teaser_title"}<h2 class="panel--title teaser--title is--align-center">
-    {s namespace="frontend/error/index" name="ErrorIndexTitle"}Sorry!{/s}
-</h2>{/block}
+{block name="frontend_checkout_finish_teaser_title"}
+    <h2 class="panel--title teaser--title is--align-center">
+    {s namespace="global" name="error_title_short"}Sorry!{/s}
+    </h2>
+{/block}
 {block name="frontend_checkout_finish_teaser_content"}
     <p class="teaser--text is--align-center">
-        {$error|snippet:$snippetKey:'frontend/finance_plugin/error'}
+        {s namespace="frontend/404/information" name="four_o_four_msg"}Content could not be found{/s}
     </p>
     <script>
         document.body.classList.add("is--ctl-checkout");
