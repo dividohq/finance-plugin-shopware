@@ -7,7 +7,7 @@
 {/block}
 {block name="frontend_checkout_finish_teaser_content"}
     <p class="teaser--text is--align-center">
-        {s namespace="frontend/404/information" name="four_o_four_msg"}Content could not be found{/s}
+        {$error|snippet:$snippetKey:'frontend/checkout/error'}
     </p>
     <script>
         document.body.classList.add("is--ctl-checkout");

@@ -310,7 +310,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
             Helper::log(self::INCOMPLETE_RESPONSE_ERROR_MSG, 'error');
 
             $this->View()->assign('error', self::INCOMPLETE_RESPONSE_ERROR_MSG);
-            $this->View()->assign('snippetKey', 'ErrorIncompleteMsg');
+            $this->View()->assign('snippetKey', 'incomplete_response_error_msg');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
@@ -336,7 +336,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         if ($session->getStatus() != WebhookService::PAYMENTSTATUSPAID) {
             Helper::log(self::NON_PAID_ERROR_MSG, 'error');
             $this->View()->assign('error', self::NON_PAID_ERROR_MSG);
-            $this->View()->assign('snippetKey', 'ErrorUnpaidMsg');
+            $this->View()->assign('snippetKey', 'unpaid_error_msg');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
@@ -361,7 +361,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
         ) {
             Helper::log(self::INVALID_TOKEN_ERROR_MSG, 'error');
             $this->View()->assign('error', self::INVALID_TOKEN_ERROR_MSG);
-            $this->View()->assign('snippetKey', 'ErrorTokenMsg');
+            $this->View()->assign('snippetKey', 'invalid_token_error_msg');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
@@ -376,7 +376,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
         if (false === Helper::hmacSign()) {
             $this->View()->assign('error', self::SSA_DECLINE_MSG);
-            $this->View()->assign('snippetKey', 'ErrorSsaMsg');
+            $this->View()->assign('snippetKey', 'ssa_error_msg');
             $this->View()->assign(
                 'template',
                 'frontend/finance_plugin/error.tpl'
@@ -432,7 +432,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
 
             } else {
                 $this->View()->assign('error', self::ORDER_CREATION_ERROR_MSG);
-                $this->View()->assign('snippetKey', 'ErrorCreateMsg');
+                $this->View()->assign('snippetKey', 'order_creation_error_msg');
                 $this->View()->assign(
                     'template',
                     'frontend/finance_plugin/error.tpl'
