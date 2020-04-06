@@ -121,14 +121,12 @@ class TemplateRegistration implements SubscriberInterface
         if ($controller->Request()->getActionName() == 'index') {
             $product = $view->sArticle;
 
-
-
             $show_widget = false;
-            if ($config['Show Widget']) {
+            if ($config['show_widget']) {
 
                 $min_product_amount
-                    = (isset($config['Widget Minimum']))
-                    ? $config['Widget Minimum']*100
+                    = (isset($config['widget_minimum']))
+                    ? $config['widget_minimum']*100
                     : 0;
 
                 $product_price = filter_var(
@@ -141,20 +139,20 @@ class TemplateRegistration implements SubscriberInterface
                     $view->assign('plans', implode(",", $plans_ids));
 
                     $button_txt
-                        = (!($config['Button Text']))
+                        = (!($config['widget_button_text']))
                         ? ''
-                        : "data-button-text='".strip_tags($config['Button Text'])."'";
+                        : "data-button-text='".strip_tags($config['widget_button_text'])."'";
                     $view->assign('widget_btn_txt', $button_txt);
 
                     $footnote
-                        = (empty($config['Widget Footnote']))
+                        = (empty($config['widget_footnote']))
                         ? ""
-                        : "data-footnote='".strip_tags($config['Widget Footnote'])."'";
+                        : "data-footnote='".strip_tags($config['widget_footnote'])."'";
                     $view->assign('widget_footnote', $footnote);
 
                     $mode
-                        = ($config['Widget Mode'])
-                        ? "data-mode='".$config['Widget Mode']."'"
+                        = ($config['widget_mode'])
+                        ? "data-mode='".$config['widget_mode']."'"
                         : "";
                     $view->assign('widget_mode', $mode);
 
@@ -167,14 +165,13 @@ class TemplateRegistration implements SubscriberInterface
                         $confPlans = Helper::getPlans();
                         $plans = PlansService::getStoredPlans();
                         if (empty($plans)) {
-                            $sdkResponse = PlansService::getPlansFromSDK($config['API Key']);
+                            $sdkResponse = PlansService::getPlansFromSDK($config['api_key']);
                             if (false === $sdkResponse->error) {
                                 $plans = $sdkResponse->plans;
                                 PlansService::storePlans($plans);
                                 $show_widget = true;
                             }
-                        } elseif(count($confPlans) > 0){
-
+                        } elseif(count($confPlans) > 0 && "limit_plans_warning" !== $confPlans[0]){
                             foreach($plans as $key => $plan) {
                                 if(!in_array($plan->getName(), $confPlans)){
                                     unset($plans[$key]);
@@ -191,6 +188,7 @@ class TemplateRegistration implements SubscriberInterface
                     $view->assign('plans', implode(",", $plan_ids));
                 }
             }
+
             $view->assign('show_widget', $show_widget);
         }
     }

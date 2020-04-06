@@ -103,7 +103,7 @@ class Helper
     public static function getApiKey()
     {
         $config = self::getConfig();
-        return $config['API Key'];
+        return $config['api_key'];
     }
 
     /**
@@ -114,7 +114,7 @@ class Helper
     public static function getDebug()
     {
         $config = self::getConfig();
-        return $config['Debug'];
+        return $config['debug'];
     }
 
     /**
@@ -125,7 +125,7 @@ class Helper
     public static function getTitle()
     {
         $config = self::getConfig();
-        return $config['Checkout Title'];
+        return $config['checkout_title'];
     }
 
     /**
@@ -136,7 +136,7 @@ class Helper
     public static function getDescription()
     {
         $config = self::getConfig();
-        return $config['Checkout Description'];
+        return $config['checkout_description'];
     }
     /**
      * Helper to grab shared secret value
@@ -146,7 +146,7 @@ class Helper
     public static function getSharedSecret()
     {
         $config = self::getConfig();
-        return $config['Shared Secret'];
+        return $config['shared_secret'];
     }
     /**
      * Helper to grab cart threshold value
@@ -156,7 +156,7 @@ class Helper
     public static function getCartThreshold()
     {
         $config = self::getConfig();
-        return $config['Cart Threshold'];
+        return $config['cart_threshold'];
     }
     /**
      * Helper to grab cart maximum value
@@ -166,9 +166,9 @@ class Helper
     public static function getCartMax()
     {
         $config = self::getConfig();
-        $max = $config['Cart Maximum'];
+        $max = $config['cart_maximum'];
         $max = (empty($max) || intval($max) > 25000) ? 25000 : intval($max);
-        return $config['Cart Maximum'];
+        return $max;
     }
     /**
      * Helper to grab Activate on Status value
@@ -178,7 +178,7 @@ class Helper
     public static function getActivateStatus()
     {
         $config = self::getConfig();
-        return $config['Activate'];
+        return $config['activate_on_status'];
     }
     /**
      * Helper to grab list of okayed plans
@@ -188,7 +188,7 @@ class Helper
     public static function getPlans()
     {
         $config = self::getConfig();
-        return $config['Plans'];
+        return $config['limit_plans'];
     }
     /**
      * Helper to grab text for widget button
@@ -198,7 +198,7 @@ class Helper
     public static function getButtonText()
     {
         $config = self::getConfig();
-        return $config['Button Text'];
+        return $config['widget_button_text'];
     }/**
      * Helper to grab text for footnote
      *
@@ -207,7 +207,7 @@ class Helper
     public static function getFootnote()
     {
         $config = self::getConfig();
-        return $config['Widget Footnote'];
+        return $config['widget_footnote'];
     }
     /**
      * Helper Function to transform shopware address array to plugin format
