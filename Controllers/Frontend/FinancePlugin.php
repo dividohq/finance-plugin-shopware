@@ -33,6 +33,8 @@ class Shopware_Controllers_Frontend_FinancePlugin
               = 'We are unable to process this order
           with the chosen payment method. Please choose another
           method via the <i>Change payment method</i> button.',
+          API_LANGUAGE_MSG
+              = 'Your language is currently not supported. Please choose another',
           SSA_DECLINE_MSG
               = 'Shared secret authentication did not authenticate.',
           NON_PAID_ERROR_MSG
@@ -111,7 +113,7 @@ class Shopware_Controllers_Frontend_FinancePlugin
          */
         $user = $this->getUser();
         if (is_null($user)) {
-            $errors = [self::SESSION_EXPIRY_MSG];
+            $errors = ['session_expiry_msg' => self::SESSION_EXPIRY_MSG];
             $this->forward('cancel', null, null, ['errors' => $errors]);
         }
 
@@ -208,7 +210,11 @@ class Shopware_Controllers_Frontend_FinancePlugin
                 serialize($response),
                 'error'
             );
-            $errors = [self::API_ERROR_MSG];
+            if(400013 === $response->code){
+                $errors = ['400013_api_error_msg' => self::API_LANGUAGE_MSG];
+            } else {
+                $errors = ['default_api_error_msg' => self::API_ERROR_MSG];
+            }
             $this->forward('cancel', null, null, ['errors' => $errors]);
         } else {
             $payload = $response->data;
