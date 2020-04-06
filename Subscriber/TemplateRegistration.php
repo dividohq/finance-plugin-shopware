@@ -171,7 +171,7 @@ class TemplateRegistration implements SubscriberInterface
                                 PlansService::storePlans($plans);
                                 $show_widget = true;
                             }
-                        } elseif(count($confPlans) > 0 && "limit_plans_warning" !== $confPlans[0]){
+                        } elseif(count($confPlans) > 0){
                             foreach($plans as $key => $plan) {
                                 if(!in_array($plan->getName(), $confPlans)){
                                     unset($plans[$key]);

@@ -13,7 +13,7 @@ use Shopware\Components\Model\ModelEntity;
 use FinancePlugin\Components\Finance\Helper;
 
 /**
- * @ORM\Table(name="s_plugin_FinancePlugin_sessions")
+ * @ORM\Table(name="s_plugin_financeplugin_sessions")
  * @ORM\Entity
  */
 class Session extends ModelEntity

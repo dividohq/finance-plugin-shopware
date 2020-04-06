@@ -243,28 +243,27 @@ class Shopware_Controllers_Frontend_FinancePlugin
         $minCartAmount = Helper::getCartThreshold();
         $maxCartAmount = Helper::getCartMax();
         if ($amount < $minCartAmount) {
-            $displayWarning[] = 'Cart does not meet minimum Finance Requirement.';
+            $displayWarning[] = 'minimum_price_error_msg';
         } elseif($amount > $maxCartAmount) {
-            $displayWarning[] = 'Cart does not meet maximum Finance Requirement.';
+            $displayWarning[] = 'maximum_price_error_msg';
         } else {
             $displayFinance = true;
         }
 
         if ($customer['address']!=$customer['shippingAddress']) {
             $displayFinance = false;
-            $displayWarning[] = "Shipping and billing address must match.";
+            $displayWarning[] = 'address_mismatch_error_msg';
         }
 
         $apiKey = Helper::getApiKey();
         if (empty($apiKey)) {
             $displayFinance = false;
-            $displayWarning[] =  self::API_ERROR_MSG;
+            $displayWarning[] =  'default_api_error_msg';
         } else {
             $basket_plans = PlansService::getBasketPlans($apiKey, $products);
-
             if (empty($basket_plans)) {
                 $displayFinance = false;
-                $displayWarning[] = self::API_ERROR_MSG;
+                $displayWarning[] = 'empty_plans_error_msg';
             }
 
             list($key,$stuff) = preg_split("/\./", $apiKey);

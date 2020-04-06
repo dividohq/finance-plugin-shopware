@@ -188,6 +188,9 @@ class Helper
     public static function getPlans()
     {
         $config = self::getConfig();
+        if("limit_plans_warning" == $config['limit_plans'][0]) {
+            unset($config['limit_plans'][0]);
+        }
         return $config['limit_plans'];
     }
     /**
